@@ -4,6 +4,7 @@ import './styles/style.scss'
 import App from './App.vue'
 import PageNotFound from  './views/404.vue'
 import Applications from './views/Applications.vue'
+import axios from 'axios'
 
 
 const routes: Array<RouteRecordRaw>  = [
@@ -47,4 +48,5 @@ const router = createRouter({
 
 const app = createApp(App);
 app.use(router);
+//app.use(axios);
 app.mount('#app');

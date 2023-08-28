@@ -8,8 +8,6 @@ export default defineComponent({
         const router = useRouter()
         const route = useRoute()
         console.log(route)
-
-
     },
 })
 </script>
