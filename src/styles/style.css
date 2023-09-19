@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito%20Sans&&display=swap");
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
 @tailwind base;
 @tailwind components;
 @tailwind variants;
