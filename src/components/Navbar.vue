@@ -1,5 +1,5 @@
 <template>
-    <nav class="bg-white h-16 shadow-sm min-w-max sticky top-0 border-b border-gray-200">
+    <nav class="bg-white h-16 shadow-sm min-w-max sticky top-0 border-b border-gray-200 dark:bg-body dark:border-navbar">
         <div class="flex flex-row items-center">
             <div class="logo mr-6">
                 <svg class="w-12 ml-3" viewBox="0 0 148 180" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
