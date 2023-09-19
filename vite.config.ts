@@ -6,7 +6,6 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '~bootstrap': './node_modules/bootstrap',
     }
   },
 })

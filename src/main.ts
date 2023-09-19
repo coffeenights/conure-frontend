@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
-import './styles/style.scss'
+import './styles/style.css'
 import App from './App.vue'
 import PageNotFound from  './views/404.vue'
 import Applications from './views/Applications.vue'
