@@ -3,7 +3,7 @@ import Breadcrumb from '../components/Breadcrumb.vue'
 let data = ['Conure', 'first-app', 'staging']
 </script>
 <template>
-    <nav class="bg-white h-16 shadow-sm min-w-max sticky top-0 border-b border-gray-200 dark:bg-body dark:border-navbar">
+    <nav class="bg-white h-16 shadow-sm min-w-max sticky top-0 border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700">
         <div class="flex flex-row items-center">
             <div class="logo mr-6">
                 <svg class="w-12 ml-3" viewBox="0 0 148 180" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
@@ -20,7 +20,7 @@ let data = ['Conure', 'first-app', 'staging']
             <div class="breadcrumbs">
                 <div v-for="(title, index) in data" :title="title" class="inline">
                     <Breadcrumb :title="title" />
-                    <label v-if="index != data.length - 1" class="text-gray-400 mr-2">/</label>
+                    <label v-if="index != data.length - 1" class="text-gray-400 dark:text-gray-700 mr-2">/</label>
                 </div>
             </div>
             <div class="profile "></div>

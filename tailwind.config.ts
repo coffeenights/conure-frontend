@@ -11,10 +11,7 @@ export default {
     },
     extend: {
       colors: {
-        body: '#0f111a',
-        navbar: '#31374a',
-        card: '#141824',
-        gray_1100: '#e3e6ed'
+        body: '#0f111a'
       }
     },
   },
