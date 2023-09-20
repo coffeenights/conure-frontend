@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import Breadcrumb from '../components/Breadcrumb.vue'
+let data = ['Conure', 'first-app', 'staging']
+</script>
 <template>
     <nav class="bg-white h-16 shadow-sm min-w-max sticky top-0 border-b border-gray-200 dark:bg-body dark:border-navbar">
         <div class="flex flex-row items-center">
@@ -14,19 +18,9 @@
                 </svg>
             </div>
             <div class="breadcrumbs">
-                <div class="cursor-pointer border border-gray-200 rounded-lg mt-1 p-2 hover:border-gray-500 transition duration-500 inline-block mr-2">
-                    <label class="mr-2 cursor-pointer">Organization Name</label>
-                    <i class="bi-chevron-down cursor-pointer"></i>
-                </div>
-                <label class=" text-gray-400 mr-2">/</label>
-                <div class="cursor-pointer border border-gray-200 rounded-lg mt-1 p-2 hover:border-gray-500 transition duration-500 inline-block mr-2">
-                    <label class="mr-2 cursor-pointer">first-app</label>
-                    <i class="bi-chevron-down cursor-pointer"></i>
-                </div>
-                <label class=" text-gray-400 mr-2">/</label>
-                <div class="cursor-pointer border border-gray-200 rounded-lg mt-1 p-2 hover:border-gray-500 transition duration-500 inline-block mr-2">
-                    <label class="mr-2 cursor-pointer">staging</label>
-                    <i class="bi-chevron-down cursor-pointer"></i>
+                <div v-for="(title, index) in data" :title="title" class="inline">
+                    <Breadcrumb :title="title" />
+                    <label v-if="index != data.length - 1" class="text-gray-400 mr-2">/</label>
                 </div>
             </div>
             <div class="profile "></div>
