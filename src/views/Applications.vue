@@ -12,14 +12,14 @@ console.log()
 <template>
 <div class="content-wrapper">
     <div class="p-5">
-        <input type="search" />
+        <input placeholder="Search" class="w-full pt-2 pb-2 pl-4 pr-4 rounded-md bg-transparent border dark:border-gray-700 border-gray-200" type="search" />
     </div>
     <div class="flex flex-row flex-wrap items-center justify-center gap-5 p-5">
-        <div class="border border-gray-200 dark:bg-gray-900 min-h-[20em] w-64 dark:border-gray-700 shrink-0 rounded-lg flex flex-col items-center justify-center dark:text-gray-300 text-gray-700">
+        <div class="cursor-pointer border border-gray-200 dark:bg-gray-900 min-h-[20em] w-64 dark:border-gray-700 shrink-0 rounded-lg flex flex-col items-center justify-center dark:text-gray-300 text-gray-700">
             <span class="bi-plus text-9xl"></span>
             <p>Add Application</p>
         </div>
-        <div class="border border-gray-200 dark:border-gray-700 dark:bg-gray-900 h-[20em] w-64 shrink-0 rounded-lg flex flex-col dark:text-gray-300 text-gray-700 overflow-hidden">
+        <div class="cursor-pointer border border-gray-200 dark:border-gray-700 dark:bg-gray-900 h-[20em] w-64 shrink-0 rounded-lg flex flex-col dark:text-gray-300 text-gray-700 overflow-hidden">
             <div class="bg-green-900 min-h-[9em] min-w-full flex flex-row justify-center items-center">
                 <span class="text-6xl text-gray-300">F</span>
             </div>
