@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
+import { createPinia } from 'pinia'
 import './styles/style.css'
 import App from './App.vue'
 import PageNotFound from  './views/404.vue'
@@ -45,8 +46,8 @@ const router = createRouter({
     routes, 
 })
 
-
+// const pinia = createPinia()
 const app = createApp(App);
 app.use(router);
-//app.use(axios);
+// app.use(pinia);
 app.mount('#app');
