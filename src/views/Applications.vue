@@ -1,3 +1,14 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
+const applications = ref({})
+onMounted(() => {
+    axios.get('http://localhost:8080/applications')
+    .then(response => (applications.value = response))
+}) 
+console.log()
+</script>
 <template>
 <div class="content-wrapper">
     <div class="p-5">
@@ -19,17 +30,14 @@
                 <div class="text-xl flex items-center pt-2 pb-2 justify-center">
                     <div class="grow flex items-center justify-center gap-2">
                         <div class="bi-boxes"></div>
-                        <span class="text-sm">10</span>
+                        <span class="text-sm">100</span>
                     </div>
                     <div class="h-5 w-0 border border-l-0 border-gray-200 dark:border-gray-700"></div>
                     <div class="grow flex items-center justify-center gap-2">
                         <div class="bi-people"></div>
                         <span class="text-sm">3</span>
                     </div>
-                    <div class="h-5 w-0 border border-l-0 border-gray-200 dark:border-gray-700"></div>
-                    <div class="grow flex items-center justify-center gap-2">
-                        <div class="bi-speedometer"></div>
-                    </div>
+                    
                 </div>
                 <div class="border border-t-[1px] border-b-0 h-0 border-gray-200 dark:border-gray-700"></div>
                 <div class="flex items-center mt-1 dark:text-gray-500">
@@ -44,19 +52,3 @@
     </div>
 </div>
 </template>
-
-<script lang="ts">
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
-
-export default {
-    setup() {
-        const applications = ref({})
-        onMounted(() => {
-            axios.get('http://localhost:8080')
-            .then(response => (applications.value = response))
-        }) 
-        console.log()
-    }
-}
-</script>
