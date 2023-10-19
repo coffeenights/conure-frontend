@@ -1,0 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito%20Sans&&display=swap");
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .content-wrapper {
+        @apply min-h-[93vh] bg-white dark:bg-gray-900 shadow-sm rounded-lg mt-10 border border-gray-200 dark:border-gray-700 min-w-full md:w-4/5 md:min-w-0
+    }
+}
