@@ -4,10 +4,10 @@ import axios from 'axios'
 
 const applications = ref({})
 onMounted(() => {
-    axios.get('http://localhost:8080/applications')
+    axios.get('http://localhost:8080/applications/')
     .then(response => (applications.value = response))
 }) 
-console.log()
+console.log('aqui')
 </script>
 <template>
 <div class="content-wrapper">
