@@ -5,7 +5,7 @@ import './styles/style.css'
 import App from './App.vue'
 import PageNotFound from  './views/404.vue'
 import Applications from './views/Applications.vue'
-import axios from 'axios'
+import ApplicationDetails from './views/ApplicationDetails.vue'
 
 
 const routes: Array<RouteRecordRaw>  = [
@@ -18,6 +18,11 @@ const routes: Array<RouteRecordRaw>  = [
         path: '/applications', 
         component: Applications,
         name: 'applications' 
+    },
+    { 
+        path: '/applications/:id', 
+        component: ApplicationDetails,
+        name: 'applicationDetails' 
     },
     { 
         path: '/databases', 
