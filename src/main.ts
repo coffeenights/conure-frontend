@@ -6,7 +6,8 @@ import App from './App.vue'
 import PageNotFound from  './views/404.vue'
 import Applications from './views/applications/ApplicationList.vue'
 import ApplicationDetails from './views/applications/ApplicationDetails.vue'
-import ApplicationDetailsEnv from './views/applications/ApplicationDetailsEnv.vue'
+import ApplicationDetailsVariables from './views/applications/ApplicationDetailsVariables.vue'
+import ApplicationDetailsComponentList from './views/applications/ApplicationDetailsComponentList.vue'
 
 
 const routes: Array<RouteRecordRaw>  = [
@@ -22,14 +23,20 @@ const routes: Array<RouteRecordRaw>  = [
     },
     { 
         path: '/applications/:id', 
-        component: ApplicationDetails,
+        components: {
+            default: ApplicationDetails,
+        },
         name: 'applicationDetails',
         children: [
             {
-              // UserProfile will be rendered inside User's <router-view>
-              // when /user/:id/profile is matched
-              path: 'environment',
-              component: ApplicationDetailsEnv,
+              path: 'variables',
+              component: ApplicationDetailsVariables,
+              name: 'applicationDetailsVariables'
+            },
+            {
+                path: 'components',
+                component: ApplicationDetailsComponentList,
+                name: 'applicationDetailsComponentList'
             }
           ],
     },
