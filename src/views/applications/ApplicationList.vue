@@ -3,11 +3,10 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const applications = ref({})
-onMounted(() => {
-    axios.get('http://localhost:8080/applications/')
-    .then(response => (applications.value = response))
-}) 
-console.log('aqui')
+// onMounted(() => {
+//     axios.get('http://localhost:8080/applications/')
+//     .then(response => (applications.value = response))
+// }) 
 </script>
 <template>
 <div class="content-wrapper">

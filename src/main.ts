@@ -7,7 +7,10 @@ import PageNotFound from  './views/404.vue'
 import Applications from './views/applications/ApplicationList.vue'
 import ApplicationDetails from './views/applications/ApplicationDetails.vue'
 import ApplicationDetailsVariables from './views/applications/ApplicationDetailsVariables.vue'
-import ApplicationDetailsComponentList from './views/applications/ApplicationDetailsComponentList.vue'
+import ComponentList from './views/applications/ComponentList.vue'
+import ComponentDetails from './views/applications/ComponentDetails.vue'
+import ComponentDetailsTab from './views/applications/ComponentDetailsTab.vue'
+import ComponentSettings from './views/applications/ComponentSettings.vue'
 
 
 const routes: Array<RouteRecordRaw>  = [
@@ -22,21 +25,40 @@ const routes: Array<RouteRecordRaw>  = [
         name: 'applications' 
     },
     { 
-        path: '/applications/:id', 
-        components: {
-            default: ApplicationDetails,
-        },
+        path: '/applications/:applicationId', 
+        component: ApplicationDetails,
         name: 'applicationDetails',
+        redirect: { name: 'componentList' },
         children: [
             {
-              path: 'variables',
-              component: ApplicationDetailsVariables,
-              name: 'applicationDetailsVariables'
+                path: 'variables',
+                component: ApplicationDetailsVariables,
+                name: 'applicationDetailsVariables'
             },
             {
                 path: 'components',
-                component: ApplicationDetailsComponentList,
-                name: 'applicationDetailsComponentList'
+                component: ComponentList,
+                name: 'componentList',
+                children: [
+                    {
+                        path: ':componentId',
+                        redirect: { name: 'componentDetailsTab' },
+                        component: ComponentDetails,
+                        name: 'componentDetails',
+                        children: [
+                            {
+                                path: 'details',
+                                component: ComponentDetailsTab,
+                                name: 'componentDetailsTab'
+                            },
+                            {
+                                path: 'settings',
+                                component: ComponentSettings,
+                                name: 'componentSettings'
+                            }
+                        ]
+                    }
+                ],
             }
           ],
     },
