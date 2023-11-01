@@ -10,7 +10,7 @@ import ApplicationDetailsVariables from './views/applications/ApplicationDetails
 import ComponentList from './views/applications/ComponentList.vue'
 import ComponentDetails from './views/applications/ComponentDetails.vue'
 import ComponentDetailsTab from './views/applications/ComponentDetailsTab.vue'
-import ComponentSettings from './views/applications/ComponentSettings.vue'
+import ComponentSettingsTab from './views/applications/ComponentSettingsTab.vue'
 
 
 const routes: Array<RouteRecordRaw>  = [
@@ -53,8 +53,8 @@ const routes: Array<RouteRecordRaw>  = [
                             },
                             {
                                 path: 'settings',
-                                component: ComponentSettings,
-                                name: 'componentSettings'
+                                component: ComponentSettingsTab,
+                                name: 'componentSettingsTab'
                             }
                         ]
                     }

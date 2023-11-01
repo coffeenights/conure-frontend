@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import ComponentDetailsTab from './ComponentDetailsTab.vue'
-defineProps(['show'])
+import TabNav from "../../components/TabNav.vue";
+
+const tabs = [
+    { routeName: 'componentDetailsTab', caption: 'Details' },
+    { routeName: 'componentSettingsTab', caption: 'Settings' },
+]
+
+const defaultTab: string = 'componentDetailsTab'
+
 </script>
 <template>
     <div d="componentDetails" class="p-3 rounded-md border border-color absolute top-0 left-0 w-full h-full bg-white dark:bg-gray-900 overflow-y-scroll">
@@ -11,10 +18,7 @@ defineProps(['show'])
             </router-link>
         </div>
         <div class="flex flex-col h-full">
-            <div id="componentTabsHeader" class="flex gap-2 border-b mt-3 border-color">
-                <div class="mb-[-1px] p-3 cursor-pointer tab-active">Details</div>
-                <div class="mb-[-1px] p-3 hover:tab-active cursor-pointer">Settings</div>
-            </div>
+            <TabNav :tabs=tabs :default=defaultTab />
             <div id="componentTabsContent" class="mt-4 h-full">
                 <router-view></router-view>
             </div>
