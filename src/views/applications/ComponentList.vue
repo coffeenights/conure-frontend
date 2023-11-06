@@ -24,7 +24,7 @@ if (route.query.componentId != undefined ) {
             <div class="py-3 mt-5 border-b border-color">
                 <div class="text-lg">Services</div>
             </div>
-            <div id="componentsGroupList" class="flex mt-4 gap-3">
+            <div id="componentsGroupList" class="flex mt-4 gap-3 flex-wrap ">
                 <router-link :to="{ name: 'componentDetails', params: { componentId: 'asd' } }" custom v-slot="{ navigate }">
                 <div @click="navigate" class="w-80 h-40 border border-color rounded-md p-3 cursor-pointer">
                     <div class="flex">
