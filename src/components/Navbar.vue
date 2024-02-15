@@ -3,7 +3,7 @@ import { useBreadCrumbStore } from '../stores/BreadCrumbStore'
 import Breadcrumb from '../components/Breadcrumb.vue'
 
 const store = useBreadCrumbStore()
-let data = [store.application, store.component, store.environment]
+let data = [store.organization, store.application, store.environment]
 </script>
 <template>
     <nav class="bg-white h-16 shadow-sm min-w-max sticky top-0 border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700 z-10">
