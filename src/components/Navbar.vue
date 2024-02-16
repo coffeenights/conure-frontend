@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import { useBreadCrumbStore } from '../stores/BreadCrumbStore'
 import Breadcrumb from '../components/Breadcrumb.vue'
-
-const store = useBreadCrumbStore()
-let data = [store.organization, store.application, store.environment]
 </script>
 <template>
     <nav class="bg-white h-16 shadow-sm min-w-max sticky top-0 border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700 z-10">
@@ -21,10 +17,7 @@ let data = [store.organization, store.application, store.environment]
                 </svg>
             </div>
             <div class="breadcrumbs">
-                <div v-for="(title, index) in data" :title="title" class="inline">
-                    <Breadcrumb :title="title" />
-                    <label v-if="index != data.length - 1" class="text-gray-400 dark:text-gray-700 mr-2">/</label>
-                </div>
+                <Breadcrumb />
             </div>
             <div class="profile "></div>
         </div>

@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { useBreadCrumbStore } from '../../stores/BreadCrumbStore';
 
 const applications = ref({})
-// onMounted(() => {
-//     axios.get('http://localhost:8080/applications/')
-//     .then(response => (applications.value = response))
-// }) 
+onMounted(() => {
+    // update breadcrumb
+    const store = useBreadCrumbStore()
+    store.application = ''
+    store.applicationId = ''
+    store.environment = ''
+}) 
 </script>
 <template>
 <div class="content-wrapper">
