@@ -1,15 +1,29 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useBreadCrumbStore } from '../../stores/BreadCrumbStore';
+import { listApplications, ApplicationResponse } from '../../services/organizations';
 
-const applications = ref({})
+// define applications as a reactive reference using the ApplicationsResponse interface as type
+const response: ApplicationResponse = {
+    applications: []
+}
+let applications = ref(response.applications)
+const store = useBreadCrumbStore()
 onMounted(() => {
     // update breadcrumb
-    const store = useBreadCrumbStore()
     store.application = ''
     store.applicationId = ''
     store.environment = ''
-}) 
+})
+
+// obtain the list of applications using the API
+listApplications(store.organizationId)
+    .then((response) => {
+        applications.value = response
+    })
+    .catch((error) => {
+        console.log(error)
+    })
 </script>
 <template>
 <div class="content-wrapper">
@@ -21,19 +35,20 @@ onMounted(() => {
             <span class="bi-plus text-9xl"></span>
             <p>Add Application</p>
         </div>
-        <router-link :to="{ name: 'componentList', params: { applicationId: 'asdf' } }" custom v-slot="{ navigate }">
+        <div v-for="application in applications" :key="application.id">
+        <router-link :to="{ name: 'componentList', params: { applicationId: application.id } }" custom v-slot="{ navigate }">
             <div @click="navigate" class="cursor-pointer border border-gray-200 dark:border-gray-700 dark:bg-gray-900 h-[20em] w-64 shrink-0 rounded-lg flex flex-col dark:text-gray-300 text-gray-700 overflow-hidden">
                 <div class="bg-green-900 min-h-[9em] min-w-full flex flex-row justify-center items-center">
                     <span class="text-6xl text-gray-300">F</span>
                 </div>
                 <div class="p-4">
-                    <div class="text-lg">first-app</div>
+                    <div class="text-lg">{{ application.name }}</div>
                     <div class="text-xs dark:text-gray-500">2 days since last activity</div>
                     <div class="border-gray-200 dark:border-gray-700 border border-t-[1px] border-b-0 mt-9 h-0"></div>
                     <div class="text-xl flex items-center pt-2 pb-2 justify-center">
                         <div class="grow flex items-center justify-center gap-2">
                             <div class="bi-boxes"></div>
-                            <span class="text-sm">100</span>
+                            <span class="text-sm">{{ application.total_components }}</span>
                         </div>
                         <div class="h-5 w-0 border border-l-0 border-gray-200 dark:border-gray-700"></div>
                         <div class="grow flex items-center justify-center gap-2">
@@ -53,6 +68,7 @@ onMounted(() => {
                 </div>
             </div>
         </router-link>
+        </div>
     </div>
 </div>
 </template>
