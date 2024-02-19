@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useBreadCrumbStore } from '../../stores/BreadCrumbStore';
-import { listApplications, ApplicationResponse } from '../../services/organizations';
+import { listApplications, getDaysAgo, ApplicationResponse } from '../../services/organizations';
 
 // define applications as a reactive reference using the ApplicationsResponse interface as type
 const response: ApplicationResponse = {
@@ -24,6 +24,10 @@ listApplications(store.organizationId)
     .catch((error) => {
         console.log(error)
     })
+
+const getFirstLetter = (name: string): string => {
+    return name.charAt(0).toUpperCase()
+}
 </script>
 <template>
 <div class="content-wrapper">
@@ -39,11 +43,11 @@ listApplications(store.organizationId)
         <router-link :to="{ name: 'componentList', params: { applicationId: application.id } }" custom v-slot="{ navigate }">
             <div @click="navigate" class="cursor-pointer border border-gray-200 dark:border-gray-700 dark:bg-gray-900 h-[20em] w-64 shrink-0 rounded-lg flex flex-col dark:text-gray-300 text-gray-700 overflow-hidden">
                 <div class="bg-green-900 min-h-[9em] min-w-full flex flex-row justify-center items-center">
-                    <span class="text-6xl text-gray-300">F</span>
+                    <span class="text-6xl text-gray-300">{{ getFirstLetter(application.name) }}</span>
                 </div>
                 <div class="p-4">
                     <div class="text-lg">{{ application.name }}</div>
-                    <div class="text-xs dark:text-gray-500">2 days since last activity</div>
+                    <div class="text-xs dark:text-gray-500">Last update {{ getDaysAgo(application.last_updated) }} days ago</div>
                     <div class="border-gray-200 dark:border-gray-700 border border-t-[1px] border-b-0 mt-9 h-0"></div>
                     <div class="text-xl flex items-center pt-2 pb-2 justify-center">
                         <div class="grow flex items-center justify-center gap-2">
@@ -59,11 +63,11 @@ listApplications(store.organizationId)
                     </div>
                     <div class="border border-t-[1px] border-b-0 h-0 border-gray-200 dark:border-gray-700"></div>
                     <div class="flex items-center mt-1 dark:text-gray-500">
-                        <div class="text-xs grow">Rev. 105</div>
+                        <div class="text-xs grow">Rev. {{ application.revision }}</div>
                         <div class="text-lime-600">
                             <span class="text-xs bi-circle-fill pr-1"></span>
                         </div>
-                        <div class="text-xs">active</div>
+                        <div class="text-xs">{{ application.status }}</div>
                     </div>
                 </div>
             </div>

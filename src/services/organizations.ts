@@ -17,6 +17,7 @@ export interface Application {
   status: string
   created: string
   revision: number
+  last_updated: string
 }
 
 export const listApplications = async (id: string) => {
@@ -26,4 +27,11 @@ export const listApplications = async (id: string) => {
   } catch (error) {
     console.error(error)
   }
+}
+
+export function getDaysAgo(date: string) {
+  const today = new Date()
+  const ago = new Date(date)
+  const diff = today.getTime() - ago.getTime()
+  return Math.floor(diff / (1000 * 60 * 60 * 24))
 }
