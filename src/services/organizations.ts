@@ -29,9 +29,37 @@ export const listApplications = async (id: string) => {
   }
 }
 
-export function getDaysAgo(date: string) {
+export function getTimeAgo(date: string): string {
   const today = new Date()
   const ago = new Date(date)
   const diff = today.getTime() - ago.getTime()
-  return Math.floor(diff / (1000 * 60 * 60 * 24))
+  const seconds = Math.floor(diff / 1000)
+  let frame: string = 'second'
+  let total: number = seconds
+
+  if (seconds >= 2592000) {
+    total = Math.floor(seconds / 2592000)
+    frame = 'month'
+  }
+  else if (seconds >= 604800) {
+    total = Math.floor(seconds / 604800)
+    frame = 'week'
+  }
+  else if (seconds >= 86400) {
+    total = Math.floor(seconds / 86400)
+    frame = 'day'
+  }
+  else if (seconds >= 3600) {
+    total = Math.floor(seconds / 3600)
+    frame = 'hour'
+  }
+  else if (seconds >= 60) {
+    total = Math.floor(seconds / 60)
+    frame = 'minute'
+  }
+
+  if (total > 1) {
+    return `${total} ${frame}s`
+  }
+  return `${total} ${frame}`
 }

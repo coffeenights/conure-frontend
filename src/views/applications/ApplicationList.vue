@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useBreadCrumbStore } from '../../stores/BreadCrumbStore';
-import { listApplications, getDaysAgo, ApplicationResponse } from '../../services/organizations';
+import { listApplications, getTimeAgo, ApplicationResponse } from '../../services/organizations';
 
 // define applications as a reactive reference using the ApplicationsResponse interface as type
 const response: ApplicationResponse = {
@@ -47,7 +47,7 @@ const getFirstLetter = (name: string): string => {
                 </div>
                 <div class="p-4">
                     <div class="text-lg">{{ application.name }}</div>
-                    <div class="text-xs dark:text-gray-500">Last update {{ getDaysAgo(application.last_updated) }} days ago</div>
+                    <div class="text-xs dark:text-gray-500">Last update {{ getTimeAgo(application.last_updated) }} ago</div>
                     <div class="border-gray-200 dark:border-gray-700 border border-t-[1px] border-b-0 mt-9 h-0"></div>
                     <div class="text-xl flex items-center pt-2 pb-2 justify-center">
                         <div class="grow flex items-center justify-center gap-2">
