@@ -3,12 +3,7 @@ import ComponentDetails from "./ComponentDetails.vue";
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 const route = useRoute()
-
 const show = ref(false)
-
-if (route.query.componentId != undefined ) {
-    console.log('aqui')
-}
 </script>
 
 <template>
