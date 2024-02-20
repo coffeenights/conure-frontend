@@ -2,11 +2,11 @@ import api from './api'
 
 // Create an object for the applications and its response
 
-export interface ApplicationResponse {
+export type ApplicationResponse = {
   applications: Application[]
 }
 
-export interface Application {
+export type Application = {
   id: string
   name: string
   description: string
