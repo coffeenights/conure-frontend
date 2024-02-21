@@ -1,7 +1,5 @@
 import api from './api'
 
-// Create an object for the applications and its response
-
 export type ApplicationResponse = {
   applications: Application[]
 }
@@ -22,7 +20,16 @@ export type Application = {
 
 export const listApplications = async (id: string) => {
   try {
-    const response = await api.get(`/organizations/${id}/`)
+    const response = await api.get(`/organizations/${id}/a/`)
+    return response.data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const detailApplication = async (organizationId: string, applicationId: string, environment: string) => {
+  try {
+    const response = await api.get(`/organizations/${organizationId}/a/${applicationId}/e/${environment}`)
     return response.data
   } catch (error) {
     console.error(error)
