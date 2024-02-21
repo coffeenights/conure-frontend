@@ -1,8 +1,4 @@
-import api from './api'
-
-export type ApplicationResponse = {
-  applications: Application[]
-}
+import api, { ApiResponse } from './api'
 
 export type Application = {
   id: string
@@ -18,12 +14,26 @@ export type Application = {
   last_updated: string
 }
 
-export const listApplications = async (id: string) => {
+export type Organization = {
+  id: string
+  name: string
+  created_at: string
+  status: string
+}
+
+export type ApplicationResponse = ApiResponse<Application[]>
+export type OrganizationResponse = ApiResponse<Organization>
+
+export const listApplications = async (id: string): Promise<ApplicationResponse> => {
   try {
-    const response = await api.get(`/organizations/${id}/a/`)
-    return response.data
+    const r = await api.get(`/organizations/${id}/a/`)
+    const applicationResponse: ApplicationResponse = { 
+      data: r.data, 
+      isError: false
+    }
+    return applicationResponse 
   } catch (error) {
-    console.error(error)
+    throw(error)
   }
 }
 
@@ -33,6 +43,15 @@ export const detailApplication = async (organizationId: string, applicationId: s
     return response.data
   } catch (error) {
     console.error(error)
+  }
+}
+
+export const detailOrganization = async (id: string): Promise<OrganizationResponse> => {
+  try {
+    const response = await api.get(`/organizations/${id}`)
+    return { data: response.data, isError: false }
+  } catch (error) {
+    throw(error)
   }
 }
 

@@ -1,14 +1,27 @@
 import { defineStore } from "pinia";
+import { list } from "postcss";
 import { ref } from 'vue';
 
 
 export const useBreadCrumbStore = defineStore('BreadCrumbStore', () => {
     const environment = ref('')
     // TODO: start with some default values for testing
-    const applicationId = ref('65c084eaff5e41522cc80f99')
-    const application = ref('first-app')
-    const organizationId = ref('6599082303bedbfeb7243ada')
+    const applicationId = ref('')
+    const application = ref('')
+    const organizationId = ref('')
     const organization = ref('ConureTest')
+
+    // appId 65c084eaff5e41522cc80f99
+    // orgId 6599082303bedbfeb7243ada
+
+    function updateBreadcrumbState(appId: string, orgId: string, env: string) {
+        
+        applicationId.value = appId
+        organizationId.value = orgId
+        environment.value = env
+    }
+    
+
     return { 
         environment, 
         application,

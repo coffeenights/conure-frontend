@@ -3,14 +3,16 @@ import { onMounted } from "vue";
 import DetailsHeader from "../../components/DetailsHeader.vue";
 import TabNav from "../../components/TabNav.vue";
 import { useBreadCrumbStore } from "../../stores/BreadCrumbStore";
+import { useRoute } from 'vue-router'
+import { listApplications } from "../../services/organizations";
+const route = useRoute()
 
 onMounted(() => {
-    // update breadcrumb
-    const store = useBreadCrumbStore()
-    store.application = 'first-app'
-    store.applicationId = 'asdasd'
-    store.environment = 'default'
+
 })
+// log the applicationId coming from the url
+console.log(route.params.applicationId)
+
 const tabs = [
     { routeName: 'componentList', caption: 'Components' },
     { routeName: 'applicationDetailsVariables', caption: 'Variables' },

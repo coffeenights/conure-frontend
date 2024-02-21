@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useBreadCrumbStore } from '../../stores/BreadCrumbStore';
-import { listApplications, getTimeAgo, ApplicationResponse } from '../../services/organizations';
+import { listApplications, getTimeAgo, ApplicationResponse, Application } from '../../services/organizations';
+import { useRouter } from 'vue-router'
 
-// define applications as a reactive reference using the ApplicationsResponse interface as type
-const response: ApplicationResponse = {
-    applications: []
-}
-let applications = ref(response.applications)
+
+let applications = ref([] as Application[])
+const router = useRouter()
 const store = useBreadCrumbStore()
 onMounted(() => {
     // update breadcrumb
@@ -19,7 +18,7 @@ onMounted(() => {
 // obtain the list of applications using the API
 listApplications(store.organizationId)
     .then((response) => {
-        applications.value = response
+        applications.value = response.data
     })
     .catch((error) => {
         console.log(error)
@@ -27,6 +26,14 @@ listApplications(store.organizationId)
 
 const getFirstLetter = (name: string): string => {
     return name.charAt(0).toUpperCase()
+}
+
+function goToDetailApplication(applicationId: string, applicationName: string, environment: string) {
+    store.applicationId = applicationId
+    store.environment = environment
+    store.application = applicationName
+    // navigate to the component list view
+    router.push({  name: 'componentList', params: { organizationId: store.organizationId ,applicationId: applicationId, environment: environment } })
 }
 </script>
 <template>
@@ -40,8 +47,7 @@ const getFirstLetter = (name: string): string => {
             <p>Add Application</p>
         </div>
         <div v-for="application in applications" :key="application.id">
-        <router-link :to="{ name: 'componentList', params: { applicationId: application.id } }" custom v-slot="{ navigate }">
-            <div @click="navigate" class="cursor-pointer border border-gray-200 dark:border-gray-700 dark:bg-gray-900 h-[20em] w-64 shrink-0 rounded-lg flex flex-col dark:text-gray-300 text-gray-700 overflow-hidden">
+            <div @click="goToDetailApplication(application.id, application.name, application.environment)" class="cursor-pointer border border-gray-200 dark:border-gray-700 dark:bg-gray-900 h-[20em] w-64 shrink-0 rounded-lg flex flex-col dark:text-gray-300 text-gray-700 overflow-hidden">
                 <div class="bg-green-900 min-h-[9em] min-w-full flex flex-row justify-center items-center">
                     <span class="text-6xl text-gray-300">{{ getFirstLetter(application.name) }}</span>
                 </div>
@@ -71,7 +77,6 @@ const getFirstLetter = (name: string): string => {
                     </div>
                 </div>
             </div>
-        </router-link>
         </div>
     </div>
 </div>

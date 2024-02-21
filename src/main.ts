@@ -20,68 +20,55 @@ const routes: Array<RouteRecordRaw>  = [
         name: 'home' 
     },
     { 
-        path: '/applications', 
-        component: Applications,
-        name: 'applications' 
-    },
-    { 
-        path: '/applications/:applicationId', 
-        component: ApplicationDetails,
-        name: 'applicationDetails',
-        redirect: { name: 'componentList' },
+        path: '/organizations/:organizationId', 
+        component: PageNotFound,
+        name: 'organization',
         children: [
-            {
-                path: 'variables',
-                component: ApplicationDetailsVariables,
-                name: 'applicationDetailsVariables'
+            { 
+                path: 'applications', 
+                component: Applications,
+                name: 'applications' 
             },
-            {
-                path: 'components',
-                component: ComponentList,
-                name: 'componentList',
+            { 
+                path: 'applications/:applicationId/:environment', 
+                component: ApplicationDetails,
+                name: 'applicationDetails',
+                redirect: { name: 'componentList' },
                 children: [
                     {
-                        path: ':componentId',
-                        redirect: { name: 'componentDetailsTab' },
-                        component: ComponentDetails,
-                        name: 'componentDetails',
+                        path: 'variables',
+                        component: ApplicationDetailsVariables,
+                        name: 'applicationDetailsVariables'
+                    },
+                    {
+                        path: 'components',
+                        component: ComponentList,
+                        name: 'componentList',
                         children: [
                             {
-                                path: 'details',
-                                component: ComponentDetailsTab,
-                                name: 'componentDetailsTab'
-                            },
-                            {
-                                path: 'settings',
-                                component: ComponentSettingsTab,
-                                name: 'componentSettingsTab'
+                                path: ':componentId',
+                                redirect: { name: 'componentDetailsTab' },
+                                component: ComponentDetails,
+                                name: 'componentDetails',
+                                children: [
+                                    {
+                                        path: 'details',
+                                        component: ComponentDetailsTab,
+                                        name: 'componentDetailsTab'
+                                    },
+                                    {
+                                        path: 'settings',
+                                        component: ComponentSettingsTab,
+                                        name: 'componentSettingsTab'
+                                    }
+                                ]
                             }
                         ]
                     }
-                ],
+                  ]
             }
-          ],
-    },
-    { 
-        path: '/databases', 
-        component: PageNotFound,
-        name: 'databases' 
-    },
-    { 
-        path: '/pubsub', 
-        component: PageNotFound,
-        name: 'pubsub' 
-    },
-    { 
-        path: '/cache', 
-        component: PageNotFound,
-        name: 'cache' 
-    },
-    { 
-        path: '/settings', 
-        component: PageNotFound,
-        name: 'settings' 
-    },
+        ]
+    }
 ]
 
 const router = createRouter({
@@ -93,4 +80,4 @@ const pinia = createPinia()
 const app = createApp(App);
 app.use(router);
 app.use(pinia);
-app.mount('#app');
+router.isReady().then(() => app.mount('#app'))

@@ -1,7 +1,7 @@
 <template>
     <div class="flex">
         <div class="text-lg grow">
-            <router-link :to="{ name: 'applications' }" custom v-slot="{ navigate }">
+            <router-link :to="{ name: 'applications', params: { organizationId: 'asd' }  }" custom v-slot="{ navigate }">
                 <span @click="navigate" class="cursor-pointer bi-arrow-left mr-3"></span>
             </router-link>
             first-app
