@@ -39,7 +39,7 @@ export const listApplications = async (id: string): Promise<ApplicationResponse>
 
 export const detailApplication = async (organizationId: string, applicationId: string, environment: string) => {
   try {
-    const response = await api.get(`/organizations/${organizationId}/a/${applicationId}/e/${environment}`)
+    const response = await api.get(`/organizations/${organizationId}/a/${applicationId}/e/${environment}/`)
     return response.data
   } catch (error) {
     console.error(error)
@@ -48,7 +48,7 @@ export const detailApplication = async (organizationId: string, applicationId: s
 
 export const detailOrganization = async (id: string): Promise<OrganizationResponse> => {
   try {
-    const response = await api.get(`/organizations/${id}`)
+    const response = await api.get(`/organizations/${id}/`)
     return { data: response.data, isError: false }
   } catch (error) {
     throw(error)
