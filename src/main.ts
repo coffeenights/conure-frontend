@@ -11,61 +11,65 @@ import ComponentList from './views/applications/ComponentList.vue'
 import ComponentDetails from './views/applications/ComponentDetails.vue'
 import ComponentDetailsTab from './views/applications/ComponentDetailsTab.vue'
 import ComponentSettingsTab from './views/applications/ComponentSettingsTab.vue'
+import EmptyState from './views/EmptyState.vue'
 
 
 const routes: Array<RouteRecordRaw>  = [
     { 
         path: '/', 
-        component: PageNotFound,
+        component: EmptyState,
         name: 'home' 
     },
     { 
-        path: '/organizations/:organizationId', 
+        path: '/not-found', 
         component: PageNotFound,
+        name: '404' 
+    },
+    { 
+        path: '/organizations/:organizationId', 
+        component: EmptyState,
         name: 'organization',
+    },
+    { 
+        path: '/organizations/:organizationId/applications', 
+        component: Applications,
+        name: 'applications' 
+    },
+    { 
+        path: '/organizations/:organizationId/applications/:applicationId/:environment', 
+        component: ApplicationDetails,
+        name: 'applicationDetails',
+        redirect: { name: 'componentList' },
         children: [
-            { 
-                path: 'applications', 
-                component: Applications,
-                name: 'applications' 
+            {
+                path: 'variables',
+                component: ApplicationDetailsVariables,
+                name: 'applicationDetailsVariables'
             },
-            { 
-                path: 'applications/:applicationId/:environment', 
-                component: ApplicationDetails,
-                name: 'applicationDetails',
-                redirect: { name: 'componentList' },
+            {
+                path: 'components',
+                component: ComponentList,
+                name: 'componentList',
                 children: [
                     {
-                        path: 'variables',
-                        component: ApplicationDetailsVariables,
-                        name: 'applicationDetailsVariables'
-                    },
-                    {
-                        path: 'components',
-                        component: ComponentList,
-                        name: 'componentList',
+                        path: ':componentId',
+                        redirect: { name: 'componentDetailsTab' },
+                        component: ComponentDetails,
+                        name: 'componentDetails',
                         children: [
                             {
-                                path: ':componentId',
-                                redirect: { name: 'componentDetailsTab' },
-                                component: ComponentDetails,
-                                name: 'componentDetails',
-                                children: [
-                                    {
-                                        path: 'details',
-                                        component: ComponentDetailsTab,
-                                        name: 'componentDetailsTab'
-                                    },
-                                    {
-                                        path: 'settings',
-                                        component: ComponentSettingsTab,
-                                        name: 'componentSettingsTab'
-                                    }
-                                ]
+                                path: 'details',
+                                component: ComponentDetailsTab,
+                                name: 'componentDetailsTab'
+                            },
+                            {
+                                path: 'settings',
+                                component: ComponentSettingsTab,
+                                name: 'componentSettingsTab'
                             }
                         ]
                     }
-                  ]
+                ]
             }
         ]
     }
