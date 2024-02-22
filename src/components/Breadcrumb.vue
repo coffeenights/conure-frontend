@@ -12,7 +12,6 @@ let environment = ref('')
 
 onMounted(() => {
     if (route.params.organizationId) {
-        organization.value = route.params.organizationId as string
         detailOrganization(route.params.organizationId as string)
             .then((response) => {
                 organization.value = response.data.name
@@ -20,7 +19,11 @@ onMounted(() => {
                 store.organizationId = response.data.id
             })
             .catch((error) => {
-                console.log(error)
+                if (error.response.status === 404) {
+                    router.push({ name: '404' })
+                } else {
+                    throw(error)
+                }
             })
     }
 })
