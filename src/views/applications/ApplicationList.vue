@@ -2,27 +2,26 @@
 import { ref, onMounted } from 'vue'
 import { useBreadCrumbStore } from '../../stores/BreadCrumbStore';
 import { listApplications, getTimeAgo, Application } from '../../services/organizations';
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 
 let applications = ref([] as Application[])
 const router = useRouter()
+const route = useRoute()
 const store = useBreadCrumbStore()
 onMounted(() => {
     // update breadcrumb
     store.application = ''
     store.applicationId = ''
     store.environment = ''
+    listApplications(store.organizationId || route.params.organizationId as string)
+        .then((response) => {
+            applications.value = response.data
+        })
+        .catch((error) => {
+            console.log(error)
+    })
 })
-
-// obtain the list of applications using the API
-listApplications(store.organizationId)
-    .then((response) => {
-        applications.value = response.data
-    })
-    .catch((error) => {
-        console.log(error)
-    })
 
 const getFirstLetter = (name: string): string => {
     return name.charAt(0).toUpperCase()
