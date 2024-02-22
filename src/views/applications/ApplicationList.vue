@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useBreadCrumbStore } from '../../stores/BreadCrumbStore';
-import { listApplications, getTimeAgo, ApplicationResponse, Application } from '../../services/organizations';
+import { listApplications, getTimeAgo, Application } from '../../services/organizations';
 import { useRouter } from 'vue-router'
 
 
