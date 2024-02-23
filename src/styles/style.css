@@ -6,7 +6,7 @@
 
 @layer utilities {
     .content-wrapper {
-        @apply min-h-[93vh] bg-white dark:bg-gray-900 shadow-sm rounded-lg mt-10 border border-gray-200 dark:border-gray-700 min-w-full md:w-4/5 md:min-w-0
+        @apply min-h-[93vh] bg-white dark:wrapper-background-color-dark shadow-sm rounded-lg mt-10 border border-gray-200 dark:border-gray-700 min-w-full md:w-4/5 md:min-w-0
     }
     .button {
         @apply border border-gray-200 dark:border-gray-700 px-4 py-1 text-sm cursor-pointer
@@ -19,5 +19,13 @@
     }
     .grid-component-details {
         grid-template-rows: 1fr minmax(100px, 3fr);
+    }
+    .wrapper-background-color-dark {
+        @apply bg-gray-900
+        /* @apply bg-fgblue1 */
+    }
+    .item-background-color-dark {
+        @apply bg-gray-900
+        /* @apply bg-fgblue2 */
     }
 }
