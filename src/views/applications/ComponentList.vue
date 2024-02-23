@@ -1,9 +1,25 @@
 <script setup lang="ts">
-import ComponentDetails from "./ComponentDetails.vue";
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { listComponents, ComponentShort } from '@/services/organizations';
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
+const router = useRouter()
 const show = ref(false)
+const components = ref<ComponentShort[]>([])
+
+onMounted(() => {
+    listComponents(route.params.organizationId as string, route.params.applicationId as string, route.params.environment as string)
+        .then((response) => {
+            components.value = response.data.components
+        })
+        .catch((error) => {
+            if (error.response.status === 404) {
+                router.push({ name: '404' })
+            } else {
+                throw(error)
+            }
+        })
+})
 </script>
 
 <template>
@@ -20,7 +36,7 @@ const show = ref(false)
                 <div class="text-lg">Services</div>
             </div>
             <div id="componentsGroupList" class="flex mt-4 gap-3 flex-wrap ">
-                <router-link :to="{ name: 'componentDetails', params: { componentId: 'asd' } }" custom v-slot="{ navigate }">
+                <router-link v-for="(c, index) in components" :key="index" :to="{ name: 'componentDetails', params: { componentName: c.name } }" custom v-slot="{ navigate }">
                 <div @click="navigate" class="w-80 h-40 border border-color rounded-md p-3 cursor-pointer">
                     <div class="flex">
                         <div class="grow">

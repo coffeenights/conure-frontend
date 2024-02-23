@@ -21,17 +21,31 @@ export type Organization = {
   status: string
 }
 
+export type ComponentShort = {
+  name: string
+  type: string
+}
+
 export type ApplicationResponse = ApiResponse<Application[]>
 export type OrganizationResponse = ApiResponse<Organization>
+export type ComponentListResponse = ApiResponse<{components: ComponentShort[]}>
+
+export const detailOrganization = async (id: string): Promise<OrganizationResponse> => {
+  try {
+    const response = await api.get(`/organizations/${id}/`)
+    return { data: response.data, isError: false }
+  } catch (error) {
+    throw(error)
+  }
+}
 
 export const listApplications = async (id: string): Promise<ApplicationResponse> => {
   try {
     const r = await api.get(`/organizations/${id}/a/`)
-    const applicationResponse: ApplicationResponse = { 
-      data: r.data, 
+    return {
+      data: r.data,
       isError: false
-    }
-    return applicationResponse 
+    } as ApplicationResponse;
   } catch (error) {
     throw(error)
   }
@@ -42,14 +56,17 @@ export const detailApplication = async (organizationId: string, applicationId: s
     const response = await api.get(`/organizations/${organizationId}/a/${applicationId}/e/${environment}/`)
     return response.data
   } catch (error) {
-    console.error(error)
+    throw(error)
   }
 }
 
-export const detailOrganization = async (id: string): Promise<OrganizationResponse> => {
+export const listComponents = async (organizationId: string, applicationId: string, environment: string) => {
   try {
-    const response = await api.get(`/organizations/${id}/`)
-    return { data: response.data, isError: false }
+    const r = await api.get(`/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/`)
+    return {
+      data: r.data,
+      isError: false
+    } as ComponentListResponse
   } catch (error) {
     throw(error)
   }

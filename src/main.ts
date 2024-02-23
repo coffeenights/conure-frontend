@@ -52,7 +52,7 @@ const routes: Array<RouteRecordRaw>  = [
                 name: 'componentList',
                 children: [
                     {
-                        path: ':componentId',
+                        path: ':componentName',
                         redirect: { name: 'componentDetailsTab' },
                         component: ComponentDetails,
                         name: 'componentDetails',
