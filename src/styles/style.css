@@ -28,6 +28,10 @@
       @apply bg-gray-900
       /* @apply bg-fgblue2 */
   }
+
+  .skeleton {
+      @apply animate-pulse bg-gray-200 dark:bg-gray-700
+  }
 }
 
 @layer base {

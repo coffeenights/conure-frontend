@@ -26,9 +26,21 @@ export type ComponentShort = {
   type: string
 }
 
-export type ApplicationResponse = ApiResponse<Application[]>
+export type ComponentStatus = {
+  updated_replicas: string,
+  ready_replicas: string,
+  available_replicas: string,
+  condition_available: string,
+  condition_progressing: string,
+  created: string,
+  updated: string
+}
+
+export type ApplicationListResponse = ApiResponse<Application[]>
+export type ApplicationResponse = ApiResponse<{ application: Application }>
 export type OrganizationResponse = ApiResponse<Organization>
-export type ComponentListResponse = ApiResponse<{components: ComponentShort[]}>
+export type ComponentListResponse = ApiResponse<{ components: ComponentShort[] }>
+export type ComponentStatusResponse = ApiResponse<ComponentStatus>
 
 export const detailOrganization = async (id: string): Promise<OrganizationResponse> => {
   try {
@@ -39,13 +51,13 @@ export const detailOrganization = async (id: string): Promise<OrganizationRespon
   }
 }
 
-export const listApplications = async (id: string): Promise<ApplicationResponse> => {
+export const listApplications = async (id: string): Promise<ApplicationListResponse> => {
   try {
     const r = await api.get(`/organizations/${id}/a/`)
     return {
       data: r.data,
       isError: false
-    } as ApplicationResponse;
+    } as ApplicationListResponse;
   } catch (error) {
     throw(error)
   }
@@ -53,8 +65,11 @@ export const listApplications = async (id: string): Promise<ApplicationResponse>
 
 export const detailApplication = async (organizationId: string, applicationId: string, environment: string) => {
   try {
-    const response = await api.get(`/organizations/${organizationId}/a/${applicationId}/e/${environment}/`)
-    return response.data
+    const r = await api.get(`/organizations/${organizationId}/a/${applicationId}/e/${environment}/`)
+    return {
+      data: r.data,
+      isError: false
+    } as ApplicationResponse;
   } catch (error) {
     throw(error)
   }
@@ -67,6 +82,27 @@ export const listComponents = async (organizationId: string, applicationId: stri
       data: r.data,
       isError: false
     } as ComponentListResponse
+  } catch (error) {
+    throw(error)
+  }
+}
+
+export const detailComponent = async (organizationId: string, applicationId: string, environment: string, componentId: string) => {
+  try {
+    const response = await api.get(`/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/`)
+    return response.data
+  } catch (error) {
+    throw(error)
+  }
+}
+
+export const statusComponent = async (organizationId: string, applicationId: string, environment: string, componentId: string) => {
+  try {
+    const r = await api.get(`/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/status/`)
+    return {
+      data: r.data,
+      isError: false
+    } as ComponentStatusResponse;
   } catch (error) {
     throw(error)
   }
