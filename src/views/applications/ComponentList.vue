@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { listComponents, ComponentShort } from '@/services/organizations';
+import { getIconPath } from '@/utils';
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 const show = ref(false)
 const components = ref<ComponentShort[]>([])
+
 
 onMounted(() => {
     listComponents(route.params.organizationId as string, route.params.applicationId as string, route.params.environment as string)
@@ -20,6 +22,8 @@ onMounted(() => {
             }
         })
 })
+
+
 </script>
 
 <template>
@@ -40,14 +44,14 @@ onMounted(() => {
                 <div @click="navigate" class="w-80 h-40 border border-color rounded-md p-3 cursor-pointer">
                     <div class="flex">
                         <div class="grow">
-                            <img src="../../assets/img/aws_rds_dark.svg" class="w-10"/>
+                            <img :src="getIconPath(c.type)" class="w-10 h-12"/>
                         </div>
                         <div>
-                            <img src="../../assets/img/aws_logo_dark.svg" class="w-14"/>
+                            <img src="@/assets/icons/docker.svg" class="w-10 h-12"/>
                         </div>
                     </div>
                     <div class="mt-3 pb-2 border-b border-color">
-                        <div class="font-bold text-lg">api-db</div>
+                        <div class="font-bold text-lg">{{ c.name }}</div>
                         <div class="font-bold text-xs text-gray-500">Last update 4 hours ago</div>
                     </div>
                     <div class="flex items-center mt-1 justify-end">
