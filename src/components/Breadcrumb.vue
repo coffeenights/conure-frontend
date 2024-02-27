@@ -1,36 +1,20 @@
 <script setup lang="ts">
 import { useBreadCrumbStore } from '../stores/BreadCrumbStore'
-import { onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { detailOrganization } from '../services/organizations';
-const route = useRoute()
-const router = useRouter()
+import { ref, watch } from 'vue'
+
 const store = useBreadCrumbStore()
-let organization = ref('')
-let application = ref('')
-let environment = ref('')
+let organization = ref(store.organization)
+let application = ref(store.application)
+let environment = ref(store.environment)
 
-onMounted(() => {
-    if (route.params.organizationId) {
-        detailOrganization(route.params.organizationId as string)
-            .then((response) => {
-                organization.value = response.data.name
-                store.organization = response.data.name
-                store.organizationId = response.data.id
-            })
-            .catch((error) => {
-                if (error.response.status === 404) {
-                    router.push({ name: '404' })
-                } else {
-                    throw(error)
-                }
-            })
-    }
-})
 
-watch([() => store.organization, () => store.application, () => store.environment], async ([newOrganization, newApplication, newEnvironment]) => {
+watch(() => store.organization, (newOrganization) => {
     organization.value = newOrganization
+})
+watch(() => store.application, (newApplication) => {
     application.value = newApplication
+})
+watch(() => store.environment, (newEnvironment) => {
     environment.value = newEnvironment
 })
 

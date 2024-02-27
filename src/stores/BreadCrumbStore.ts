@@ -9,12 +9,14 @@ export const useBreadCrumbStore = defineStore('BreadCrumbStore', () => {
     const application = ref('')
     const organizationId = ref('')
     const organization = ref('')
+    const isLoaded = ref(false)
 
     return { 
         environment, 
         application,
         applicationId, 
         organization,
-        organizationId
+        organizationId, 
+        isLoaded
     }
 })
