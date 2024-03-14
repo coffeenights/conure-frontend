@@ -1,18 +1,17 @@
-@import "~bootstrap/scss/bootstrap.scss";
-@import "navbar";
-@import "roboto";
-@import "bakbak_one";
-
+@import '~bootstrap/scss/bootstrap.scss';
+@import 'navbar';
+@import 'roboto';
+@import 'bakbak_one';
 
 .bi {
   vertical-align: -0.1em;
 }
-  
+
 body {
   min-height: stretch;
   min-height: 100vh;
 }
-  
+
 aside {
   height: 100vh;
   // height: -webkit-fill-available;
@@ -21,7 +20,7 @@ aside {
   overflow-x: auto;
   overflow-y: hidden;
 }
-  
+
 .navigation-header {
-  font-size: 0.750em;
+  font-size: 0.75em;
 }
