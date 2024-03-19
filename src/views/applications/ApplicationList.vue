@@ -13,18 +13,16 @@ const router = useRouter()
 const route = useRoute()
 const store = useBreadCrumbStore()
 onMounted(() => {
-  // update breadcrumb
-  store.application = ''
-  store.applicationId = ''
-  store.environment = ''
-  listApplications(
-    store.organizationId || (route.params.organizationId as string),
-  )
-    .then((response) => {
-      applications.value = response.data
-    })
-    .catch((error) => {
-      throw error
+    // update breadcrumb
+    store.application = ''
+    store.applicationId = ''
+    store.environment = ''
+    listApplications(store.organizationId || route.params.organizationId as string)
+        .then((response) => {
+            applications.value = response.data.applications
+        })
+        .catch((error) => {
+            throw(error)
     })
 })
 
