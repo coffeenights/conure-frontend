@@ -6,7 +6,13 @@ import {
   Application,
 } from '@/services/organizations'
 import { useRoute, useRouter } from 'vue-router'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { 
+  Accordion, 
+  AccordionContent, 
+  AccordionItem, 
+  AccordionTrigger 
+} from '@/components/ui/accordion'
+import ApplicationCard from '@/components/ApplicationCard.vue'
 
 let applications = ref([] as Application[])
 const router = useRouter()
@@ -39,12 +45,12 @@ onMounted(() => {
     <div class="flex flex-col flex-wrap gap-5 p-5">
       <div v-for="application in applications" :key="application.id">
         <Accordion type="single" collapsible>
-          <AccordionItem value="item-1">
-            <AccordionTrigger>
+          <AccordionItem value="item-1" class="border dark:border-gray-700 border-gray-200 rounded-md">
+            <AccordionTrigger class="border-b dark:border-gray-700 border-gray-200 px-4  bg-transparent hover:brightness-150">
               {{ application.name }}
             </AccordionTrigger>
-            <AccordionContent>
-              Yes. It adheres to the WAI-ARIA design pattern.
+            <AccordionContent class="p-5 dark:bg-bgblue1 bg-gray-100 rounded-b-md flex flex-row gap-5">
+              <ApplicationCard v-for="environment in application.environments"  :application="application" :environment="environment" />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

@@ -1,18 +1,25 @@
 <script setup lang="ts">
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import { getTimeAgo } from '@/services/organizations'
 import { useRouter } from 'vue-router'
-import { defineProps } from 'vue'
-import { Application } from '@/services/organizations'
+import { ref } from 'vue'
+import { Application, Environment, Revision, getTimeAgo, getLatestRevision } from '@/services/organizations'
 
 const router = useRouter()
 const store = useBreadCrumbStore()
-defineProps({
+const latestRevision = ref<Revision | null>(null)
+
+const props = defineProps({
     application: {
         type: Object as () => Application,
         required: true,
     },
+    environment: {
+        type: Object as () => Environment,
+        required: true,
+    },
 })
+
+latestRevision.value = getLatestRevision(props.application)
 
 const getFirstLetter = (name: string): string => {
   return name.charAt(0).toUpperCase()
@@ -40,49 +47,41 @@ function goToDetailApplication( applicationId: string, applicationName: string, 
     goToDetailApplication(
         application.id,
         application.name,
-        application.environment,
+        environment.name,
     )
     "
-    class="cursor-pointer border border-gray-200 dark:border-gray-700 dark:item-background-color-dark h-[20em] w-64 shrink-0 rounded-lg flex flex-col dark:text-gray-300 text-gray-700 overflow-hidden"
+    class="cursor-pointer border bg-white drop-shadow border-gray-200 dark:border-gray-700 dark:item-background-color-dark w-64 shrink-0 rounded-lg flex flex-col dark:text-gray-300 text-gray-700 overflow-hidden"
 >
-    <div
-    class="bg-green-900 min-h-[9em] min-w-full flex flex-row justify-center items-center"
-    >
-    <span class="text-6xl text-gray-300">{{
-        getFirstLetter(application.name)
-    }}</span>
-    </div>
     <div class="p-4">
-    <div class="text-lg">{{ application.name }}</div>
-    <div class="text-xs dark:text-gray-500">
-        Last update {{ getTimeAgo(application.last_updated) }} ago
-    </div>
-    <div
-        class="border-gray-200 dark:border-gray-700 border border-t-[1px] border-b-0 mt-9 h-0"
-    ></div>
-    <div class="text-xl flex items-center pt-2 pb-2 justify-center">
-        <div class="grow flex items-center justify-center gap-2">
-        <div class="bi-boxes"></div>
-        <span class="text-sm">{{ application.total_components }}</span>
+        <div class="text-lg">{{ application.name }}</div>
+        <div v-if="latestRevision" class="text-xs dark:text-gray-500">
+            Last update {{ getTimeAgo(latestRevision.created_at) }} ago
+        </div>
+        <div v-else class="text-xs dark:text-gray-500">No updates yet</div>
+        <div class="border-gray-200 dark:border-gray-700 border border-t-[1px] border-b-0 mt-9 h-0"></div>
+        <div class="text-xl flex items-center pt-2 pb-2 justify-center">
+            <div class="grow flex items-center justify-center gap-2">
+            <div class="bi-boxes"></div>
+            <span class="text-sm">{{ application.total_components }}</span>
+            </div>
+            <div
+            class="h-5 w-0 border border-l-0 border-gray-200 dark:border-gray-700"
+            ></div>
+            <div class="grow flex items-center justify-center gap-2">
+            <div class="bi-people"></div>
+            <span class="text-sm">3</span>
+            </div>
         </div>
         <div
-        class="h-5 w-0 border border-l-0 border-gray-200 dark:border-gray-700"
+            class="border border-t-[1px] border-b-0 h-0 border-gray-200 dark:border-gray-700"
         ></div>
-        <div class="grow flex items-center justify-center gap-2">
-        <div class="bi-people"></div>
-        <span class="text-sm">3</span>
+        <div class="flex items-center mt-1 dark:text-gray-500">
+            <div class="text-xs grow">Rev. {{ latestRevision.revision_nuber | 0 }}</div>
+            <div class="text-lime-600">
+            <span class="text-xs bi-circle-fill pr-1"></span>
+            </div>
+            <div class="text-xs">{{ application.status }}</div>
         </div>
-    </div>
-    <div
-        class="border border-t-[1px] border-b-0 h-0 border-gray-200 dark:border-gray-700"
-    ></div>
-    <div class="flex items-center mt-1 dark:text-gray-500">
-        <div class="text-xs grow">Rev. {{ application.revision }}</div>
-        <div class="text-lime-600">
-        <span class="text-xs bi-circle-fill pr-1"></span>
-        </div>
-        <div class="text-xs">{{ application.status }}</div>
-    </div>
     </div>
 </div>
 </template>
