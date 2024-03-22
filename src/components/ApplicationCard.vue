@@ -53,7 +53,7 @@ function goToDetailApplication( applicationId: string, applicationName: string, 
     class="cursor-pointer border bg-white drop-shadow border-gray-200 dark:border-gray-700 dark:item-background-color-dark w-64 shrink-0 rounded-lg flex flex-col dark:text-gray-300 text-gray-700 overflow-hidden"
 >
     <div class="p-4">
-        <div class="text-lg">{{ application.name }}</div>
+        <div class="text-lg">{{ environment.name }}</div>
         <div v-if="latestRevision" class="text-xs dark:text-gray-500">
             Last update {{ getTimeAgo(latestRevision.created_at) }} ago
         </div>
