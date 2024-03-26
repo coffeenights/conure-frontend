@@ -35,6 +35,16 @@ export type ComponentShort = {
   type: string
 }
 
+export type ComponentService = {
+  id: string
+  application_id: string
+  created_at: string
+  description: string
+  properties: Object
+  traits: Object
+  type: string
+}
+
 
 export type ComponentStatus = {
   updated_replicas: string
@@ -50,7 +60,7 @@ export type ApplicationResponse = ApiResponse<{ application: Application }>
 
 export type OrganizationResponse = ApiResponse<Organization>
 export type ComponentListResponse = ApiResponse<{
-  components: ComponentShort[]
+  components: ComponentService[]
 }>
 export type ComponentStatusResponse = ApiResponse<ComponentStatus>
 

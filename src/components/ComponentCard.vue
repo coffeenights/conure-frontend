@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // declare props and define their types and default values using composition api
 import {
-  ComponentShort,
+  ComponentService,
   statusComponent,
   getTimeAgo,
 } from '@/services/organizations'
@@ -9,7 +9,7 @@ import { getIconPath } from '@/utils'
 import { defineProps, onMounted, ref } from 'vue'
 const props = defineProps({
   component: {
-    type: Object as () => ComponentShort,
+    type: Object as () => ComponentService,
     required: true,
   },
   organizationId: {
@@ -34,7 +34,7 @@ onMounted(() => {
     props.organizationId,
     props.applicationId,
     props.environmentId,
-    props.component.name,
+    props.component.id,
   )
     .then((response) => {
       isLoading.value = false
@@ -57,7 +57,7 @@ onMounted(() => {
       </div>
     </div>
     <div class="mt-3 pb-2 border-b border-color">
-      <div class="font-bold text-lg">{{ component.name }}</div>
+      <div class="font-bold text-lg">{{ component.id }}</div>
       <div
         class="w-40 h-3 mt-2 rounded-sm skeleton"
         :class="{ hidden: !isLoading }"

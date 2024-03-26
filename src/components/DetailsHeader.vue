@@ -1,8 +1,15 @@
+<script setup lang="ts">
+defineProps({
+  organizationId: String,
+})
+
+</script>
+
 <template>
   <div class="flex">
     <div class="text-lg grow">
       <router-link
-        :to="{ name: 'applications', params: { organizationId: 'asd' } }"
+        :to="{ name: 'applications', params: { organizationId: organizationId } }"
         custom
         v-slot="{ navigate }"
       >
