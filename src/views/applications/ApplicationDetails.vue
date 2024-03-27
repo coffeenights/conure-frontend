@@ -10,7 +10,6 @@ const tabs = [
   { routeName: 'activity', caption: 'Activity' },
 ]
 const store = useBreadCrumbStore()
-const organizationId = store.organizationId
 const defaultTab = 'componentList'
 </script>
 

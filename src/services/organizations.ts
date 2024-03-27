@@ -47,22 +47,38 @@ export type ComponentService = {
 
 
 export type ComponentStatus = {
-  updated_replicas: string
-  ready_replicas: string
-  available_replicas: string
-  condition_available: string
-  condition_progressing: string
-  created: string
-  updated: string
+  component: ComponentService
+  properties: ComponentProperties
 }
+
+export type ComponentProperties = {
+  network: {
+    ip: string
+    external_ip: string
+    host: string
+    port: number[]
+  }
+  resources: {
+    cpu: string
+    memory: string
+    replicas: number
+  }
+  storage: {
+    size: string
+  }
+  source: {
+    container_image: string
+  }
+}
+
 export type ApplicationListResponse = ApiResponse<{organization: Organization, applications: Application[]}>
 export type ApplicationResponse = ApiResponse<{ application: Application }>
-
 export type OrganizationResponse = ApiResponse<Organization>
 export type ComponentListResponse = ApiResponse<{
   components: ComponentService[]
 }>
 export type ComponentStatusResponse = ApiResponse<ComponentStatus>
+
 
 export const detailOrganization = async (
   id: string,

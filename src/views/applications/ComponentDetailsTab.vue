@@ -1,6 +1,12 @@
+<script setup lang="ts">
+import { useComponentStore } from '@/stores/ComponentStore'
+
+const store = useComponentStore()
+
+</script>
 <template>
   <div class="text-lg col-start-1 col-span-2 md:row-start-1 mb-3">
-    <span class="bi-globe mr-2"></span>Web Service
+    <span class="bi-globe mr-2"></span>{{ store.component.type }}
   </div>
   <div
     class="grid md:grid-cols-2 md:grid-component-details grid-cols-1 h-full gap-4"

@@ -2,7 +2,7 @@
 // declare props and define their types and default values using composition api
 import {
   ComponentService,
-  statusComponent,
+  detailComponent,
   getTimeAgo,
 } from '@/services/organizations'
 import { getIconPath } from '@/utils'
@@ -30,7 +30,7 @@ const isLoading = ref(true)
 const date = ref('')
 
 onMounted(() => {
-  statusComponent(
+  detailComponent(
     props.organizationId,
     props.applicationId,
     props.environmentId,
