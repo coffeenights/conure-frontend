@@ -24,7 +24,7 @@ onMounted(() => {
     route.params.componentName as string
     )
     .then((response) => {
-      componentStore.component = response.data.component
+      componentStore.componentStatus = response.data
     })
     .catch((error) => {
       console.log(error)
@@ -37,8 +37,7 @@ onMounted(() => {
     id="componentDetails"
     class="p-3 rounded-md border border-color absolute top-0 left-0 w-full h-full bg-white dark:bg-gray-900 overflow-y-scroll"
   >
-    <div class="flex">
-      <div class="grow text-lg">{{ route.params.componentName }}</div>
+    <div class="flex justify-end">
       <router-link :to="{ name: 'componentList' }" custom v-slot="{ navigate }">
         <div @click="navigate" class="text-md cursor-pointer">X</div>
       </router-link>

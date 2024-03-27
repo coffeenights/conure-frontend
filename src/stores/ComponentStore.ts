@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { ComponentService } from '@/services/organizations'
+import { ComponentStatus } from '@/services/organizations'
 
 export const useComponentStore = defineStore('ComponentStore', () => {
-  const component = ref<ComponentService>({} as ComponentService)
+  const componentStatus = ref<ComponentStatus>({} as ComponentStatus)
 
   return {
-    component
+    componentStatus
   }
 })
