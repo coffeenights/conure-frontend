@@ -1,10 +1,5 @@
 <script setup lang="ts">
 import TabNav from '@/components/TabNav.vue'
-import { useRoute } from 'vue-router'
-import { onMounted } from 'vue'
-import { useComponentStore } from '@/stores/ComponentStore'
-import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import { statusComponent } from '@/services/organizations'
 
 const tabs = [
   { routeName: 'componentDetailsTab', caption: 'Details' },
@@ -12,24 +7,6 @@ const tabs = [
 ]
 
 const defaultTab: string = 'componentDetailsTab'
-const route = useRoute()
-const componentStore = useComponentStore()
-const breadCrumbStore = useBreadCrumbStore()
-
-onMounted(() => {
-  statusComponent(
-    breadCrumbStore.organizationId, 
-    breadCrumbStore.applicationId, 
-    breadCrumbStore.environment, 
-    route.params.componentName as string
-    )
-    .then((response) => {
-      componentStore.componentStatus = response.data
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  })
 
 </script>
 <template>

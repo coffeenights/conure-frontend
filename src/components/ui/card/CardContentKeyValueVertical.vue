@@ -12,11 +12,12 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div :class="cn('flex gap-2 mb-2', props.class)"  v-if="!isLoading">    
+  <div :class="cn('block', props.class)" v-if="!isLoading">
     <div class="text-gray-500 text-sm">{{ cKey }}:</div>
-    <div class="text-sm">{{ value }}</div>
+    <div class="text-lg">{{ value }}</div>
   </div>
-  <div :class="cn('flex gap-2 mb-2', props.class)" v-else> 
-    <Skeleton class="h-3 w-1/2 mb-2" />
+  <div :class="cn('block', props.class)" v-else>
+    <Skeleton class="h-3 w-1/2 mb-4" />
+    <Skeleton class="h-5 w-25" />
   </div>
 </template>
