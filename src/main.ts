@@ -6,6 +6,7 @@ import App from './App.vue'
 import PageNotFound from './views/404.vue'
 import EmptyState from './views/EmptyState.vue'
 import applicationRoutes from './views/applications/routes'
+import authRoutes from './views/auth/routes'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -21,6 +22,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 routes.push(...applicationRoutes)
+routes.push(...authRoutes)
 
 const router = createRouter({
   history: createWebHistory(),
