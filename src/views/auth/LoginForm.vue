@@ -16,6 +16,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import axios from 'axios'
 import CompanyLogo from '@/components/CompanyLogo.vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/UserStore'
 
 const isLoading = ref(false)
 const authError = ref('')
@@ -32,11 +33,12 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     const result = await authenticateUser(values)
     if (!result.isError) {
+      const userStore = useUserStore()
+      userStore.isAuthenticated = true
       // TODO: define the route that needs to be redirected to
       router.push({ path: '/' })
     }
   } catch (error) {
-    console.error(error)
     if (axios.isAxiosError(error)) {
       if (error.response && error.response.status === 401) {
         authError.value = 'Credentials are incorrect. Please try again.'
