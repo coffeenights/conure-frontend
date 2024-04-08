@@ -21,6 +21,7 @@ import { useUserStore } from '@/stores/UserStore'
 const isLoading = ref(false)
 const authError = ref('')
 const router = useRouter()
+const userStore = useUserStore()
 
 const { handleSubmit } = useForm({
   validationSchema: toTypedSchema(UserLoginSchema),
@@ -33,10 +34,9 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     const result = await authenticateUser(values)
     if (!result.isError) {
-      const userStore = useUserStore()
-      userStore.isAuthenticated = true
+      userStore.login()
       // TODO: define the route that needs to be redirected to
-      router.push({ path: '/' })
+      router.replace({ path: '/' })
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
