@@ -13,11 +13,13 @@ const authRoutes: Array<RouteRecordRaw> = [
     path: '/auth/me',
     component: CurrentUser,
     name: 'me',
+    meta: { requiresAuth: true },
   },
   {
     path: '/auth/change-password',
     component: ChangePassword,
     name: 'change-password',
+    meta: { requiresAuth: true },
   },
 ]
 
