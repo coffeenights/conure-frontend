@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import Toaster from '@/components/ui/toast/Toaster.vue'
 import {
   FormControl,
   FormField,
@@ -14,10 +15,12 @@ import { useForm } from 'vee-validate'
 import { ChangePasswordSchema, changePassword } from '@/services/auth'
 import { toTypedSchema } from '@vee-validate/zod'
 import axios from 'axios'
+import { useToast } from '@/components/ui/toast/use-toast'
 
 const isLoading = ref(false)
 const formError = ref('')
 const isDisabled = ref(false)
+const { toast } = useToast()
 
 const { handleSubmit, resetForm, errorBag } = useForm({
   validationSchema: toTypedSchema(ChangePasswordSchema),
@@ -31,6 +34,9 @@ const onSubmit = handleSubmit(async (values) => {
     const result = await changePassword(values)
     if (!result.isError) {
       resetForm()
+      toast({
+        description: 'Password changed successfully.',
+      })
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -111,4 +117,5 @@ watch(errorBag, () => {
       </form>
     </div>
   </div>
+  <Toaster />
 </template>
