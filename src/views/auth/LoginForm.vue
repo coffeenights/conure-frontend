@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { Loader } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { UserLoginSchema, authenticateUser } from '@/services/auth'
@@ -50,6 +50,12 @@ const onSubmit = handleSubmit(async (values) => {
     }
   } finally {
     isLoading.value = false
+  }
+})
+
+onMounted(() => {
+  if (userStore.authenticated) {
+    router.replace({ path: '/' })
   }
 })
 </script>
