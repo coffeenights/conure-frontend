@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import ComponentCard from '@/components/ComponentCard.vue'
-import { listComponents, ComponentShort } from '@/services/organizations'
+import { listComponents, ComponentService } from '@/services/organizations'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
-const components = ref<ComponentShort[]>([])
+const components = ref<ComponentService[]>([])
 const store = useBreadCrumbStore()
 
 onMounted(() => {
@@ -57,7 +57,7 @@ onMounted(() => {
         <router-link
           v-for="(c, index) in components"
           :key="index"
-          :to="{ name: 'componentDetails', params: { componentName: c.name } }"
+          :to="{ name: 'componentDetails', params: { componentName: c.id } }"
           custom
           v-slot="{ navigate }"
         >

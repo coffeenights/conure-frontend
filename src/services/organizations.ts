@@ -1,17 +1,26 @@
 import api, { ApiResponse } from './api'
 
+export type Revision = {
+  revision_number: number
+  created_at: string
+}
+
+export type Environment = {
+  id: string
+  name: string
+}
+
 export type Application = {
   id: string
   name: string
   description: string
-  environment: string
   created_by: string
   account_id: string
   total_components: number
   status: string
-  created: string
-  revision: number
-  last_updated: string
+  created_at: string
+  environments: Environment[]
+  revisions: Revision[]
 }
 
 export type Organization = {
@@ -26,23 +35,50 @@ export type ComponentShort = {
   type: string
 }
 
-export type ComponentStatus = {
-  updated_replicas: string
-  ready_replicas: string
-  available_replicas: string
-  condition_available: string
-  condition_progressing: string
-  created: string
-  updated: string
+export type ComponentService = {
+  id: string
+  application_id: string
+  created_at: string
+  description: string
+  properties: Object
+  traits: Object
+  type: string
 }
 
-export type ApplicationListResponse = ApiResponse<Application[]>
+
+export type ComponentStatus = {
+  component: ComponentService
+  properties: ComponentProperties
+}
+
+export type ComponentProperties = {
+  network: {
+    ip: string
+    external_ip: string
+    host: string
+    port: number[]
+  }
+  resources: {
+    cpu: string
+    memory: string
+    replicas: number
+  }
+  storage: {
+    size: string
+  }
+  source: {
+    container_image: string
+  }
+}
+
+export type ApplicationListResponse = ApiResponse<{organization: Organization, applications: Application[]}>
 export type ApplicationResponse = ApiResponse<{ application: Application }>
 export type OrganizationResponse = ApiResponse<Organization>
 export type ComponentListResponse = ApiResponse<{
-  components: ComponentShort[]
+  components: ComponentService[]
 }>
 export type ComponentStatusResponse = ApiResponse<ComponentStatus>
+
 
 export const detailOrganization = async (
   id: string,
@@ -158,4 +194,12 @@ export function getTimeAgo(date: string): string {
     return `${total} ${frame}s`
   }
   return `${total} ${frame}`
+}
+
+export function getLatestRevision(application: Application): Revision | null {
+  const revisions = application.revisions
+  if (revisions.length === 0) {
+    return null
+  }
+  return revisions[0]
 }

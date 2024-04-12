@@ -6,17 +6,7 @@ import {
   Application,
 } from '@/services/organizations'
 import { useRoute, useRouter } from 'vue-router'
-import { 
-  Accordion, 
-  AccordionContent, 
-  AccordionItem, 
-  AccordionTrigger 
-} from '@/components/ui/accordion'
-
-import {
-  ApplicationCard, 
-  ApplicationEnvironmentAddCard
-} from '../../components'
+import ApplicationCard from '../../components/ApplicationCard.vue'
 
 let applications = ref([] as Application[])
 const router = useRouter()
@@ -46,19 +36,15 @@ onMounted(() => {
         type="search"
       />
     </div>
-    <div class="flex flex-col flex-wrap gap-5 p-5">
+    <div class="flex flex-row flex-wrap items-center justify-center gap-5 p-5">
+      <div
+        class="cursor-pointer border border-gray-200 dark:item-background-color-dark min-h-[20em] w-64 dark:border-gray-700 shrink-0 rounded-lg flex flex-col items-center justify-center dark:text-gray-300 text-gray-700"
+      >
+        <span class="bi-plus text-9xl"></span>
+        <p>Add Application</p>
+      </div>
       <div v-for="application in applications" :key="application.id">
-        <Accordion type="single" collapsible default-value="environments">
-          <AccordionItem value="environments" class="border dark:border-gray-700 border-gray-200 rounded-md">
-            <AccordionTrigger class="border-b dark:border-gray-700 border-gray-200 px-4  bg-transparent hover:brightness-150">
-              {{ application.name }}
-            </AccordionTrigger>
-            <AccordionContent class="p-5 dark:bg-bgblue1 bg-gray-100 rounded-b-md flex flex-row gap-5">
-              <ApplicationCard v-for="environment in application.environments"  :application="application" :environment="environment" />
-              <ApplicationEnvironmentAddCard />
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        <ApplicationCard :application="application" />
       </div>
     </div>
   </div>

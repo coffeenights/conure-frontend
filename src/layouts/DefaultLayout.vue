@@ -41,8 +41,8 @@ onMounted(() => {
       route.params.environment as string,
     )
       .then((response) => {
-        store.application = response.data.application.name
-        store.applicationId = response.data.application.id
+        store.application = response.data.name
+        store.applicationId = response.data.id
       })
       .catch((error) => {
         if (error.response.status === 404) {
