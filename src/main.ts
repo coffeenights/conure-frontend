@@ -6,6 +6,8 @@ import App from './App.vue'
 import PageNotFound from './views/404.vue'
 import EmptyState from './views/EmptyState.vue'
 import applicationRoutes from './views/applications/routes'
+import authRoutes from './views/auth/routes'
+import { useUserStore } from './stores/UserStore'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -21,10 +23,25 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 routes.push(...applicationRoutes)
+routes.push(...authRoutes)
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  if (
+    to.matched.some((record) => record.meta.requiresAuth) &&
+    !userStore.authenticated
+  ) {
+    // Redirect to the login page if the user is not authenticated
+    next({ path: '/auth/login' })
+  } else {
+    // Proceed as normal if the user is authenticated or the route doesn't require authentication
+    next()
+  }
 })
 
 const pinia = createPinia()
