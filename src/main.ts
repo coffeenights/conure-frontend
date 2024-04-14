@@ -37,7 +37,8 @@ router.beforeEach((to, from, next) => {
     !userStore.authenticated
   ) {
     // Redirect to the login page if the user is not authenticated
-    next({ path: '/auth/login' })
+    const nextUrl = to.fullPath
+    next({ path: '/auth/login', query: { next: nextUrl } })
   } else {
     // Proceed as normal if the user is authenticated or the route doesn't require authentication
     next()
