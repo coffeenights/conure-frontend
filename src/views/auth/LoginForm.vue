@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { Loader } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { UserLoginSchema, authenticateUser } from '@/services/auth'
@@ -27,6 +27,19 @@ const { handleSubmit } = useForm({
   validationSchema: toTypedSchema(UserLoginSchema),
 })
 
+watch(
+  () => userStore.authenticated,
+  (newVal) => {
+    if (newVal) {
+      if ('next' in router.currentRoute.value.query) {
+        router.push(router.currentRoute.value.query.next as string)
+        return
+      }
+      router.replace({ path: '/' })
+    }
+  }
+)
+
 const onSubmit = handleSubmit(async (values) => {
   isLoading.value = true
   authError.value = ''
@@ -34,7 +47,12 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     const result = await authenticateUser(values)
     if (!result.isError) {
-      userStore.login()
+      userStore.authenticated = true
+      if ('next' in router.currentRoute.value.query) {
+        router.push(router.currentRoute.value.query.next as string)
+        return
+      }
+      router.replace({ path: '/' })
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -51,15 +69,15 @@ const onSubmit = handleSubmit(async (values) => {
   }
 })
 
-onMounted(() => {
-  if (userStore.authenticated) {
-    if ('next' in router.currentRoute.value.query) {
-      router.push(router.currentRoute.value.query.next as string)
-      return
-    }
-    router.replace({ path: '/' })
-  }
-})
+// onMounted(() => {
+//   if (userStore.authenticated) {
+//     if ('next' in router.currentRoute.value.query) {
+//       router.push(router.currentRoute.value.query.next as string)
+//       return
+//     }
+//     router.replace({ path: '/' })
+//   }
+// })
 </script>
 
 <template>
