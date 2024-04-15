@@ -35,8 +35,6 @@ const onSubmit = handleSubmit(async (values) => {
     const result = await authenticateUser(values)
     if (!result.isError) {
       userStore.login()
-      // TODO: define the route that needs to be redirected to
-      router.replace({ path: '/' })
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -55,6 +53,10 @@ const onSubmit = handleSubmit(async (values) => {
 
 onMounted(() => {
   if (userStore.authenticated) {
+    if ('next' in router.currentRoute.value.query) {
+      router.push(router.currentRoute.value.query.next as string)
+      return
+    }
     router.replace({ path: '/' })
   }
 })
