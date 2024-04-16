@@ -33,6 +33,6 @@ export const fetchData = async <T>(url: string) => {
   } catch (error) {
     return Promise.reject(error)
   }
-} 
+}
 
 export default instance
