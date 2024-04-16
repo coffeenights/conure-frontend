@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useBreadCrumbStore } from '../stores/BreadCrumbStore'
+import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { ref, watch } from 'vue'
 
 const store = useBreadCrumbStore()
