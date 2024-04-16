@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { onMounted, ref, watch } from 'vue'
+import { ref } from 'vue'
 import { Loader } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { UserLoginSchema, authenticateUser } from '@/services/auth'
@@ -32,9 +32,8 @@ const onSubmit = handleSubmit(async (values) => {
   authError.value = ''
 
   try {
-
     const result = await authenticateUser(values)
-    if (result.status != 401) {
+    if (result.status == 200) {
       userStore.authenticated = true
       if ('next' in router.currentRoute.value.query) {
         window.location.href = router.currentRoute.value.query.next as string
