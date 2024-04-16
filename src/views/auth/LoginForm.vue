@@ -27,32 +27,20 @@ const { handleSubmit } = useForm({
   validationSchema: toTypedSchema(UserLoginSchema),
 })
 
-watch(
-  () => userStore.authenticated,
-  (newVal) => {
-    if (newVal) {
-      if ('next' in router.currentRoute.value.query) {
-        router.push(router.currentRoute.value.query.next as string)
-        return
-      }
-      router.replace({ path: '/' })
-    }
-  }
-)
-
 const onSubmit = handleSubmit(async (values) => {
   isLoading.value = true
   authError.value = ''
 
   try {
+
     const result = await authenticateUser(values)
     if (result.status != 401) {
       userStore.authenticated = true
       if ('next' in router.currentRoute.value.query) {
-        router.push(router.currentRoute.value.query.next as string)
-        return
+        window.location.href = router.currentRoute.value.query.next as string
+      } else {
+        window.location.href = '/'
       }
-      router.replace({ path: '/' })
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
