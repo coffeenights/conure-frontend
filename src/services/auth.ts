@@ -9,12 +9,12 @@ export const UserLoginSchema = z.object({
 export type UserLoginData = z.infer<typeof UserLoginSchema>
 
 export type UserAuthData = {
-    id: string,
-    email: string,
-    is_active: boolean,
-    last_login_at: string,
-    created_at: string,
-    updated_at: string
+  id: string
+  email: string
+  is_active: boolean
+  last_login_at: string
+  created_at: string
+  updated_at: string
 }
 
 // Regex for one lowercase letter, one uppercase letter, one number
@@ -72,17 +72,18 @@ export const authenticateUser = async ({
   }
 }
 
-export const authenticationStatus = async (): Promise<AuthenticationStatusResponse> => {
-  try {
-    const response = await api.get('/auth/mee')
-    return { 
-      data: response.data,
-      status: response.status,
-    } as AuthenticationStatusResponse
-  } catch (error) {
-    return Promise.reject(error)
+export const authenticationStatus =
+  async (): Promise<AuthenticationStatusResponse> => {
+    try {
+      const response = await api.get('/auth/me')
+      return {
+        data: response.data,
+        status: response.status,
+      } as AuthenticationStatusResponse
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
-}
 
 export const changePassword = async ({
   oldPassword,
