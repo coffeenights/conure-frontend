@@ -10,13 +10,16 @@ export const useBreadCrumbStore = defineStore('BreadCrumbStore', () => {
   const isStoreLoaded = ref(false)
 
   const isLoaded = computed(() => {
-    if (environment.value === '' && applicationId.value === '' && organizationId.value === '') {
+    if (
+      environment.value === '' &&
+      applicationId.value === '' &&
+      organizationId.value === ''
+    ) {
       return false
     }
     return true
   })
 
-   
   return {
     environment,
     application,
