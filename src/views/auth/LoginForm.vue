@@ -46,7 +46,7 @@ const onSubmit = handleSubmit(async (values) => {
 
   try {
     const result = await authenticateUser(values)
-    if (!result.isError) {
+    if (result.status != 401) {
       userStore.authenticated = true
       if ('next' in router.currentRoute.value.query) {
         router.push(router.currentRoute.value.query.next as string)
@@ -68,16 +68,6 @@ const onSubmit = handleSubmit(async (values) => {
     isLoading.value = false
   }
 })
-
-// onMounted(() => {
-//   if (userStore.authenticated) {
-//     if ('next' in router.currentRoute.value.query) {
-//       router.push(router.currentRoute.value.query.next as string)
-//       return
-//     }
-//     router.replace({ path: '/' })
-//   }
-// })
 </script>
 
 <template>
