@@ -1,4 +1,4 @@
-import api, { ApiResponse } from './api'
+import api, { ApiResponse, fetchData } from './api'
 
 export type Revision = {
   revision_number: number
@@ -30,21 +30,15 @@ export type Organization = {
   status: string
 }
 
-export type ComponentShort = {
-  name: string
-  type: string
-}
-
 export type ComponentService = {
   id: string
   application_id: string
   created_at: string
   description: string
-  properties: Object
-  traits: Object
+  properties: object
+  traits: object
   type: string
 }
-
 
 export type ComponentStatus = {
   component: ComponentService
@@ -71,65 +65,50 @@ export type ComponentProperties = {
   }
 }
 
-export type ApplicationListResponse = ApiResponse<{organization: Organization, applications: Application[]}>
-export type ApplicationResponse = ApiResponse<{ application: Application }>
+export type ApplicationListResponse = ApiResponse<{
+  organization: Organization
+  applications: Application[]
+}>
+export type ApplicationResponse = ApiResponse<Application>
 export type OrganizationResponse = ApiResponse<Organization>
 export type ComponentListResponse = ApiResponse<{
   components: ComponentService[]
 }>
 export type ComponentStatusResponse = ApiResponse<ComponentStatus>
 
-
 export const detailOrganization = async (
   id: string,
 ): Promise<OrganizationResponse> => {
-  const response = await api.get(`/organizations/${id}/`)
-  return { data: response.data, isError: false } as OrganizationResponse
+  return fetchData<OrganizationResponse>(`/organizations/${id}/`)
 }
 
 export const listApplications = async (
   id: string,
 ): Promise<ApplicationListResponse> => {
-  const r = await api.get(`/organizations/${id}/a/`)
-  return { data: r.data, isError: false } as ApplicationListResponse
+  return fetchData<ApplicationListResponse>(`/organizations/${id}/a/`)
 }
 
 export const detailApplication = async (
   organizationId: string,
   applicationId: string,
   environment: string,
-) => {
-  try {
-    const r = await api.get(
-      `/organizations/${organizationId}/a/${applicationId}/e/${environment}/`,
-    )
-    return {
-      data: r.data,
-      isError: false,
-    } as ApplicationResponse
-  } catch (error) {
-    console.log(error)
-  }
+): Promise<ApplicationResponse> => {
+  return fetchData<ApplicationResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/`,
+  )
 }
 
 export const listComponents = async (
   organizationId: string,
   applicationId: string,
   environment: string,
-) => {
-  try {
-    const r = await api.get(
-      `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/`,
-    )
-    return {
-      data: r.data,
-      isError: false,
-    } as ComponentListResponse
-  } catch (error) {
-    console.log(error)
-  }
+): Promise<ComponentListResponse> => {
+  return fetchData<ComponentListResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/`,
+  )
 }
 
+// TODO: Implement the detailComponent function using the fetchData function
 export const detailComponent = async (
   organizationId: string,
   applicationId: string,
@@ -151,18 +130,10 @@ export const statusComponent = async (
   applicationId: string,
   environment: string,
   componentId: string,
-) => {
-  try {
-    const r = await api.get(
-      `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/status/`,
-    )
-    return {
-      data: r.data,
-      isError: false,
-    } as ComponentStatusResponse
-  } catch (error) {
-    console.log(error)
-  }
+): Promise<ComponentStatusResponse> => {
+  return fetchData<ComponentStatusResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/status/`,
+  )
 }
 
 export function getTimeAgo(date: string): string {

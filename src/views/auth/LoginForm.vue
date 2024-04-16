@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { Loader } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { UserLoginSchema, authenticateUser } from '@/services/auth'
@@ -33,8 +33,13 @@ const onSubmit = handleSubmit(async (values) => {
 
   try {
     const result = await authenticateUser(values)
-    if (!result.isError) {
-      userStore.login()
+    if (result.status == 200) {
+      userStore.authenticated = true
+      if ('next' in router.currentRoute.value.query) {
+        window.location.href = router.currentRoute.value.query.next as string
+      } else {
+        window.location.href = '/'
+      }
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -48,16 +53,6 @@ const onSubmit = handleSubmit(async (values) => {
     }
   } finally {
     isLoading.value = false
-  }
-})
-
-onMounted(() => {
-  if (userStore.authenticated) {
-    if ('next' in router.currentRoute.value.query) {
-      router.push(router.currentRoute.value.query.next as string)
-      return
-    }
-    router.replace({ path: '/' })
   }
 })
 </script>

@@ -8,11 +8,7 @@ const userStore = useUserStore()
 
 <template>
   <div>
-    <template v-if="userStore.authenticated">
-      <DefaultLayout />
-    </template>
-    <template v-else>
-      <NonLoggedUserLayout />
-    </template>
+    <DefaultLayout v-if="userStore.authenticated" />
+    <NonLoggedUserLayout v-else />
   </div>
 </template>

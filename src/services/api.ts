@@ -20,7 +20,19 @@ instance.interceptors.response.use(
 
 export type ApiResponse<Data> = {
   data: Data
-  isError: boolean
+  status: number
+}
+
+export const fetchData = async <T>(url: string) => {
+  try {
+    const r = await instance.get(url)
+    return {
+      data: r.data,
+      status: r.status,
+    } as T
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
 
 export default instance
