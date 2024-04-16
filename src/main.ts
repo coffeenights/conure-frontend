@@ -1,5 +1,10 @@
 import { createApp } from 'vue'
-import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
+import {
+  RouteRecordRaw,
+  createRouter,
+  createWebHistory,
+  RouteLocationNormalized,
+} from 'vue-router'
 import { createPinia } from 'pinia'
 import './styles/style.css'
 import App from './App.vue'
@@ -8,9 +13,9 @@ import EmptyState from './views/EmptyState.vue'
 import applicationRoutes from './views/applications/routes'
 import authRoutes from './views/auth/routes'
 import { useUserStore } from '@/stores/UserStore'
-import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import { detailOrganization, detailApplication } from '@/services/organizations'
 import { authenticationStatus } from '@/services/auth'
+import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
+import { detailApplication, detailOrganization } from '@/services/organizations'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -33,77 +38,79 @@ const router = createRouter({
   routes,
 })
 
-
-
-router.beforeEach((to, from, next) => {
-  const userStore = useUserStore()
+const loadBreadCrumb = async (
+  route: RouteLocationNormalized,
+): Promise<void[]> => {
+  let orgResponse: Promise<void> | undefined
+  let appResponse: Promise<void> | undefined
+  const callStack: Promise<void>[] = []
   const breadCrumbStore = useBreadCrumbStore()
+
+  if (route.params.organizationId) {
+    orgResponse = detailOrganization(route.params.organizationId as string)
+      .then((response) => {
+        breadCrumbStore.organization = response.data.name
+        breadCrumbStore.organizationId = response.data.id
+      })
+      .catch((error) => {
+        if (error.response.status === 404) {
+          router.push({ name: '404' })
+        } else {
+          throw error
+        }
+      })
+  }
+  if (route.params.applicationId) {
+    appResponse = detailApplication(
+      route.params.organizationId as string,
+      route.params.applicationId as string,
+      route.params.environment as string,
+    )
+      .then((response) => {
+        breadCrumbStore.application = response?.data.name as string
+        breadCrumbStore.applicationId = response?.data.id as string
+      })
+      .catch((error) => {
+        if (error.response.status === 404) {
+          router.push({ name: '404' })
+        } else {
+          throw error
+        }
+      })
+  }
+  if (route.params.environment) {
+    breadCrumbStore.environment = route.params.environment as string
+  }
+
+  if (orgResponse) {
+    callStack.push(orgResponse)
+  }
+
+  if (appResponse) {
+    callStack.push(appResponse)
+  }
+  return Promise.all(callStack).catch((error) => {
+    throw error
+  })
+}
+
+router.beforeEach(async (to) => {
+  const userStore = useUserStore()
   if (
     to.matched.some((record) => record.meta.requiresAuth) &&
     !userStore.authenticated
   ) {
-
-    // check if the user is authenticated against the server
-    authenticationStatus()
-    .then((response) => {
-      console.log(response)
-    })
-    .catch()
-    // Redirect to the login page if the user is not authenticated
-    const nextUrl = to.fullPath
-    next({ path: '/auth/login', query: { next: nextUrl } })
-  } else if (
-    to.matched.some((record) => record.meta.requiresBreadcrumbState) &&
-    !breadCrumbStore.isLoaded
-  ) {
-    let orgResponse: Promise<any> | undefined
-    let appResponse: Promise<any> | undefined
-    if (to.params.organizationId) {
-      orgResponse = detailOrganization(to.params.organizationId as string)
-        .then((response) => {
-          breadCrumbStore.organization = response.data.name
-          breadCrumbStore.organizationId = response.data.id
-        })
-        .catch((error) => {
-          if (error.response.status === 404) {
-            router.push({ name: '404' })
-          } else {
-            throw error
-          }
-        })
-    }
-    if (to.params.applicationId) {
-      appResponse = detailApplication(
-        to.params.organizationId as string,
-        to.params.applicationId as string,
-        to.params.environment as string,
-      )
-        .then((response) => {
-          breadCrumbStore.application = response?.data.name as string
-          breadCrumbStore.applicationId = response?.data.id as string
-        })
-        .catch((error) => {
-          if (error.response.status === 404) {
-            router.push({ name: '404' })
-          } else {
-            throw error
-          }
-        })
-    }
-    if (to.params.environment) {
-      breadCrumbStore.environment = to.params.environment as string
-    }
-    Promise.all([orgResponse, appResponse])
-      .then(() => {
-        breadCrumbStore.isStoreLoaded = true
-      })
-      .catch((error) => {
-        throw error
+    const result = await authenticationStatus()
+    if (result.status === 200) {
+      userStore.authenticated = true
+      if (to.meta.requiresBreadcrumbState) {
+        await loadBreadCrumb(to)
       }
-    )
-    next()
-  } else {
-    next()
+      return true
+    } else {
+      userStore.authenticated = false
+      return { name: 'login', query: { next: to.fullPath } }
+    }
   }
 })
 
