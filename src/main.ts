@@ -16,6 +16,7 @@ import { useUserStore } from '@/stores/UserStore'
 import { authenticationStatus } from '@/services/auth'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { detailApplication, detailOrganization } from '@/services/organizations'
+import axios from 'axios'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -100,16 +101,22 @@ router.beforeEach(async (to) => {
     to.matched.some((record) => record.meta.requiresAuth) &&
     !userStore.authenticated
   ) {
-    const result = await authenticationStatus()
-    if (result.status === 200) {
-      userStore.authenticated = true
-      if (to.meta.requiresBreadcrumbState) {
-        await loadBreadCrumb(to)
+    try {
+      const result = await authenticationStatus()
+      if (result.status === 200) {
+        userStore.authenticated = true
+        if (to.meta.requiresBreadcrumbState) {
+          await loadBreadCrumb(to)
+        }
+        return true
       }
-      return true
-    } else {
-      userStore.authenticated = false
-      return { name: 'login', query: { next: to.fullPath } }
+    } catch (error: any) {
+      if ( axios.isAxiosError(error) && error.code === 'ERR_BAD_REQUEST') {
+        userStore.authenticated = false
+        return { name: 'login', query: { next: to.fullPath } }
+      } else {
+        return false
+      }
     }
   }
 })
