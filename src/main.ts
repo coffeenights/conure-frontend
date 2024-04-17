@@ -39,6 +39,16 @@ const router = createRouter({
   routes,
 })
 
+/**
+ * This function loads breadcrumb data for the given route.
+ * It fetches the organization and application details based on the route parameters.
+ * If the organization or application does not exist, it redirects to the 404 page.
+ *
+ * @async
+ * @param {RouteLocationNormalized} route - The route for which to load breadcrumb data.
+ * @returns {Promise<void[]>} A promise that resolves when all breadcrumb data has been loaded.
+ * @throws Will throw an error if the request fails.
+ */
 const loadBreadCrumb = async (
   route: RouteLocationNormalized,
 ): Promise<void[]> => {
@@ -106,12 +116,13 @@ router.beforeEach(async (to) => {
       if (result.status === 200) {
         userStore.authenticated = true
         if (to.meta.requiresBreadcrumbState) {
+          // stop the navigation until the breadcrumb data is loaded
           await loadBreadCrumb(to)
         }
         return true
       }
-    } catch (error: any) {
-      if ( axios.isAxiosError(error) && error.code === 'ERR_BAD_REQUEST') {
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.code === 'ERR_BAD_REQUEST') {
         userStore.authenticated = false
         return { name: 'login', query: { next: to.fullPath } }
       } else {
