@@ -5,7 +5,7 @@ import ApplicationDetailsVariables from './ApplicationDetailsVariables.vue'
 import ComponentList from './ComponentList.vue'
 import ComponentDetails from './ComponentDetails.vue'
 import ComponentDetailsTab from './ComponentDetailsTab.vue'
-import ComponentSettingsTab from './ComponentSettingsTab.vue'
+import ComponentVariablesTab from './ComponentVariablesTab.vue'
 import { RouteRecordRaw } from 'vue-router'
 
 const applicationRoutes: Array<RouteRecordRaw> = [
@@ -55,8 +55,8 @@ const applicationRoutes: Array<RouteRecordRaw> = [
               },
               {
                 path: 'settings',
-                component: ComponentSettingsTab,
-                name: 'componentSettingsTab',
+                component: ComponentVariablesTab,
+                name: 'componentVariablesTab',
                 meta: { requiresAuth: true, requiresBreadcrumbState: true },
               },
             ],
