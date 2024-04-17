@@ -6,7 +6,7 @@ import {
   getTimeAgo,
 } from '@/services/organizations'
 import { getIconPath } from '@/utils'
-import { defineProps, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 const props = defineProps({
   component: {
     type: Object as () => ComponentService,
