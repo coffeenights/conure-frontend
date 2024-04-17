@@ -38,11 +38,6 @@ export default {
     },
     extend: {
       colors: {
-        body: '#0f111a',
-        bgblue1: '#0f111a',
-        bgblue2: '#151519',
-        fgblue2: '#22222E',
-        fgblue1: '#1C1D27',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

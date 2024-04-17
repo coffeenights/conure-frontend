@@ -82,6 +82,7 @@ const onSubmit = handleSubmit(async (values) => {
                     auto-correct="off"
                     :disabled="isLoading"
                     v-bind="componentField"
+                    class="bg-card"
                   />
                 </FormControl>
                 <FormMessage />
@@ -98,6 +99,7 @@ const onSubmit = handleSubmit(async (values) => {
                     auto-capitalize="none"
                     :disabled="isLoading"
                     v-bind="componentField"
+                    class="bg-card"
                   />
                 </FormControl>
                 <FormMessage />

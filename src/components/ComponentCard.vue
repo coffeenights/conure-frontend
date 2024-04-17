@@ -47,7 +47,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-80 h-40 border border-color rounded-md p-3 cursor-pointer">
+  <div class="w-80 h-40 border rounded-md p-3 cursor-pointer">
     <div class="flex">
       <div class="grow">
         <img :src="getIconPath(component.type)" class="w-10 h-12" />
@@ -56,14 +56,14 @@ onMounted(() => {
         <img src="@/assets/icons/docker.svg" class="w-10 h-12" />
       </div>
     </div>
-    <div class="mt-3 pb-2 border-b border-color">
+    <div class="mt-3 pb-2 border-b">
       <div class="font-bold text-lg">{{ component.id }}</div>
       <div
         class="w-40 h-3 mt-2 rounded-sm skeleton"
         :class="{ hidden: !isLoading }"
       ></div>
       <div
-        class="font-bold text-xs text-gray-500"
+        class="font-bold text-xs text-muted-foreground"
         :class="{ hidden: isLoading }"
       >
         Last update {{ getTimeAgo(date) }} ago

@@ -31,7 +31,7 @@ function isActive(tab: string): boolean {
 </script>
 
 <template>
-  <div class="flex gap-2 border-b mt-2 border-color">
+  <div class="flex gap-2 border-b">
     <div
       v-for="tab in props.tabs"
       @click="setTab(tab.routeName)"

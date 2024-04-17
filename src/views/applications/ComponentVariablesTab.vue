@@ -8,6 +8,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 const invoices = [
   {
@@ -32,11 +33,12 @@ const invoices = [
       <TableBody class="[&_tr:last-child]:border-1">
         <TableRow v-for="invoice in invoices" :key="invoice.name">
           <TableCell class="font-medium">
-<!--            <input v-model="invoice.name" />-->
             <Input model-value="invoice.name" class="border-0 h-7"/>
           </TableCell>
           <TableCell>{{ invoice.scope }}</TableCell>
-          <TableCell><input v-model="invoice.value" class="w-full" /></TableCell>
+          <TableCell>
+            <Input model-value="invoice.value" class="border-0 h-7"/>
+          </TableCell>
           <TableCell class="text-right">
             <span class="bi-trash text-xl cursor-pointer"></span>
           </TableCell>
@@ -44,9 +46,9 @@ const invoices = [
       </TableBody>
     </Table>
     <div class="px-2 pb-2">
-      <div class="border rounded-md py-1 px-2 text-lg cursor-pointer hover:border-gray-500 dark:hover:border-gray-500 transition duration-500">
-        <span class="bi-plus-lg"></span>
-      </div>
+      <Button variant="outline" size="icon">
+        <span class="bi-plus-lg text-xl"></span>
+      </Button>
     </div>
   </div>
 </template>

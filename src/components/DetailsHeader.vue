@@ -1,7 +1,13 @@
 <script setup lang="ts">
+import { useBreadCrumbStore } from '@/stores/BreadCrumbStore';
+import { Button } from '@/components/ui/button'
+
 defineProps({
   organizationId: String,
 })
+
+const store = useBreadCrumbStore()
+
 </script>
 
 <template>
@@ -15,18 +21,17 @@ defineProps({
         custom
         v-slot="{ navigate }"
       >
-        <span
-          @click="navigate"
-          class="cursor-pointer bi-arrow-left mr-3"
-        ></span>
+        <Button variant="ghost" size="icon">
+          <span
+            @click="navigate"
+            class="bi-arrow-left text-lg"
+          ></span>
+        </Button>
       </router-link>
-      first-app
+      {{ store.application }}
     </div>
     <div class="flex gap-2">
-      <div class="button bg-yellow-600">Deploy</div>
-      <div class="button">
-        <span class="bi-chevron-down"></span>
-      </div>
+      <Button>Deploy</Button>
     </div>
   </div>
 </template>
