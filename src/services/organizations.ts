@@ -79,13 +79,13 @@ export type ComponentStatusResponse = ApiResponse<ComponentStatus>
 export const detailOrganization = async (
   id: string,
 ): Promise<OrganizationResponse> => {
-  return fetchData<OrganizationResponse>(`/organizations/${id}/`)
+  return fetchData<OrganizationResponse>(`/organizations/${id}`)
 }
 
 export const listApplications = async (
   id: string,
 ): Promise<ApplicationListResponse> => {
-  return fetchData<ApplicationListResponse>(`/organizations/${id}/a/`)
+  return fetchData<ApplicationListResponse>(`/organizations/${id}/a`)
 }
 
 export const detailApplication = async (
@@ -94,7 +94,7 @@ export const detailApplication = async (
   environment: string,
 ): Promise<ApplicationResponse> => {
   return fetchData<ApplicationResponse>(
-    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/`,
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}`,
   )
 }
 
@@ -104,7 +104,7 @@ export const listComponents = async (
   environment: string,
 ): Promise<ComponentListResponse> => {
   return fetchData<ComponentListResponse>(
-    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/`,
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c`,
   )
 }
 
@@ -117,7 +117,7 @@ export const detailComponent = async (
 ) => {
   try {
     const response = await api.get(
-      `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/`,
+      `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}`,
     )
     return response.data
   } catch (error) {
@@ -132,7 +132,7 @@ export const statusComponent = async (
   componentId: string,
 ): Promise<ComponentStatusResponse> => {
   return fetchData<ComponentStatusResponse>(
-    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/status/`,
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/status`,
   )
 }
 
