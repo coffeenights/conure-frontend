@@ -8,7 +8,7 @@ import {
   CardContentKeyValue,
   CardContentKeyValueVertical,
 } from '@/components/ui/card'
-import { onMounted, ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { statusComponent } from '@/services/organizations'
 import { useRoute } from 'vue-router'
@@ -19,7 +19,7 @@ const breadCrumbStore = useBreadCrumbStore()
 const store = useComponentStore()
 const isLoading = ref<boolean>(true)
 
-onMounted(() => {
+const fetchData = () => {
   statusComponent(
     breadCrumbStore.organizationId,
     breadCrumbStore.applicationId,
@@ -33,7 +33,9 @@ onMounted(() => {
     .catch((error) => {
       console.log(error)
     })
-})
+}
+watch(() => route.params.componentName, fetchData, { immediate: true })
+
 </script>
 <template>
   <div class="flex flex-row gap-2 flex-wrap">
