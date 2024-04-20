@@ -38,14 +38,14 @@ const applicationRoutes: Array<RouteRecordRaw> = [
         path: 'components',
         component: ComponentList,
         name: 'componentList',
-        meta: { requiresAuth: true, requiresBreadcrumbState: true},
+        meta: { requiresAuth: true, requiresBreadcrumbState: true },
         children: [
           {
-            path: ':componentName',
+            path: ':componentId',
             redirect: { name: 'componentDetailsTab' },
             component: ComponentDetails,
             name: 'componentDetails',
-            meta: { requiresAuth: true, requiresBreadcrumbState: true},
+            meta: { requiresAuth: true, requiresBreadcrumbState: true },
             children: [
               {
                 path: 'details',
