@@ -54,7 +54,7 @@ onMounted(() => {
           v-for="(c, index) in components"
           :key="index"
           v-slot="{ navigate }"
-          :to="{ name: 'componentDetails', params: { componentName: c.id } }"
+          :to="{ name: 'componentDetails', params: { componentId: c.id } }"
           custom
         >
           <ComponentCard

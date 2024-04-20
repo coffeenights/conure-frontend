@@ -24,7 +24,7 @@ const fetchData = () => {
     breadCrumbStore.organizationId,
     breadCrumbStore.applicationId,
     breadCrumbStore.environment,
-    route.params.componentName as string,
+    route.params.componentId as string,
   )
     .then((response) => {
       componentStore.componentStatus = response.data
@@ -34,8 +34,7 @@ const fetchData = () => {
       console.log(error)
     })
 }
-watch(() => route.params.componentName, fetchData, { immediate: true })
-
+watch(() => route.params.componentId, fetchData, { immediate: true })
 </script>
 <template>
   <div class="flex flex-row gap-2 flex-wrap">
