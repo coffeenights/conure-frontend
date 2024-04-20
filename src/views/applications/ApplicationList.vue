@@ -1,41 +1,38 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import {
-  listApplications,
-  Application,
-} from '@/services/organizations'
+import { listApplications, Application } from '@/services/organizations'
 import { useRoute, useRouter } from 'vue-router'
-import { 
-  Accordion, 
-  AccordionContent, 
-  AccordionItem, 
-  AccordionTrigger 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from '@/components/ui/accordion'
 
 import {
-  ApplicationCard, 
-  ApplicationEnvironmentAddCard
+  ApplicationCard,
+  ApplicationEnvironmentAddCard,
 } from '../../components'
 
 let applications = ref([] as Application[])
-const router = useRouter()
 const route = useRoute()
 const store = useBreadCrumbStore()
 onMounted(() => {
-    // update breadcrumb
-    store.application = ''
-    store.applicationId = ''
-    store.environment = ''
-    listApplications(store.organizationId || route.params.organizationId as string)
-        .then((response) => {
-            applications.value = response.data.applications
-        })
-        .catch((error) => {
-            throw(error)
+  // update breadcrumb
+  store.application = ''
+  store.applicationId = ''
+  store.environment = ''
+  listApplications(
+    store.organizationId || (route.params.organizationId as string),
+  )
+    .then((response) => {
+      applications.value = response.data.applications
+    })
+    .catch((error) => {
+      throw error
     })
 })
-
 </script>
 <template>
   <div class="content-wrapper">
@@ -46,8 +43,14 @@ onMounted(() => {
             <AccordionTrigger class="border-b px-4 bg-transparent">
               {{ application.name }}
             </AccordionTrigger>
-            <AccordionContent class="p-5 bg-background rounded-b-md flex flex-row gap-5">
-              <ApplicationCard v-for="environment in application.environments"  :application="application" :environment="environment" />
+            <AccordionContent
+              class="p-5 bg-background rounded-b-md flex flex-row gap-5"
+            >
+              <ApplicationCard
+                v-for="environment in application.environments"
+                :application="application"
+                :environment="environment"
+              />
               <ApplicationEnvironmentAddCard />
             </AccordionContent>
           </AccordionItem>
