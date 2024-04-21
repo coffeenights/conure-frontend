@@ -9,14 +9,30 @@ import {
 } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { watch, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { listComponentVariables, Variable } from '@/services/variables'
 
-const invoices = [
-  {
-    name: 'PG_URL',
-    scope: 'Component',
-    value: 'postgres://conure:test123@localhost:54320/conure',
-  },
-]
+const route = useRoute()
+const variables = ref([] as Variable[])
+
+watch(() => route.params.id, fetchVariables, { immediate: true })
+
+function fetchVariables() {
+  listComponentVariables(
+    route.params.organizationId as string,
+    route.params.applicationId as string,
+    route.params.environment as string,
+    route.params.componentId as string,
+  )
+    .then((response) => {
+      variables.value = response.data
+    })
+    .catch((error) => {
+      throw error
+    })
+}
 </script>
 
 <template>
@@ -24,20 +40,24 @@ const invoices = [
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead class="">Name</TableHead>
-          <TableHead>Scope</TableHead>
+          <TableHead>Name</TableHead>
+          <TableHead class="w-72">Scope</TableHead>
           <TableHead>Value</TableHead>
           <TableHead class="text-right"></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody class="[&_tr:last-child]:border-1">
-        <TableRow v-for="invoice in invoices" :key="invoice.name">
+        <TableRow v-for="variable in variables" :key="variable.id">
           <TableCell class="font-medium">
-            <Input model-value="invoice.name" class="border-0 h-7"/>
+            <Input v-model="variable.name" class="border-0 h-7" />
           </TableCell>
-          <TableCell>{{ invoice.scope }}</TableCell>
           <TableCell>
-            <Input model-value="invoice.value" class="border-0 h-7"/>
+            <Badge variant="secondary">
+              {{ variable.type }}
+            </Badge>
+          </TableCell>
+          <TableCell>
+            <Input v-model="variable.value" class="border-0 h-7" />
           </TableCell>
           <TableCell class="text-right">
             <span class="bi-trash text-xl cursor-pointer"></span>
