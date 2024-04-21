@@ -7,7 +7,6 @@ const tabs = [
   { routeName: 'componentList', caption: 'Components' },
   { routeName: 'applicationDetailsVariables', caption: 'Variables' },
   { routeName: 'users', caption: 'Users' },
-  { routeName: 'activity', caption: 'Activity' },
 ]
 const store = useBreadCrumbStore()
 const defaultTab = 'componentList'

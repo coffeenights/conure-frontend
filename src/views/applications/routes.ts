@@ -5,7 +5,7 @@ import ApplicationDetailsVariables from './ApplicationDetailsVariables.vue'
 import ComponentList from './ComponentList.vue'
 import ComponentDetails from './ComponentDetails.vue'
 import ComponentDetailsTab from './ComponentDetailsTab.vue'
-import ComponentSettingsTab from './ComponentSettingsTab.vue'
+import ComponentVariablesTab from './ComponentVariablesTab.vue'
 import { RouteRecordRaw } from 'vue-router'
 
 const applicationRoutes: Array<RouteRecordRaw> = [
@@ -13,7 +13,7 @@ const applicationRoutes: Array<RouteRecordRaw> = [
     path: '/organizations/:organizationId',
     component: EmptyState,
     name: 'organization',
-    meta: { requiresAuth: true, requiresBreadcrumbState: true},
+    meta: { requiresAuth: true, requiresBreadcrumbState: true },
   },
   {
     path: '/organizations/:organizationId/applications',
@@ -38,14 +38,14 @@ const applicationRoutes: Array<RouteRecordRaw> = [
         path: 'components',
         component: ComponentList,
         name: 'componentList',
-        meta: { requiresAuth: true, requiresBreadcrumbState: true},
+        meta: { requiresAuth: true, requiresBreadcrumbState: true },
         children: [
           {
-            path: ':componentName',
+            path: ':componentId',
             redirect: { name: 'componentDetailsTab' },
             component: ComponentDetails,
             name: 'componentDetails',
-            meta: { requiresAuth: true, requiresBreadcrumbState: true},
+            meta: { requiresAuth: true, requiresBreadcrumbState: true },
             children: [
               {
                 path: 'details',
@@ -55,8 +55,8 @@ const applicationRoutes: Array<RouteRecordRaw> = [
               },
               {
                 path: 'settings',
-                component: ComponentSettingsTab,
-                name: 'componentSettingsTab',
+                component: ComponentVariablesTab,
+                name: 'componentVariablesTab',
                 meta: { requiresAuth: true, requiresBreadcrumbState: true },
               },
             ],

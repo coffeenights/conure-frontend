@@ -8,14 +8,5 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div
-    :class="
-      cn(
-        'rounded-lg border',
-        props.class,
-      )
-    "
-  >
-    <slot />
-  </div>
+  <input :class="cn('', props.class)">
 </template>

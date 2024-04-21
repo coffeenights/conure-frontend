@@ -28,13 +28,13 @@ watch(
 </script>
 <template>
   <div
-    class="cursor-pointer border border-gray-200 dark:border-gray-700 rounded-lg mt-1 p-2 hover:border-gray-500 dark:hover:border-gray-500 transition duration-500 inline-block mr-2"
+    class="cursor-pointer border rounded-lg mt-1 p-2.5 hover:border-ring transition duration-500 inline-block mr-2"
   >
     <label class="mr-2 cursor-pointer">{{ organization }}</label>
   </div>
-  <label class="text-gray-400 dark:text-gray-700 mr-2">/</label>
+  <label class="mr-2">/</label>
   <div
-    class="cursor-pointer border border-gray-200 dark:border-gray-700 rounded-lg mt-1 p-2 hover:border-gray-500 dark:hover:border-gray-500 transition duration-500 inline-block mr-2"
+    class="cursor-pointer border rounded-lg mt-1 p-2.5 hover:border-ring transition duration-500 inline-block mr-2"
   >
     <label class="mr-2 cursor-pointer">
       <i class="bi bi-diagram-3 cursor-pointer pr-1"></i>
@@ -44,7 +44,7 @@ watch(
   </div>
   <div
     v-if="environment"
-    class="cursor-pointer border border-gray-200 dark:border-gray-700 rounded-lg mt-1 p-2 hover:border-gray-500 dark:hover:border-gray-500 transition duration-500 inline-block mr-2"
+    class="cursor-pointer border rounded-lg mt-1 p-2.5 hover:border-ring transition duration-500 inline-block mr-2"
   >
     <label class="mr-2 cursor-pointer">{{ environment }}</label>
     <i class="bi-chevron-down cursor-pointer"></i>

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import ComponentCard from '@/components/ComponentCard.vue'
+import Input from '@/components/ui/input/Input.vue'
+import Button from '@/components/ui/button/Button.vue'
 import { listComponents, ComponentService } from '@/services/organizations'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { onMounted, ref } from 'vue'
@@ -30,43 +32,37 @@ onMounted(() => {
 
 <template>
   <div class="flex gap-2">
-    <div
-      class="border border-color py-2 px-4 text-md cursor-pointer rounded-md dark:bg-blue-800"
-    >
-      <span class="bi-plus mr-2"> Add</span>
-    </div>
-    <div
-      class="border border-color py-2 px-4 text-md cursor-pointer rounded-md dark:bg-blue-800"
-    >
-      <span class="bi-grid-fill"></span>
-    </div>
+    <Button> <span class="bi-plus mr-1 text-2xl"></span>Add </Button>
+    <Button variant="secondary" size="icon">
+      <span class="bi-grid-fill text-xl"></span>
+    </Button>
     <div class="grow">
-      <input
-        placeholder="Search"
-        class="w-full py-2 px-4 rounded-md bg-transparent border dark:border-gray-700 border-gray-200"
+      <Input
         type="search"
+        placeholder="Search"
+        class="focus-visible:ring-ring focus-visible:ring-1"
       />
     </div>
   </div>
   <div class="relative grow overflow-hidden mt-3">
     <div id="componentsList" class="">
-      <div class="py-3 mt-5 border-b border-color">
+      <div class="py-3 mt-5 border-b">
         <div class="text-lg">Services</div>
       </div>
       <div id="componentsGroupList" class="flex mt-4 gap-3 flex-wrap">
         <router-link
           v-for="(c, index) in components"
           :key="index"
-          :to="{ name: 'componentDetails', params: { componentName: c.id } }"
-          custom
           v-slot="{ navigate }"
+          :to="{ name: 'componentDetails', params: { componentId: c.id } }"
+          custom
         >
           <ComponentCard
-            @click="navigate"
             :component="c"
-            :organizationId="store.organizationId"
-            :applicationId="store.applicationId"
-            :environmentId="store.environment"
+            :organization-id="store.organizationId"
+            :application-id="store.applicationId"
+            :environment-id="store.environment"
+            @click="navigate"
           />
         </router-link>
       </div>
