@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { listApplications, Application } from '@/services/organizations'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import {
   Accordion,
   AccordionContent,
@@ -48,6 +48,7 @@ onMounted(() => {
             >
               <ApplicationCard
                 v-for="environment in application.environments"
+                :key="environment.id"
                 :application="application"
                 :environment="environment"
               />
