@@ -54,7 +54,7 @@ const applicationRoutes: Array<RouteRecordRaw> = [
                 meta: { requiresAuth: true, requiresBreadcrumbState: true },
               },
               {
-                path: 'settings',
+                path: 'variables',
                 component: ComponentVariablesTab,
                 name: 'componentVariablesTab',
                 meta: { requiresAuth: true, requiresBreadcrumbState: true },
