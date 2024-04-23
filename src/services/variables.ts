@@ -1,5 +1,12 @@
 import { Variable } from 'lucide-vue-next'
-import { ApiResponse, fetchData, postData } from './api'
+import { ApiResponse, deleteData, fetchData, postData } from './api'
+import { z } from 'zod'
+
+export const VariableSchema = z.object({
+  name: z.string().max(50),
+  value: z.string(),
+  isEncrypted: z.boolean().default(false),
+})
 
 export type Variable = {
   id: string
@@ -71,4 +78,11 @@ export const createVariable = async (
       url = `/variables/${data.organization_id}/${data.application_id}/e/${data.environment_id}/c/${data.component_id}`
   }
   return postData<VariableCreateResponse>(url, data)
+}
+
+export const deleteVariable = async (
+  organizationId: string,
+  id: string,
+): Promise<ApiResponse<null>> => {
+  return deleteData<ApiResponse<null>>(`/variables/${organizationId}/${id}`)
 }
