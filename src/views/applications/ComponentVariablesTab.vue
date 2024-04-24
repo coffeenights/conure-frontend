@@ -27,6 +27,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { Textarea } from '@/components/ui/textarea'
 import { watch, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import {
@@ -59,10 +60,12 @@ import { Skeleton } from '@/components/ui/skeleton'
 const route = useRoute()
 const variables = ref([] as Variable[])
 const store = useBreadCrumbStore()
-const open = ref(false)
+const newVariableOpen = ref(false)
 const deleteDialog = ref(false)
 const toDeleteVariable = ref({} as Variable)
 const isLoading = ref(false)
+const variableRead = ref(false)
+const selectedVariable = ref({} as Variable)
 
 watch(() => route.params.id, fetchVariables, { immediate: true })
 
@@ -108,7 +111,7 @@ const onSubmit = handleSubmit(async (values) => {
         title: 'Success',
         description: 'New variable created!',
       })
-      open.value = false
+      newVariableOpen.value = false
     }
     fetchVariables()
   } catch (error) {
@@ -154,6 +157,15 @@ const onDelete = async (id: string) => {
     }
   }
 }
+
+const selectVariable = (variable: Variable) => {
+  selectedVariable.value = variable
+  variableRead.value = true
+}
+
+const truncate = (text: string, length: number) => {
+  return text.length > length ? text.substring(0, length) + ' ...' : text
+}
 </script>
 
 <template>
@@ -168,22 +180,29 @@ const onDelete = async (id: string) => {
         </TableRow>
       </TableHeader>
       <TableBody v-if="!isLoading" class="[&_tr:last-child]:border-1">
-        <TableRow v-for="variable in variables" :key="variable.id">
-          <TableCell class="font-medium flex items-center">
+        <TableRow
+          v-for="variable in variables"
+          :key="variable.id"
+          class="cursor-pointer"
+        >
+          <TableCell
+            @click="selectVariable(variable)"
+            class="font-medium flex items-center"
+          >
             <span
               v-if="variable.is_encrypted"
               class="bi-key text-xl mr-3"
             ></span>
             {{ variable.name }}
           </TableCell>
-          <TableCell>
+          <TableCell @click="selectVariable(variable)">
             <Badge variant="secondary">
               {{ variable.type }}
             </Badge>
           </TableCell>
-          <TableCell>
+          <TableCell @click="selectVariable(variable)">
             <span v-if="variable.is_encrypted">**************</span>
-            <span v-else>{{ variable.value }}</span>
+            <span v-else>{{ truncate(variable.value, 100) }}</span>
           </TableCell>
           <TableCell class="text-right">
             <span
@@ -214,7 +233,7 @@ const onDelete = async (id: string) => {
       <h1 class="text-2xl font-extrabold mt-5">No Variables found</h1>
     </div>
     <div class="px-2 pb-2">
-      <Dialog v-model:open="open">
+      <Dialog v-model:open="newVariableOpen">
         <DialogTrigger as-child>
           <Button variant="outline" size="icon">
             <span class="bi-plus-lg text-xl"></span>
@@ -245,7 +264,7 @@ const onDelete = async (id: string) => {
               <FormItem>
                 <FormLabel>Value</FormLabel>
                 <FormControl>
-                  <Input
+                  <Textarea
                     type="text"
                     v-bind="componentField"
                     :disabled="isSubmitting"
@@ -271,11 +290,19 @@ const onDelete = async (id: string) => {
             </FormField>
             <DialogFooter class="sm:justify-end mt-2">
               <DialogClose>
-                <Button variant="outline" :disabled="isSubmitting">
+                <Button
+                  variant="outline"
+                  :disabled="isSubmitting"
+                  class="w-full"
+                >
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit" :disabled="isSubmitting">
+              <Button
+                type="submit"
+                :disabled="isSubmitting"
+                class="mb-4 sm:mb-0"
+              >
                 <Loader v-if="isSubmitting" class="mr-2 h-4 w-4 animate-spin" />
                 Save
               </Button>
@@ -283,10 +310,64 @@ const onDelete = async (id: string) => {
           </form>
         </DialogContent>
       </Dialog>
+      <Dialog v-model:open="variableRead">
+        <DialogContent class="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Variable</DialogTitle>
+          </DialogHeader>
+          <FormField name="name">
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  v-model="selectedVariable.name"
+                  type="text"
+                  :disabled="true"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <FormField name="value">
+            <FormItem>
+              <FormLabel>Value</FormLabel>
+              <FormControl>
+                <Textarea
+                  v-model="selectedVariable.value"
+                  type="text"
+                  :disabled="true"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <FormField name="isEncrypted">
+            <FormItem>
+              <FormControl>
+                <div class="flex items-center space-x-2">
+                  <Switch
+                    id="isEncrypted"
+                    :checked="selectedVariable.is_encrypted"
+                    :disabled="true"
+                  />
+                  <Label for="isEncrypted">Encrypted</Label>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <DialogFooter class="sm:justify-end mt-2">
+            <DialogClose>
+              <Button variant="outline" class="w-full"> Close </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <AlertDialog v-model:open="deleteDialog">
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               Do you want to delete the variable named "{{
                 toDeleteVariable.name
