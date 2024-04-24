@@ -31,7 +31,7 @@ const store = useBreadCrumbStore()
       {{ store.application }}
     </div>
     <div class="flex gap-2">
-      <Button>Deploy</Button>
+      <Button disabled>Deploy</Button>
     </div>
   </div>
 </template>
