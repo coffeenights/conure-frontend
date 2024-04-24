@@ -186,8 +186,8 @@ const truncate = (text: string, length: number) => {
           class="cursor-pointer"
         >
           <TableCell
-            @click="selectVariable(variable)"
             class="font-medium flex items-center"
+            @click="selectVariable(variable)"
           >
             <span
               v-if="variable.is_encrypted"
