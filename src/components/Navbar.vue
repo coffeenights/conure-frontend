@@ -37,7 +37,9 @@ const { isDarkMode, toggleDarkMode } = useDarkMode()
               ></span>
             </Button>
           </HoverCardTrigger>
-          <HoverCardContent class="text-sm w-max bg-black border-0 text-white dark:text-black dark:bg-white">
+          <HoverCardContent
+            class="text-sm w-max bg-black border-0 text-white dark:text-black dark:bg-white"
+          >
             Switch theme
             <HoverCardArrow class="dark:fill-white" :width="8" />
           </HoverCardContent>
