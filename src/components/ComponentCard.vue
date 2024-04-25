@@ -57,7 +57,7 @@ onMounted(() => {
       </div>
     </div>
     <div class="mt-3 pb-2 border-b">
-      <div class="font-bold text-lg">{{ component.id }}</div>
+      <div class="font-bold text-lg">{{ component.name }}</div>
       <div
         class="w-40 h-3 mt-2 rounded-sm skeleton"
         :class="{ hidden: !isLoading }"

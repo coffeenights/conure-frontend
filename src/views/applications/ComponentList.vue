@@ -6,6 +6,7 @@ import { listComponents, ComponentService } from '@/services/organizations'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { toast } from '@/components/ui/toast'
 const route = useRoute()
 const router = useRouter()
 const components = ref<ComponentService[]>([])
@@ -24,7 +25,10 @@ onMounted(() => {
       if (error.response.status === 404) {
         router.push({ name: '404' })
       } else {
-        throw error
+        toast({
+          title: 'Error',
+          description: 'An error occurred while fetching components.',
+        })
       }
     })
 })

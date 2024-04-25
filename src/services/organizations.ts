@@ -32,6 +32,7 @@ export type Organization = {
 
 export type ComponentService = {
   id: string
+  name: string
   application_id: string
   created_at: string
   description: string

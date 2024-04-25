@@ -43,7 +43,7 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
         <CardContent class="p-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
           <CardContentKeyValueVertical
             c-key="Name"
-            :value="store.componentStatus?.component?.id"
+            :value="store.componentStatus?.component?.name"
             :is-loading="isLoading"
           />
           <CardContentKeyValueVertical
