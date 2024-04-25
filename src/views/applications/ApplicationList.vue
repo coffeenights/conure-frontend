@@ -40,7 +40,7 @@ onMounted(() => {
       <div v-for="application in applications" :key="application.id">
         <Accordion type="single" collapsible default-value="environments">
           <AccordionItem value="environments" class="border rounded-md">
-            <AccordionTrigger class="border-b px-4 bg-transparent">
+            <AccordionTrigger class="px-4 bg-transparent">
               {{ application.name }}
             </AccordionTrigger>
             <AccordionContent

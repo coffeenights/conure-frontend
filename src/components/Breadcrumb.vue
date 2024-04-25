@@ -28,11 +28,11 @@ watch(
 </script>
 <template>
   <div
-    class="cursor-pointer border rounded-lg mt-1 p-2.5 hover:border-ring transition duration-500 inline-block mr-2"
+    class="cursor-pointer border rounded-lg mt-1 p-2.5 hover:border-ring transition duration-500 sm:inline-block mr-2 hidden sm:visible"
   >
     <label class="mr-2 cursor-pointer">{{ organization }}</label>
   </div>
-  <label class="mr-2">/</label>
+  <label class="mr-2 hidden sm:visible">/</label>
   <div
     class="cursor-pointer border rounded-lg mt-1 p-2.5 hover:border-ring transition duration-500 inline-block mr-2"
   >
