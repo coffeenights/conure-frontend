@@ -49,3 +49,12 @@ Errors between 3000 and 3999 are related to the server.
 - `3001 - internal_error`: There was an internal error.
 - `3002 - database_error`: There was an error while trying to access the database.
 - `3003 - network_error`: There was an error while trying to access the network.
+
+
+### Internal errors
+
+Errors between 4000 and 4999 are related to the internal system.
+
+- `4001 - provider_not_supported`: The provider is not supported.
+- `4002 - component_not_found`: The component was not found.
+- `4003 - application_already_exists`: The application already exists.
