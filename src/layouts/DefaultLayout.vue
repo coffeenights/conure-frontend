@@ -2,28 +2,17 @@
 import { onBeforeMount, ref, watch } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
+import { useRoute } from 'vue-router'
 
 const store = useBreadCrumbStore()
-const isStoreLoaded = ref(false)
-
-onBeforeMount(() => {
-  if (store.isLoaded) {
-    isStoreLoaded.value = true
-  }
-})
-
-watch(
-  () => store.isLoaded,
-  (newVal) => {
-    isStoreLoaded.value = newVal
-  },
-)
+const route = useRoute()
+console.log(route)
 </script>
 
 <template>
-  <Navbar v-if="isStoreLoaded" />
+  <Navbar v-if="!store.isLoading" />
   <section>
-    <div v-if="isStoreLoaded" class="flex flex-col items-center">
+    <div v-if="!store.isLoading" class="flex flex-col items-center">
       <router-view></router-view>
     </div>
   </section>
