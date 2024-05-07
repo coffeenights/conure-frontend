@@ -13,7 +13,7 @@ import {
 import {
   ApplicationCard,
   ApplicationEnvironmentAddCard,
-} from '../../components'
+} from '@/components'
 
 let applications = ref([] as Application[])
 const route = useRoute()
