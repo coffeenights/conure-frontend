@@ -16,9 +16,7 @@ const props = defineProps<{
 
 const tabItem = ref('')
 if (props.tabs.some((e) => e.routeName === route.name)) {
-  tabItem.value = route.name.toString()
-} else {
-  tabItem.value = props.default
+  tabItem.value = route.name?.toString() ?? props.default
 }
 
 function setTab(tab: string) {
@@ -34,9 +32,11 @@ function isActive(tab: string): boolean {
   <div class="flex gap-2 border-b">
     <div
       v-for="tab in props.tabs"
-      @click="setTab(tab.routeName)"
+      :key="tab.routeName"
+      v-bind="tab"
       class="mb-[-1px] p-3 cursor-pointer"
       :class="{ 'tab-active': isActive(tab.routeName) }"
+      @click="setTab(tab.routeName)"
     >
       {{ tab.caption }}
     </div>
