@@ -3,7 +3,6 @@ import {
   RouteRecordRaw,
   createRouter,
   createWebHistory,
-  RouteLocationNormalized,
 } from 'vue-router'
 import { createPinia } from 'pinia'
 import './styles/style.css'
@@ -15,7 +14,6 @@ import authRoutes from './views/auth/routes'
 import { useUserStore } from '@/stores/UserStore'
 import { authenticationStatus } from '@/services/auth'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import { detailApplication, detailOrganization } from '@/services/organizations'
 import axios from 'axios'
 
 const routes: Array<RouteRecordRaw> = [
