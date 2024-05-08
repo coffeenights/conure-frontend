@@ -9,6 +9,7 @@ import {
   Organization,
 } from '@/services/organizations'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
+import { SetSettings, Settings } from '@/storage/settings'
 
 const store = useBreadCrumbStore()
 const getFirstLetter = (name: string): string => {
@@ -25,6 +26,7 @@ const goToApplications = (organization: Organization) => {
     name: 'applications',
     params: { organizationId: organization.id },
   })
+  SetSettings({ defaultOrganization: organization.id } as Settings)
 }
 
 const fetchData = () => {
