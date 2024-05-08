@@ -59,7 +59,7 @@ const goToApplications = (oId: string) => {
     <i class="bi-chevron-down cursor-pointer"></i>
   </div>
   <div
-    v-if="environment"
+    v-if="environment && organization"
     class="cursor-pointer border rounded-lg mt-1 p-2.5 hover:border-ring transition duration-500 inline-block mr-2"
   >
     <label class="mr-2 cursor-pointer">{{ environment }}</label>
