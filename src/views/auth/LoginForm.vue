@@ -17,6 +17,7 @@ import axios from 'axios'
 import CompanyLogo from '@/components/CompanyLogo.vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/UserStore'
+import { GetSettings } from '@/storage/settings'
 
 const isLoading = ref(false)
 const authError = ref('')
@@ -36,9 +37,19 @@ const onSubmit = handleSubmit(async (values) => {
     if (result.status == 200) {
       userStore.authenticated = true
       if ('next' in router.currentRoute.value.query) {
-        window.location.href = router.currentRoute.value.query.next as string
+        await router.push(router.currentRoute.value.query.next as string)
       } else {
-        window.location.href = '/'
+        const settings = GetSettings()
+        if (settings.defaultOrganization) {
+          await router.push({
+            name: 'applications',
+            params: { organizationId: settings.defaultOrganization },
+          })
+        } else {
+          await router.push({
+            name: 'organizations',
+          })
+        }
       }
     }
   } catch (error) {
