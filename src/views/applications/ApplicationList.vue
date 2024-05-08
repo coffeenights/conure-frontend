@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { listApplications, Application } from '@/services/organizations'
 import { useRoute } from 'vue-router'
@@ -10,15 +10,12 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 
-import {
-  ApplicationCard,
-  ApplicationEnvironmentAddCard,
-} from '@/components'
+import { ApplicationCard, ApplicationEnvironmentAddCard } from '@/components'
 
 let applications = ref([] as Application[])
 const route = useRoute()
 const store = useBreadCrumbStore()
-onMounted(() => {
+const fetchData = () => {
   // update breadcrumb
   store.application = ''
   store.applicationId = ''
@@ -32,7 +29,9 @@ onMounted(() => {
     .catch((error) => {
       throw error
     })
-})
+}
+
+watch(() => route.params.organizationId, fetchData, { immediate: true })
 </script>
 <template>
   <div class="content-wrapper">
