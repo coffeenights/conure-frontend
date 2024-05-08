@@ -72,6 +72,9 @@ export type ApplicationListResponse = ApiResponse<{
 }>
 export type ApplicationResponse = ApiResponse<Application>
 export type OrganizationResponse = ApiResponse<Organization>
+export type OrganizationListResponse = ApiResponse<{
+  organizations: Organization[]
+}>
 export type ComponentListResponse = ApiResponse<{
   components: ComponentService[]
 }>
@@ -82,6 +85,11 @@ export const detailOrganization = async (
 ): Promise<OrganizationResponse> => {
   return fetchData<OrganizationResponse>(`/organizations/${id}`)
 }
+
+export const listOrganizations =
+  async (): Promise<OrganizationListResponse> => {
+    return fetchData<OrganizationListResponse>('/organizations/')
+  }
 
 export const listApplications = async (
   id: string,

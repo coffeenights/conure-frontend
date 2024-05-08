@@ -1,14 +1,15 @@
 import { onMounted, ref } from 'vue'
+import { GetSettings, SetSettings, Settings } from '@/storage/settings'
 
 export function useDarkMode() {
   const isDarkMode = ref(false)
 
   onMounted(() => {
-    const savedIsDarkMode = localStorage.getItem('isDarkMode')
+    const settings: Settings = GetSettings()
 
-    if (savedIsDarkMode !== null) {
+    if (settings.isDarkMode !== '') {
       // Use the saved value
-      isDarkMode.value = savedIsDarkMode === 'true'
+      isDarkMode.value = settings.isDarkMode === 'true'
       document.documentElement.classList.toggle('dark', isDarkMode.value)
     } else {
       // Save the system preference to local storage
@@ -22,14 +23,14 @@ export function useDarkMode() {
         document.documentElement.classList.remove('dark')
         isDarkMode.value = false
       }
-      localStorage.setItem('isDarkMode', String(isDarkMode.value))
+      SetSettings({ isDarkMode: String(isDarkMode.value) })
     }
   })
 
   const toggleDarkMode = () => {
     isDarkMode.value = !isDarkMode.value
     document.documentElement.classList.toggle('dark', isDarkMode.value)
-    localStorage.setItem('isDarkMode', String(isDarkMode.value))
+    SetSettings({ isDarkMode: String(isDarkMode.value) })
   }
 
   return { isDarkMode, toggleDarkMode }
