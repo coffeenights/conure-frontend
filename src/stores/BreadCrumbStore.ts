@@ -1,9 +1,6 @@
 import { detailApplication, detailOrganization } from '@/services/organizations'
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import {
-  RouteLocationNormalized,
-} from 'vue-router'
 
 export const useBreadCrumbStore = defineStore('BreadCrumbStore', () => {
   const environment = ref('')
@@ -31,15 +28,11 @@ export const useBreadCrumbStore = defineStore('BreadCrumbStore', () => {
         .catch((error) => {
           if (error.response.status === 404) {
             throw error
-          } 
+          }
         })
     }
-    if (applicationId) {
-      appResponse = detailApplication(
-        orgId,
-        appId,
-        env,
-      )
+    if (applicationId.value) {
+      appResponse = detailApplication(orgId, appId, env)
         .then((response) => {
           application.value = response?.data.name as string
           applicationId.value = response?.data.id as string
@@ -71,14 +64,11 @@ export const useBreadCrumbStore = defineStore('BreadCrumbStore', () => {
   }
 
   const isLoaded = computed(() => {
-    if (
+    return !(
       environment.value === '' &&
       applicationId.value === '' &&
       organizationId.value === ''
-    ) {
-      return false
-    }
-    return true
+    )
   })
 
   return {
