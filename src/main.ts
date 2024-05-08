@@ -1,9 +1,5 @@
 import { createApp } from 'vue'
-import {
-  RouteRecordRaw,
-  createRouter,
-  createWebHistory,
-} from 'vue-router'
+import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
 import { createPinia } from 'pinia'
 import './styles/style.css'
 import App from './App.vue'
