@@ -31,7 +31,7 @@ export const useBreadCrumbStore = defineStore('BreadCrumbStore', () => {
           }
         })
     }
-    if (applicationId.value) {
+    if (appId) {
       appResponse = detailApplication(orgId, appId, env)
         .then((response) => {
           application.value = response?.data.name as string
