@@ -27,10 +27,6 @@ const props = defineProps({
 
 latestRevision.value = getLatestRevision(props.application)
 
-const getFirstLetter = (name: string): string => {
-  return name.charAt(0).toUpperCase()
-}
-
 function goToDetailApplication(
   applicationId: string,
   applicationName: string,
