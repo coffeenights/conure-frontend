@@ -37,8 +37,12 @@ const router = createRouter({
   routes,
 })
 
+// Navigation guards
 router.beforeEach(async (to) => {
   const userStore = useUserStore()
+  const breadCrumbStore = useBreadCrumbStore()
+
+  // Authenticated routes
   if (
     to.matched.some((record) => record.meta.requiresAuth) &&
     !userStore.authenticated
@@ -47,19 +51,6 @@ router.beforeEach(async (to) => {
       const result = await authenticationStatus()
       if (result.status === 200) {
         userStore.authenticated = true
-        if (to.meta.requiresBreadcrumbState) {
-          const breadCrumbStore = useBreadCrumbStore()
-          try {
-            await breadCrumbStore.loadBreadCrumb(
-              to.params.organizationId as string,
-              to.params.applicationId as string,
-              to.params.environment as string
-            )
-          } catch (error) {
-            console.log(error)
-          }
-        }
-        return true
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.code === 'ERR_BAD_REQUEST') {
@@ -68,6 +59,19 @@ router.beforeEach(async (to) => {
       } else {
         return false
       }
+    }
+  }
+
+  // Load breadcrumb state
+  if (to.meta.requiresBreadcrumbState && !breadCrumbStore.isLoaded) {
+    try {
+      await breadCrumbStore.loadBreadCrumb(
+        to.params.organizationId as string,
+        to.params.applicationId as string,
+        to.params.environment as string,
+      )
+    } catch (error) {
+      console.log(error)
     }
   }
 })

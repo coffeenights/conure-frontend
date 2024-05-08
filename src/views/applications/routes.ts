@@ -14,7 +14,7 @@ const applicationRoutes: Array<RouteRecordRaw> = [
     path: '/organizations',
     component: OrganizationList,
     name: 'organizations',
-    meta: { requiresAuth: true, requiresBreadcrumbState: true },
+    meta: { requiresAuth: true, requiresBreadcrumbState: false },
   },
   {
     path: '/organizations/:organizationId',
