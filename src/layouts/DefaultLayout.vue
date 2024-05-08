@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, watch } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import { useRoute } from 'vue-router'
 
 const store = useBreadCrumbStore()
-const route = useRoute()
-console.log(route)
 </script>
 
 <template>
