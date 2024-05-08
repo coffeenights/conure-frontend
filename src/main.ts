@@ -4,7 +4,6 @@ import { createPinia } from 'pinia'
 import './styles/style.css'
 import App from './App.vue'
 import PageNotFound from './views/404.vue'
-import EmptyState from './views/EmptyState.vue'
 import applicationRoutes from './views/applications/routes'
 import authRoutes from './views/auth/routes'
 import { useUserStore } from '@/stores/UserStore'
@@ -15,8 +14,7 @@ import axios from 'axios'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    component: EmptyState,
-    name: 'home',
+    redirect: { name: 'organizations' },
   },
   {
     path: '/not-found',
