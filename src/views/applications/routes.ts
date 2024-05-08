@@ -6,9 +6,16 @@ import ComponentList from './ComponentList.vue'
 import ComponentDetails from './ComponentDetails.vue'
 import ComponentDetailsTab from './ComponentDetailsTab.vue'
 import ComponentVariablesTab from './ComponentVariablesTab.vue'
+import OrganizationList from './OrganizationList.vue'
 import { RouteRecordRaw } from 'vue-router'
 
 const applicationRoutes: Array<RouteRecordRaw> = [
+  {
+    path: '/organizations',
+    component: OrganizationList,
+    name: 'organizations',
+    meta: { requiresAuth: true, requiresBreadcrumbState: false },
+  },
   {
     path: '/organizations/:organizationId',
     component: EmptyState,

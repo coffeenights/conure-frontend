@@ -16,9 +16,11 @@ const { isDarkMode, toggleDarkMode } = useDarkMode()
 <template>
   <nav class="bg-card h-16 shadow-sm min-w-max sticky top-0 border-b z-10">
     <div class="flex flex-row items-center">
-      <div class="logo mr-6 w-12 ml-3">
-        <CompanyLogo />
-      </div>
+      <router-link :to="{ name: 'organizations' }">
+        <div class="logo mr-6 w-12 ml-3">
+          <CompanyLogo />
+        </div>
+      </router-link>
       <div class="breadcrumbs">
         <Breadcrumb />
       </div>
@@ -47,7 +49,7 @@ const { isDarkMode, toggleDarkMode } = useDarkMode()
       </div>
       <div class="mr-5 mt-2">
         <Avatar class="h-10 w-10">
-          <AvatarFallback>P</AvatarFallback>
+          <AvatarFallback><span class="text-lg bi bi-person"></span></AvatarFallback>
         </Avatar>
       </div>
     </div>
