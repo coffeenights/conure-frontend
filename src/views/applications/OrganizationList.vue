@@ -4,12 +4,37 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Status } from '@/components/ui/status'
 import { ref, watch } from 'vue'
 import {
+  createOrganization,
   getTimeAgo,
   listOrganizations,
   Organization,
+  OrganizationSchema,
 } from '@/services/organizations'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { SetSettings, Settings } from '@/storage/settings'
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Loader } from 'lucide-vue-next'
+import { toast } from '@/components/ui/toast'
+import axios from 'axios'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
 
 const store = useBreadCrumbStore()
 const getFirstLetter = (name: string): string => {
@@ -18,6 +43,7 @@ const getFirstLetter = (name: string): string => {
 const route = useRoute()
 const router = useRouter()
 const organizations = ref([] as Organization[])
+const newOrganizationOpen = ref(false)
 
 const goToApplications = (organization: Organization) => {
   store.organizationId = organization.id
@@ -75,6 +101,45 @@ const selectBackgroundColor = (letter: string) => {
 
 store.organizationId = ''
 store.organization = ''
+
+const onAddOrganization = () => {
+  newOrganizationOpen.value = true
+}
+
+const { handleSubmit, isSubmitting } = useForm({
+  validationSchema: toTypedSchema(OrganizationSchema),
+})
+
+const onSubmit = handleSubmit(async (values) => {
+  try {
+    const result = await createOrganization({
+      name: values.name,
+    })
+    if (result.status == 201) {
+      toast({
+        title: 'Success',
+        description: 'New organization created!',
+      })
+      newOrganizationOpen.value = false
+    }
+    fetchData()
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.data.code == '2007') {
+        toast({
+          title: 'An error occurred',
+          description:
+            error.response?.data.message + ' ' + error.response?.data.fields,
+        })
+      }
+    } else {
+      toast({
+        title: 'An error occurred',
+        description: 'An unexpected error occurred.',
+      })
+    }
+  }
+})
 </script>
 <template>
   <div class="content-wrapper">
@@ -101,11 +166,55 @@ store.organization = ''
           ></Status>
         </CardContent>
       </Card>
-      <Card class="flex flex-col justify-center items-center w-60">
+      <Card
+        class="flex flex-col justify-center items-center w-60 cursor-pointer"
+        @click="onAddOrganization"
+      >
         <CardContent class="p-0">
           <span class="text-9xl font-bold text-gray-400 bi bi-plus"></span>
         </CardContent>
       </Card>
     </div>
   </div>
+  <Dialog v-model:open="newOrganizationOpen">
+    <DialogContent class="sm:max-w-md">
+      <form class="space-y-6" @submit="onSubmit">
+        <DialogHeader>
+          <DialogTitle>Add new organization</DialogTitle>
+          <DialogDescription class="hidden">
+            Create a new organization
+          </DialogDescription>
+        </DialogHeader>
+        <FormField v-slot="{ componentField }" name="name">
+          <FormItem>
+            <FormLabel>Name</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                v-bind="componentField"
+                :disabled="isSubmitting"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+        <DialogFooter class="sm:justify-end mt-2">
+          <DialogClose>
+            <Button
+              type="button"
+              variant="outline"
+              :disabled="isSubmitting"
+              class="w-full"
+            >
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button type="submit" :disabled="isSubmitting" class="mb-4 sm:mb-0">
+            <Loader v-if="isSubmitting" class="mr-2 h-4 w-4 animate-spin" />
+            Save
+          </Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
+  </Dialog>
 </template>

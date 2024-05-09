@@ -63,7 +63,7 @@ onMounted(() => {
         :class="{ hidden: !isLoading }"
       ></div>
       <div
-        class="font-bold text-xs text-muted-foreground"
+        class="text-xs text-muted-foreground"
         :class="{ hidden: isLoading }"
       >
         Last update {{ getTimeAgo(date) }} ago

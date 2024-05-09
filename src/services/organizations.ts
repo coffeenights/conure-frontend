@@ -1,4 +1,5 @@
-import api, { ApiResponse, fetchData } from './api'
+import api, { ApiResponse, fetchData, postData } from './api'
+import { z } from 'zod'
 
 export type Revision = {
   revision_number: number
@@ -29,6 +30,14 @@ export type Organization = {
   created_at: string
   status: string
 }
+
+export type OrganizationCreateRequest = {
+  name: string
+}
+
+export const OrganizationSchema = z.object({
+  name: z.string().min(4).max(25).trim(),
+})
 
 export type ComponentService = {
   id: string
@@ -91,6 +100,12 @@ export const listOrganizations =
   async (): Promise<OrganizationListResponse> => {
     return fetchData<OrganizationListResponse>('/organizations/')
   }
+
+export const createOrganization = async (
+  data: OrganizationCreateRequest,
+): Promise<OrganizationResponse> => {
+  return postData('/organizations/', data)
+}
 
 export const listApplications = async (
   id: string,

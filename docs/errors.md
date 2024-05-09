@@ -40,6 +40,7 @@ Errors between 2000 and 2999 are related to the request.
 - `2004 - invalid_email`: The email is invalid.
 - `2005 - invalid_password`: The password is invalid.
 - `2006 - password_confirmation_mismatch`: The password confirmation does not match the password.
+- `2007 - invalid_field_value`: The value of the following fields are not correct.
 
 
 ### Server errors
