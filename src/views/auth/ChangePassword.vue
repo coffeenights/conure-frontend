@@ -32,7 +32,7 @@ const onSubmit = handleSubmit(async (values) => {
 
   try {
     const result = await changePassword(values)
-    if (!result.isError) {
+    if (!result.data.error) {
       resetForm()
       toast({
         description: 'Password changed successfully.',
