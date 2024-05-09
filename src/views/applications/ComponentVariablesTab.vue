@@ -294,6 +294,7 @@ const truncate = (text: string, length: number) => {
                   variant="outline"
                   :disabled="isSubmitting"
                   class="w-full"
+                  type="button"
                 >
                   Cancel
                 </Button>
@@ -358,7 +359,9 @@ const truncate = (text: string, length: number) => {
           </FormField>
           <DialogFooter class="sm:justify-end mt-2">
             <DialogClose>
-              <Button variant="outline" class="w-full"> Close </Button>
+              <Button variant="outline" class="w-full" type="button">
+                Close
+              </Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

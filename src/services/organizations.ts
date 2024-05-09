@@ -36,7 +36,7 @@ export type OrganizationCreateRequest = {
 }
 
 export const OrganizationSchema = z.object({
-  name: z.string().min(4).max(50).trim(),
+  name: z.string().min(4).max(25).trim(),
 })
 
 export type ComponentService = {

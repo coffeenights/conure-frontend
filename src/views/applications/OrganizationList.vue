@@ -200,7 +200,12 @@ const onSubmit = handleSubmit(async (values) => {
         </FormField>
         <DialogFooter class="sm:justify-end mt-2">
           <DialogClose>
-            <Button variant="outline" :disabled="isSubmitting" class="w-full">
+            <Button
+              type="button"
+              variant="outline"
+              :disabled="isSubmitting"
+              class="w-full"
+            >
               Cancel
             </Button>
           </DialogClose>
