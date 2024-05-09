@@ -75,7 +75,7 @@ function goToDetailApplication(
       <div class="border border-t-[1px] border-b-0 h-0"></div>
       <div class="flex items-center mt-1 text-muted-foreground">
         <div class="text-xs grow">
-          Rev. {{ latestRevision.revision_number | 0 }}
+          Rev. {{ latestRevision?.revision_number ?? 0 }}
         </div>
         <div class="text-lime-600">
           <span class="text-xs bi-circle-fill pr-1"></span>

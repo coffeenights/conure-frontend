@@ -73,6 +73,7 @@ export type ComponentProperties = {
   source: {
     container_image: string
   }
+  status?: string
 }
 
 export type ApplicationListResponse = ApiResponse<{
