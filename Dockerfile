@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN yarn install
 COPY . .
-RUN yarn vite build --mode=staging
+RUN yarn build --mode=staging
 
 FROM nginx:alpine as production-stage
 
