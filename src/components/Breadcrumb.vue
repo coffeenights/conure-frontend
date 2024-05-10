@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 import {detailApplication, Environment} from "@/services/organizations";
+import {Loader} from "lucide-vue-next";
 
 const store = useBreadCrumbStore()
 const router = useRouter()
@@ -17,6 +18,7 @@ const organization = ref(store.organization)
 const application = ref(store.application)
 const environment = ref(store.environment)
 const envList = ref([] as Environment[])
+const envLoading = ref(false)
 
 watch(
   () => store.organization,
@@ -64,12 +66,16 @@ const onEnvMenuOpen = (isOpen: boolean) => {
   if (!isOpen) {
     return
   }
+  envLoading.value = true
   detailApplication(store.organizationId, store.applicationId, store.environment)
     .then((response) => {
       envList.value = response.data.environments
     })
     .catch((error) => {
       console.log(error)
+    })
+    .finally(() => {
+      envLoading.value = false
     })
 }
 
@@ -98,7 +104,7 @@ const onEnvSelect = (env: Environment) => {
   </div>
   <label class="mr-2 hidden sm:visible">/</label>
   <div
-    v-if="organization"
+    v-if="organization && application"
     class="cursor-pointer border rounded-lg mt-1 p-2.5 hover:border-ring transition duration-500 inline-block mr-2"
     @click="goToComponents(store.organizationId, store.applicationId)"
   >
@@ -118,7 +124,10 @@ const onEnvSelect = (env: Environment) => {
       </div>
     </DropdownMenuTrigger>
     <DropdownMenuContent>
-      <DropdownMenuItem v-for="env in envList" :key="env.id" class="cursor-pointer" @select="onEnvSelect(env)">
+      <DropdownMenuItem v-if="envLoading" class="justify-center h-15">
+        <Loader  class="h-7 w-7 animate-spin" />
+      </DropdownMenuItem>
+      <DropdownMenuItem v-if="!envLoading" v-for="env in envList" :key="env.id" class="cursor-pointer" @select="onEnvSelect(env)">
         {{ env.name }}
       </DropdownMenuItem>
     </DropdownMenuContent>
