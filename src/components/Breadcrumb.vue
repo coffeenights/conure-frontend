@@ -2,13 +2,23 @@
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu'
+import {detailApplication, Environment} from "@/services/organizations";
+import {Loader} from "lucide-vue-next";
 
 const store = useBreadCrumbStore()
 const router = useRouter()
 const route = useRoute()
-let organization = ref(store.organization)
-let application = ref(store.application)
-let environment = ref(store.environment)
+const organization = ref(store.organization)
+const application = ref(store.application)
+const environment = ref(store.environment)
+const envList = ref([] as Environment[])
+const envLoading = ref(false)
 
 watch(
   () => store.organization,
@@ -38,6 +48,51 @@ const goToApplications = (oId: string) => {
     params: { organizationId: oId },
   })
 }
+
+const goToComponents = (oId: string, aId: string) => {
+  if (route.name === 'componentList') {
+    return
+  }
+  router.push({
+    name: 'componentList',
+    params: {
+      organizationId: oId,
+      applicationId: aId,
+    },
+  })
+}
+
+const onEnvMenuOpen = (isOpen: boolean) => {
+  if (!isOpen) {
+    return
+  }
+  envLoading.value = true
+  detailApplication(store.organizationId, store.applicationId, store.environment)
+    .then((response) => {
+      envList.value = response.data.environments
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+    .finally(() => {
+      envLoading.value = false
+    })
+}
+
+const onEnvSelect = (env: Environment) => {
+  if (env.name === store.environment) {
+    return
+  }
+  store.environment = env.name
+  router.push({
+    name: 'componentList',
+    params: {
+      organizationId: store.organizationId,
+      applicationId: store.applicationId,
+      environment: env.name,
+    },
+  })
+}
 </script>
 <template>
   <div
@@ -49,20 +104,33 @@ const goToApplications = (oId: string) => {
   </div>
   <label class="mr-2 hidden sm:visible">/</label>
   <div
-    v-if="organization"
+    v-if="organization && application"
     class="cursor-pointer border rounded-lg mt-1 p-2.5 hover:border-ring transition duration-500 inline-block mr-2"
+    @click="goToComponents(store.organizationId, store.applicationId)"
   >
     <label class="mr-2 cursor-pointer">
       <i class="bi bi-diagram-3 cursor-pointer pr-1"></i>
       {{ application }}
     </label>
-    <i class="bi-chevron-down cursor-pointer"></i>
   </div>
-  <div
-    v-if="environment && organization"
-    class="cursor-pointer border rounded-lg mt-1 p-2.5 hover:border-ring transition duration-500 inline-block mr-2"
-  >
-    <label class="mr-2 cursor-pointer">{{ environment }}</label>
-    <i class="bi-chevron-down cursor-pointer"></i>
-  </div>
+  <DropdownMenu @update:open="onEnvMenuOpen" >
+    <DropdownMenuTrigger>
+      <div
+        v-if="environment && organization"
+        class="cursor-pointer border rounded-lg mt-1 p-2.5 hover:border-ring transition duration-500 inline-block mr-2"
+      >
+        <label class="mr-2 cursor-pointer">{{ environment }}</label>
+        <i class="bi-chevron-down cursor-pointer"></i>
+      </div>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent>
+      <DropdownMenuItem v-if="envLoading" class="justify-center h-15">
+        <Loader  class="h-7 w-7 animate-spin" />
+      </DropdownMenuItem>
+      <DropdownMenuItem v-if="!envLoading" v-for="env in envList" :key="env.id" class="cursor-pointer" @select="onEnvSelect(env)">
+        {{ env.name }}
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+
 </template>

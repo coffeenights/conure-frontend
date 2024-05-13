@@ -157,7 +157,7 @@ const onSubmit = handleSubmit(async (values) => {
         </CardHeader>
         <CardContent class="p-3">
           <div class="font-bold text-lg">{{ o.name }}</div>
-          <div class="font-bold text-xs text-muted-foreground pb-2">
+          <div class="text-xs text-muted-foreground pb-2">
             Created {{ getTimeAgo(o.created_at) }} ago
           </div>
           <Status
