@@ -60,20 +60,8 @@ function goToDetailApplication(
         Last update {{ getTimeAgo(latestRevision.created_at) }} ago
       </div>
       <div v-else class="text-xs text-muted-foreground">No updates yet</div>
-      <div class="border border-t-[1px] border-b-0 mt-9 h-0"></div>
-      <div class="text-xl flex items-center pt-2 pb-2 justify-center">
-        <div class="grow flex items-center justify-center gap-2">
-          <div class="bi-boxes"></div>
-          <span class="text-sm">{{ application.total_components }}</span>
-        </div>
-        <div class="h-5 w-0 border border-l-0"></div>
-        <div class="grow flex items-center justify-center gap-2">
-          <div class="bi-people"></div>
-          <span class="text-sm">3</span>
-        </div>
-      </div>
-      <div class="border border-t-[1px] border-b-0 h-0"></div>
-      <div class="flex items-center mt-1 text-muted-foreground">
+      <div class="border border-t-[1px] border-b-0 mt-5 mb-4 h-0"></div>
+      <div class="flex items-center text-muted-foreground">
         <div class="text-xs grow">
           Rev. {{ latestRevision?.revision_number ?? 0 }}
         </div>
