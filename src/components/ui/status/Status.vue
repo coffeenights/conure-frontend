@@ -4,6 +4,7 @@ import { cn } from '@/utils'
 const props = defineProps<{
   class?: string
   status: string
+  text: string
 }>()
 
 const color = () => {
@@ -17,19 +18,16 @@ const color = () => {
     case 'warning':
       return 'text-yellow-600'
     case 'progressing':
-      return 'text-blue-600'
+      return 'text-orange-600'
   }
 }
 </script>
 
 <template>
-  <div
-    :class="cn('flex items-center mt-1', props.class)"
-    class="flex items-center mt-1"
-  >
+  <div :class="cn('flex items-center', props.class)">
     <div :class="color()">
       <span class="text-xs bi-circle-fill pr-2"></span>
     </div>
-    <div class="text-xs">{{ props.status }}</div>
+    <div class="text-xs">{{ props.text }}</div>
   </div>
 </template>

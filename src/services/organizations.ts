@@ -24,6 +24,10 @@ export type Application = {
   revisions: Revision[]
 }
 
+export type ApplicationStatus = {
+  status: string
+}
+
 export type Organization = {
   id: string
   name: string
@@ -81,6 +85,7 @@ export type ApplicationListResponse = ApiResponse<{
   applications: Application[]
 }>
 export type ApplicationResponse = ApiResponse<Application>
+export type ApplicationStatusResponse = ApiResponse<ApplicationStatus>
 export type OrganizationResponse = ApiResponse<Organization>
 export type OrganizationListResponse = ApiResponse<{
   organizations: Organization[]
@@ -120,6 +125,16 @@ export const detailApplication = async (
 ): Promise<ApplicationResponse> => {
   return fetchData<ApplicationResponse>(
     `/organizations/${organizationId}/a/${applicationId}/e/${environment}`,
+  )
+}
+
+export const statusApplication = async (
+  organizationId: string,
+  applicationId: string,
+  environment: string,
+): Promise<ApplicationStatusResponse> => {
+  return fetchData<ApplicationStatusResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/status`,
   )
 }
 
