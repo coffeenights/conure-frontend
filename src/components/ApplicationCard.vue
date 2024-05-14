@@ -90,7 +90,7 @@ onMounted(() => {
       goToDetailApplication(application.id, application.name, environment.name)
     "
   >
-    <div class="p-4 ">
+    <div class="p-4">
       <div class="text-lg">{{ environment.name }}</div>
       <div v-if="latestRevision" class="text-xs text-muted-foreground">
         Last update {{ getTimeAgo(latestRevision.created_at) }} ago
