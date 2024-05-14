@@ -36,11 +36,11 @@ Errors between 2000 and 2999 are related to the request.
 - `2001 - invalid_request`: The request is invalid.
 - `2002 - object_not_found`: The object was not found.
 - `2003 - object_already_exists`: The object already exists.
-- `2003 - email_already_exists`: The email already exists.
 - `2004 - invalid_email`: The email is invalid.
 - `2005 - invalid_password`: The password is invalid.
 - `2006 - password_confirmation_mismatch`: The password confirmation does not match the password.
 - `2007 - invalid_field_value`: The value of the following fields are not correct.
+- `2008 - email_already_exists`: The email already exists.
 
 
 ### Server errors
