@@ -2,14 +2,14 @@
 import Breadcrumb from '../components/Breadcrumb.vue'
 import CompanyLogo from '../components/CompanyLogo.vue'
 import { Button } from '@/components/ui/button'
-import {
-  HoverCard,
-  HoverCardTrigger,
-  HoverCardContent,
-} from '@/components/ui/hover-card'
-import { HoverCardArrow } from 'radix-vue'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useDarkMode } from '@/composables/useDarkMode'
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip'
 
 const { isDarkMode, toggleDarkMode } = useDarkMode()
 </script>
@@ -25,31 +25,33 @@ const { isDarkMode, toggleDarkMode } = useDarkMode()
         <Breadcrumb />
       </div>
       <div class="flex flex-grow justify-end mt-2">
-        <HoverCard>
-          <HoverCardTrigger as-child>
-            <Button
-              size="icon"
-              variant="ghost"
-              class="mr-5"
-              @click="toggleDarkMode"
-            >
-              <span
-                class="text-xl"
-                :class="{ 'bi-moon-stars': isDarkMode, 'bi-sun': !isDarkMode }"
-              ></span>
-            </Button>
-          </HoverCardTrigger>
-          <HoverCardContent
-            class="text-sm w-max bg-black border-0 text-white dark:text-black dark:bg-white"
-          >
-            Switch theme
-            <HoverCardArrow class="dark:fill-white" :width="8" />
-          </HoverCardContent>
-        </HoverCard>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                size="icon"
+                variant="ghost"
+                class="mr-5"
+                @click="toggleDarkMode"
+              >
+                <span
+                  class="text-xl"
+                  :class="{
+                    'bi-moon-stars': isDarkMode,
+                    'bi-sun': !isDarkMode,
+                  }"
+                ></span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Switch theme</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       <div class="mr-5 mt-2">
         <Avatar class="h-10 w-10">
-          <AvatarFallback><span class="text-lg bi bi-person"></span></AvatarFallback>
+          <AvatarFallback
+            ><span class="text-lg bi bi-person"></span
+          ></AvatarFallback>
         </Avatar>
       </div>
     </div>
