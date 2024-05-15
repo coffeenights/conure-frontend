@@ -1,4 +1,7 @@
 <script setup lang="ts">
+defineProps({
+  name: String,
+})
 
 type IconFile = {
   [key: string]: string
@@ -19,12 +22,13 @@ const serviceIcon: IconFile = {
 }
 
 function getImageUrl(name: string) {
-  return new URL(`/src/assets/icons/${name}.svg`, import.meta.url).href
+  const icon = serviceIcon[name]
+  return new URL(`/src/assets/icons/${icon}`, import.meta.url).href
 }
 </script>
 
 <template>
-  <img :src="getImageUrl('serverstack')" alt="Web Service" class="w-10 h-12" />
+  <img :src="getImageUrl(name as string)" alt="Web Service" class="w-10 h-12" />
 </template>
 
 <style scoped>
