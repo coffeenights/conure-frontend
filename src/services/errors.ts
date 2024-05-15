@@ -35,5 +35,8 @@ export const getErrorCode = (error: any): number => {
 }
 
 export const getError = (error: any): string => {
+  if (error.response?.data?.fields) {
+    return `${getErrorMessage(getErrorCode(error))} ${error.response.data.fields}`
+  }
   return getErrorMessage(getErrorCode(error))
 }
