@@ -2,11 +2,13 @@
 // declare props and define their types and default values using composition api
 import {
   ComponentService,
-  detailComponent,
   getTimeAgo,
+  statusComponentHealth,
 } from '@/services/organizations'
 import { getIconPath } from '@/utils'
 import { onMounted, ref } from 'vue'
+import { Status } from '@/components/ui/status'
+
 const props = defineProps({
   component: {
     type: Object as () => ComponentService,
@@ -28,9 +30,10 @@ const props = defineProps({
 
 const isLoading = ref(true)
 const date = ref('')
+const healthy = ref(false)
 
 onMounted(() => {
-  detailComponent(
+  statusComponentHealth(
     props.organizationId,
     props.applicationId,
     props.environmentId,
@@ -39,6 +42,7 @@ onMounted(() => {
     .then((response) => {
       isLoading.value = false
       date.value = response.data.updated
+      healthy.value = response.data.healthy
     })
     .catch((error) => {
       console.log(error)
@@ -70,10 +74,11 @@ onMounted(() => {
       </div>
     </div>
     <div class="flex items-center mt-1 justify-end">
-      <div class="text-lime-600">
-        <span class="text-xs bi-circle-fill pr-2"></span>
-      </div>
-      <div class="text-xs">active</div>
+      <Status
+        v-if="!isLoading"
+        :status="healthy ? 'active' : 'error'"
+        :text="healthy ? 'healthy' : 'unhealthy'"
+      />
     </div>
   </div>
 </template>
