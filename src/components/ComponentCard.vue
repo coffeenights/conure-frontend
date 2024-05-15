@@ -8,6 +8,7 @@ import {
 import { getIconPath } from '@/utils'
 import { onMounted, ref } from 'vue'
 import { Status } from '@/components/ui/status'
+import WebService from "@/components/service-icons/WebService.vue";
 
 const props = defineProps({
   component: {
@@ -67,7 +68,7 @@ onMounted(() => {
   <div class="w-80 h-40 border rounded-md p-3 cursor-pointer">
     <div class="flex">
       <div class="grow">
-        <img :src="getIconPath(component.type)" class="w-10 h-12" />
+        <WebService />
       </div>
       <div>
         <img src="@/assets/icons/docker.svg" class="w-10 h-12" />
