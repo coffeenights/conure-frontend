@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card'
 import { ref, watch } from 'vue'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import { statusComponent } from '@/services/organizations'
+import { getTimeAgo, statusComponent } from '@/services/organizations'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -40,7 +40,7 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
   <div class="flex flex-row gap-2 flex-wrap">
     <div class="grow flex flex-col gap-2 sm:min-w-[22rem] md:min-w-[34rem]">
       <Card class="grow">
-        <CardContent class="p-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <CardContent class="p-4 grid grid-cols-2 sm:grid-cols-6 gap-2">
           <CardContentKeyValueVertical
             c-key="Name"
             :value="store.componentStatus?.component?.name"
@@ -57,8 +57,22 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
             :is-loading="isLoading"
           />
           <CardContentKeyValueVertical
+            c-key="Healthy"
+            :value="store.componentStatus?.properties?.status?.healthy"
+            :is-loading="isLoading"
+          />
+          <CardContentKeyValueVertical
             c-key="Status"
-            :value="store.componentStatus?.properties?.status"
+            :value="store.componentStatus?.properties?.status.message"
+            :is-loading="isLoading"
+          />
+          <CardContentKeyValueVertical
+            c-key="Updated"
+            :value="
+              'Updated ' +
+              getTimeAgo(store.componentStatus?.properties?.status?.updated) +
+              ' ago'
+            "
             :is-loading="isLoading"
           />
         </CardContent>

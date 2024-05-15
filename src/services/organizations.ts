@@ -59,6 +59,12 @@ export type ComponentStatus = {
   properties: ComponentProperties
 }
 
+export type ComponentStatusHealth = {
+  healthy: boolean
+  message: string
+  updated: string
+}
+
 export type ComponentProperties = {
   network: {
     ip: string
@@ -77,7 +83,7 @@ export type ComponentProperties = {
   source: {
     container_image: string
   }
-  status?: string
+  status: ComponentStatusHealth
 }
 
 export type ApplicationListResponse = ApiResponse<{
@@ -94,6 +100,8 @@ export type ComponentListResponse = ApiResponse<{
   components: ComponentService[]
 }>
 export type ComponentStatusResponse = ApiResponse<ComponentStatus>
+export type ComponentStatusHealthResponse = ApiResponse<ComponentStatusHealth>
+
 
 export const detailOrganization = async (
   id: string,
@@ -173,6 +181,16 @@ export const statusComponent = async (
 ): Promise<ComponentStatusResponse> => {
   return fetchData<ComponentStatusResponse>(
     `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/status`,
+  )
+}
+export const statusComponentHealth = async (
+  organizationId: string,
+  applicationId: string,
+  environment: string,
+  componentId: string,
+): Promise<ComponentStatusHealthResponse> => {
+  return fetchData<ComponentStatusHealthResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/status/health`,
   )
 }
 
