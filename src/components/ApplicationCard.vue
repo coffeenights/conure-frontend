@@ -41,9 +41,14 @@ const statusMap: Record<string, string> = {
   running: 'active',
   unhealthy: 'error',
   deleting: 'disabled',
+  notDeployed: 'disabled',
 }
 
 latestRevision.value = getLatestRevision(props.application)
+
+function camelToSnakeCase(str: string)  {
+  return str.replace(/[A-Z]/g, letter => ` ${letter.toLowerCase()}`);
+}
 
 function goToDetailApplication(
   applicationId: string,
@@ -75,7 +80,11 @@ onMounted(() => {
       status.value = response.data.status
     })
     .catch((error) => {
-      throw error
+      if (error.response.data.code === '4004') {
+        status.value = 'notDeployed'
+      } else {
+        throw error
+      }
     })
     .finally(() => {
       statusLoading.value = false
@@ -105,7 +114,7 @@ onMounted(() => {
         <Status
           v-if="!statusLoading"
           :status="statusMap[status]"
-          :text="status"
+          :text="camelToSnakeCase(status)"
         />
       </div>
     </div>

@@ -4,15 +4,17 @@ import Input from '@/components/ui/input/Input.vue'
 import Button from '@/components/ui/button/Button.vue'
 import { listComponents, ComponentService } from '@/services/organizations'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import { onMounted, ref } from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { toast } from '@/components/ui/toast'
+
 const route = useRoute()
 const router = useRouter()
 const components = ref<ComponentService[]>([])
 const store = useBreadCrumbStore()
 
-onMounted(() => {
+const fetchData = () => {
+  components.value = []
   listComponents(
     route.params.organizationId as string,
     route.params.applicationId as string,
@@ -23,7 +25,7 @@ onMounted(() => {
     })
     .catch((error) => {
       if (error.response.status === 404) {
-        router.push({ name: '404' })
+        router.push({name: '404'})
       } else {
         toast({
           title: 'Error',
@@ -31,7 +33,9 @@ onMounted(() => {
         })
       }
     })
-})
+}
+
+watch(() => route.params.environment, fetchData, { immediate: true })
 </script>
 
 <template>

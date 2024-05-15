@@ -30,7 +30,13 @@ const props = defineProps({
 
 const isLoading = ref(true)
 const date = ref('')
-const healthy = ref(false)
+const healthy = ref('')
+
+const statusMap: Record<string, string> = {
+  healthy: 'active',
+  unhealthy: 'error',
+  disabled: 'disabled',
+}
 
 onMounted(() => {
   statusComponentHealth(
@@ -40,12 +46,19 @@ onMounted(() => {
     props.component.id,
   )
     .then((response) => {
-      isLoading.value = false
       date.value = response.data.updated
-      healthy.value = response.data.healthy
+      healthy.value = response.data.healthy ? 'healthy' : 'unhealthy'
     })
     .catch((error) => {
-      console.log(error)
+      if (error.response.data.code === '4004') {
+        date.value = ''
+        healthy.value = 'disabled'
+      } else {
+        throw error
+      }
+    })
+    .finally(() => {
+      isLoading.value = false
     })
 })
 </script>
@@ -67,17 +80,25 @@ onMounted(() => {
         :class="{ hidden: !isLoading }"
       ></div>
       <div
+        v-if="date"
         class="text-xs text-muted-foreground"
         :class="{ hidden: isLoading }"
       >
         Last update {{ getTimeAgo(date) }} ago
       </div>
+      <div
+        v-else
+        class="text-xs text-muted-foreground"
+        :class="{ hidden: isLoading }"
+      >
+        Never updated
+      </div>
     </div>
     <div class="flex items-center mt-1 justify-end">
       <Status
         v-if="!isLoading"
-        :status="healthy ? 'active' : 'error'"
-        :text="healthy ? 'healthy' : 'unhealthy'"
+        :status="statusMap[healthy]"
+        :text="healthy"
       />
     </div>
   </div>

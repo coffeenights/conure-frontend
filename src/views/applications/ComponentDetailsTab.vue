@@ -16,6 +16,7 @@ const route = useRoute()
 const breadCrumbStore = useBreadCrumbStore()
 const c = ref({} as ComponentStatus)
 const isLoading = ref<boolean>(true)
+const notDeployed = ref<boolean>(false)
 
 const fetchData = () => {
   statusComponent(
@@ -29,13 +30,17 @@ const fetchData = () => {
       isLoading.value = false
     })
     .catch((error) => {
-      console.log(error)
+      if (error.response.data.code === '4004') {
+        notDeployed.value = true
+      } else {
+        throw error
+      }
     })
 }
 watch(() => route.params.componentId, fetchData, { immediate: true })
 </script>
 <template>
-  <div class="flex flex-row gap-2 flex-wrap">
+  <div v-if="!notDeployed" class="flex flex-row gap-2 flex-wrap">
     <div class="grow flex flex-col gap-2 sm:min-w-[22rem] md:min-w-[34rem]">
       <Card class="grow">
         <CardContent class="p-4 grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -156,6 +161,11 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
           </CardContent>
         </Card>
       </div>
+    </div>
+  </div>
+  <div v-else class="flex justify-center items-center h-96">
+    <div class="text-lg text-muted-foreground">
+      This component has not been deployed yet
     </div>
   </div>
 </template>
