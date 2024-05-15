@@ -1,5 +1,7 @@
 import { useUserStore } from '@/stores/UserStore'
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
+import { getError } from './errors'
+import { toast } from '@/components/ui/toast'
 
 const instance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_API_URL,
@@ -14,6 +16,11 @@ instance.interceptors.response.use(
     if (error.response?.status === 401) {
       userStore.logout()
     }
+    const errorMessage = getError(error)
+    toast({
+      title: 'Error',
+      description: errorMessage,
+    })
     return Promise.reject(error)
   },
 )
