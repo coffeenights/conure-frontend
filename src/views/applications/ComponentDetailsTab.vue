@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useComponentStore } from '@/stores/ComponentStore'
 import {
   Card,
   CardContent,
@@ -10,13 +9,12 @@ import {
 } from '@/components/ui/card'
 import { ref, watch } from 'vue'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import { getTimeAgo, statusComponent } from '@/services/organizations'
+import {ComponentStatus, getTimeAgo, statusComponent} from '@/services/organizations'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const componentStore = useComponentStore()
 const breadCrumbStore = useBreadCrumbStore()
-const store = useComponentStore()
+const c = ref({} as ComponentStatus)
 const isLoading = ref<boolean>(true)
 
 const fetchData = () => {
@@ -27,7 +25,7 @@ const fetchData = () => {
     route.params.componentId as string,
   )
     .then((response) => {
-      componentStore.componentStatus = response.data
+      c.value = response.data
       isLoading.value = false
     })
     .catch((error) => {
@@ -43,28 +41,28 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
         <CardContent class="p-4 grid grid-cols-2 sm:grid-cols-5 gap-2">
           <CardContentKeyValueVertical
             c-key="Name"
-            :value="store.componentStatus?.component?.name"
+            :value="c.component?.name"
             :is-loading="isLoading"
           />
           <CardContentKeyValueVertical
             c-key="Type"
-            :value="store.componentStatus?.component?.type"
+            :value="c.component?.type"
             :is-loading="isLoading"
           />
           <CardContentKeyValueVertical
             c-key="Healthy"
-            :value="store.componentStatus?.properties?.status?.healthy"
+            :value="c.properties?.health.healthy"
             :is-loading="isLoading"
           />
           <CardContentKeyValueVertical
             c-key="Status"
-            :value="store.componentStatus?.properties?.status.message"
+            :value="c.properties?.health.message"
             :is-loading="isLoading"
           />
           <CardContentKeyValueVertical
             c-key="Updated"
             :value="
-              getTimeAgo(store.componentStatus?.properties?.status?.updated) +
+              getTimeAgo(c.properties?.health.updated) +
               ' ago'
             "
             :is-loading="isLoading"
@@ -81,22 +79,22 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
           <CardContent class="p-4">
             <CardContentKeyValue
               c-key="IP"
-              :value="store.componentStatus?.properties?.network?.ip"
+              :value="c.properties?.network?.ip"
               :is-loading="isLoading"
             />
             <CardContentKeyValue
               c-key="External IP"
-              :value="store.componentStatus?.properties?.network?.external_ip"
+              :value="c.properties?.network?.external_ip"
               :is-loading="isLoading"
             />
             <CardContentKeyValue
               c-key="Host"
-              :value="store.componentStatus?.properties?.network?.host"
+              :value="c.properties?.network?.host"
               :is-loading="isLoading"
             />
             <CardContentKeyValue
               c-key="Ports"
-              :value="store.componentStatus?.properties?.network?.port"
+              :value="c.properties?.network?.port"
               :is-loading="isLoading"
             />
           </CardContent>
@@ -111,7 +109,7 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
             <CardContentKeyValue
               c-key="Image"
               :value="
-                store.componentStatus?.properties?.source?.container_image
+                c.properties?.source?.container_image
               "
               :is-loading="isLoading"
             />
@@ -128,17 +126,17 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
           <CardContent class="p-4">
             <CardContentKeyValue
               c-key="CPU"
-              :value="store.componentStatus?.properties?.resources?.cpu"
+              :value="c.properties?.resources?.cpu"
               :is-loading="isLoading"
             />
             <CardContentKeyValue
               c-key="Memory"
-              :value="store.componentStatus?.properties?.resources?.memory"
+              :value="c.properties?.resources?.memory"
               :is-loading="isLoading"
             />
             <CardContentKeyValue
               c-key="Replicas"
-              :value="store.componentStatus?.properties?.resources?.replicas"
+              :value="c.properties?.resources?.replicas"
               :is-loading="isLoading"
             />
           </CardContent>
@@ -152,7 +150,7 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
           <CardContent class="p-4">
             <CardContentKeyValue
               c-key="Size"
-              :value="store.componentStatus?.properties?.storage?.size"
+              :value="c.properties?.storage?.size"
               :is-loading="isLoading"
             />
           </CardContent>
