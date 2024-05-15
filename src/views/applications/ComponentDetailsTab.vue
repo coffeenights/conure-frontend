@@ -40,7 +40,7 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
   <div class="flex flex-row gap-2 flex-wrap">
     <div class="grow flex flex-col gap-2 sm:min-w-[22rem] md:min-w-[34rem]">
       <Card class="grow">
-        <CardContent class="p-4 grid grid-cols-2 sm:grid-cols-6 gap-2">
+        <CardContent class="p-4 grid grid-cols-2 sm:grid-cols-5 gap-2">
           <CardContentKeyValueVertical
             c-key="Name"
             :value="store.componentStatus?.component?.name"
@@ -49,11 +49,6 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
           <CardContentKeyValueVertical
             c-key="Type"
             :value="store.componentStatus?.component?.type"
-            :is-loading="isLoading"
-          />
-          <CardContentKeyValueVertical
-            c-key="Replicas"
-            :value="store.componentStatus?.properties?.resources?.replicas"
             :is-loading="isLoading"
           />
           <CardContentKeyValueVertical
@@ -69,7 +64,6 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
           <CardContentKeyValueVertical
             c-key="Updated"
             :value="
-              'Updated ' +
               getTimeAgo(store.componentStatus?.properties?.status?.updated) +
               ' ago'
             "
