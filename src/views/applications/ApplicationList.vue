@@ -78,7 +78,7 @@ watch(() => route.params.organizationId, fetchData, { immediate: true })
               </div>
             </AccordionTrigger>
             <AccordionContent
-              class="p-5 bg-background rounded-b-md flex flex-row gap-5"
+              class="p-5 bg-background rounded-b-md flex flex-row gap-5 flex-wrap"
             >
               <ApplicationCard
                 v-for="environment in application.environments"
