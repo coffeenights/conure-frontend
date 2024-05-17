@@ -2,11 +2,14 @@
 // declare props and define their types and default values using composition api
 import {
   ComponentService,
-  detailComponent,
   getTimeAgo,
+  statusComponentHealth,
 } from '@/services/organizations'
 import { getIconPath } from '@/utils'
 import { onMounted, ref } from 'vue'
+import { Status } from '@/components/ui/status'
+import ServiceIcon from "@/components/ServiceIcon.vue";
+
 const props = defineProps({
   component: {
     type: Object as () => ComponentService,
@@ -28,20 +31,35 @@ const props = defineProps({
 
 const isLoading = ref(true)
 const date = ref('')
+const healthy = ref('')
+
+const statusMap: Record<string, string> = {
+  healthy: 'active',
+  unhealthy: 'error',
+  disabled: 'disabled',
+}
 
 onMounted(() => {
-  detailComponent(
+  statusComponentHealth(
     props.organizationId,
     props.applicationId,
     props.environmentId,
     props.component.id,
   )
     .then((response) => {
-      isLoading.value = false
       date.value = response.data.updated
+      healthy.value = response.data.healthy ? 'healthy' : 'unhealthy'
     })
     .catch((error) => {
-      console.log(error)
+      if (error.response.data.code === '4004') {
+        date.value = ''
+        healthy.value = 'disabled'
+      } else {
+        throw error
+      }
+    })
+    .finally(() => {
+      isLoading.value = false
     })
 })
 </script>
@@ -50,7 +68,7 @@ onMounted(() => {
   <div class="w-80 h-40 border rounded-md p-3 cursor-pointer">
     <div class="flex">
       <div class="grow">
-        <img :src="getIconPath(component.type)" class="w-10 h-12" />
+        <ServiceIcon :name="component.type" />
       </div>
       <div>
         <img src="@/assets/icons/docker.svg" class="w-10 h-12" />
@@ -63,17 +81,26 @@ onMounted(() => {
         :class="{ hidden: !isLoading }"
       ></div>
       <div
+        v-if="date"
         class="text-xs text-muted-foreground"
         :class="{ hidden: isLoading }"
       >
         Last update {{ getTimeAgo(date) }} ago
       </div>
+      <div
+        v-else
+        class="text-xs text-muted-foreground"
+        :class="{ hidden: isLoading }"
+      >
+        Never updated
+      </div>
     </div>
     <div class="flex items-center mt-1 justify-end">
-      <div class="text-lime-600">
-        <span class="text-xs bi-circle-fill pr-2"></span>
-      </div>
-      <div class="text-xs">active</div>
+      <Status
+        v-if="!isLoading"
+        :status="statusMap[healthy]"
+        :text="healthy"
+      />
     </div>
   </div>
 </template>

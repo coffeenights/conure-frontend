@@ -1,18 +1,23 @@
 <script setup lang="ts">
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import {
   Application,
   Environment,
   Revision,
   getTimeAgo,
   getLatestRevision,
+  statusApplication,
 } from '@/services/organizations'
+import { Status } from '@/components/ui/status'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const router = useRouter()
 const store = useBreadCrumbStore()
 const latestRevision = ref<Revision | null>(null)
+const status = ref<string>('')
+const statusLoading = ref<boolean>(true)
 
 const props = defineProps({
   application: {
@@ -25,7 +30,25 @@ const props = defineProps({
   },
 })
 
+const statusMap: Record<string, string> = {
+  starting: 'progressing',
+  rendering: 'progressing',
+  generatingPolicy: 'active',
+  runningWorkflow: 'progressing',
+  workflowSuspending: 'warning',
+  workflowTerminated: 'disabled',
+  workflowFailed: 'error',
+  running: 'active',
+  unhealthy: 'error',
+  deleting: 'disabled',
+  notDeployed: 'disabled',
+}
+
 latestRevision.value = getLatestRevision(props.application)
+
+function camelToSnakeCase(str: string)  {
+  return str.replace(/[A-Z]/g, letter => ` ${letter.toLowerCase()}`);
+}
 
 function goToDetailApplication(
   applicationId: string,
@@ -45,6 +68,28 @@ function goToDetailApplication(
     },
   })
 }
+
+onMounted(() => {
+  statusLoading.value = true
+  statusApplication(
+    store.organizationId,
+    props.application.id,
+    props.environment?.name,
+  )
+    .then((response) => {
+      status.value = response.data.status
+    })
+    .catch((error) => {
+      if (error.response.data.code === '4004') {
+        status.value = 'notDeployed'
+      } else {
+        throw error
+      }
+    })
+    .finally(() => {
+      statusLoading.value = false
+    })
+})
 </script>
 
 <template>
@@ -60,27 +105,17 @@ function goToDetailApplication(
         Last update {{ getTimeAgo(latestRevision.created_at) }} ago
       </div>
       <div v-else class="text-xs text-muted-foreground">No updates yet</div>
-      <div class="border border-t-[1px] border-b-0 mt-9 h-0"></div>
-      <div class="text-xl flex items-center pt-2 pb-2 justify-center">
-        <div class="grow flex items-center justify-center gap-2">
-          <div class="bi-boxes"></div>
-          <span class="text-sm">{{ application.total_components }}</span>
-        </div>
-        <div class="h-5 w-0 border border-l-0"></div>
-        <div class="grow flex items-center justify-center gap-2">
-          <div class="bi-people"></div>
-          <span class="text-sm">3</span>
-        </div>
-      </div>
-      <div class="border border-t-[1px] border-b-0 h-0"></div>
-      <div class="flex items-center mt-1 text-muted-foreground">
+      <div class="border border-t-[1px] border-b-0 mt-5 mb-4 h-0"></div>
+      <div class="flex items-center text-muted-foreground min-h-5">
         <div class="text-xs grow">
           Rev. {{ latestRevision?.revision_number ?? 0 }}
         </div>
-        <div class="text-lime-600">
-          <span class="text-xs bi-circle-fill pr-1"></span>
-        </div>
-        <div class="text-xs">{{ application.status }}</div>
+        <Skeleton v-if="statusLoading" class="h-3 w-1/2" />
+        <Status
+          v-if="!statusLoading"
+          :status="statusMap[status]"
+          :text="camelToSnakeCase(status)"
+        />
       </div>
     </div>
   </div>

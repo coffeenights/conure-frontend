@@ -24,6 +24,10 @@ export type Application = {
   revisions: Revision[]
 }
 
+export type ApplicationStatus = {
+  status: string
+}
+
 export type Organization = {
   id: string
   name: string
@@ -55,6 +59,12 @@ export type ComponentStatus = {
   properties: ComponentProperties
 }
 
+export type ComponentStatusHealth = {
+  healthy: boolean
+  message: string
+  updated: string
+}
+
 export type ComponentProperties = {
   network: {
     ip: string
@@ -68,12 +78,20 @@ export type ComponentProperties = {
     replicas: number
   }
   storage: {
-    size: string
+    volumes: [
+      {
+        name: string
+        path: string
+        size: string
+      },
+    ]
+    healthy: boolean
   }
   source: {
     container_image: string
+    command: string
   }
-  status?: string
+  health: ComponentStatusHealth
 }
 
 export type ApplicationListResponse = ApiResponse<{
@@ -81,6 +99,7 @@ export type ApplicationListResponse = ApiResponse<{
   applications: Application[]
 }>
 export type ApplicationResponse = ApiResponse<Application>
+export type ApplicationStatusResponse = ApiResponse<ApplicationStatus>
 export type OrganizationResponse = ApiResponse<Organization>
 export type OrganizationListResponse = ApiResponse<{
   organizations: Organization[]
@@ -89,6 +108,8 @@ export type ComponentListResponse = ApiResponse<{
   components: ComponentService[]
 }>
 export type ComponentStatusResponse = ApiResponse<ComponentStatus>
+export type ComponentStatusHealthResponse = ApiResponse<ComponentStatusHealth>
+
 
 export const detailOrganization = async (
   id: string,
@@ -120,6 +141,16 @@ export const detailApplication = async (
 ): Promise<ApplicationResponse> => {
   return fetchData<ApplicationResponse>(
     `/organizations/${organizationId}/a/${applicationId}/e/${environment}`,
+  )
+}
+
+export const statusApplication = async (
+  organizationId: string,
+  applicationId: string,
+  environment: string,
+): Promise<ApplicationStatusResponse> => {
+  return fetchData<ApplicationStatusResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/status`,
   )
 }
 
@@ -158,6 +189,16 @@ export const statusComponent = async (
 ): Promise<ComponentStatusResponse> => {
   return fetchData<ComponentStatusResponse>(
     `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/status`,
+  )
+}
+export const statusComponentHealth = async (
+  organizationId: string,
+  applicationId: string,
+  environment: string,
+  componentId: string,
+): Promise<ComponentStatusHealthResponse> => {
+  return fetchData<ComponentStatusHealthResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/status/health`,
   )
 }
 

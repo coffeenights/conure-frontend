@@ -230,7 +230,7 @@ const truncate = (text: string, length: number) => {
       v-if="!variables.length && !isLoading"
       class="flex flex-col items-center w-full"
     >
-      <h1 class="text-2xl font-extrabold mt-5">No Variables found</h1>
+      <h1 class="text-lg text-muted-foreground mt-5">No component variables found</h1>
     </div>
     <div class="px-2 pb-2">
       <Dialog v-model:open="newVariableOpen">

@@ -59,3 +59,4 @@ Errors between 4000 and 4999 are related to the internal system.
 - `4001 - provider_not_supported`: The provider is not supported.
 - `4002 - component_not_found`: The component was not found.
 - `4003 - application_already_exists`: The application already exists.
+- `4004 - application_not_deployed`: The application hasn't been deployed.
