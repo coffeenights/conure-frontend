@@ -117,6 +117,11 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
               :value="c.properties?.source?.container_image"
               :is-loading="isLoading"
             />
+            <CardContentKeyValue
+              c-key="Command"
+              :value="c.properties?.source?.command"
+              :is-loading="isLoading"
+            />
           </CardContent>
         </Card>
       </div>
@@ -152,11 +157,21 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
             </CardTitle>
           </CardHeader>
           <CardContent class="p-4">
-            <CardContentKeyValue
-              c-key="Size"
-              :value="c.properties?.storage?.size"
-              :is-loading="isLoading"
-            />
+
+            <div v-for="vol in c.properties?.storage.volumes" class="mb-5">
+              <div class="text-lg">{{ vol.name }}</div>
+              <CardContentKeyValue
+                c-key="Size"
+                :value="vol.size"
+                :is-loading="isLoading"
+              />
+              <CardContentKeyValue
+                c-key="Mount Path"
+                :value="vol.path"
+                :is-loading="isLoading"
+              />
+            </div>
+
           </CardContent>
         </Card>
       </div>

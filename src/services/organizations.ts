@@ -78,10 +78,18 @@ export type ComponentProperties = {
     replicas: number
   }
   storage: {
-    size: string
+    volumes: [
+      {
+        name: string
+        path: string
+        size: string
+      },
+    ]
+    healthy: boolean
   }
   source: {
     container_image: string
+    command: string
   }
   health: ComponentStatusHealth
 }
