@@ -157,8 +157,7 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
             </CardTitle>
           </CardHeader>
           <CardContent class="p-4">
-
-            <div v-for="vol in c.properties?.storage.volumes" class="mb-5">
+            <div v-for="vol in c.properties?.storage.volumes" :key="vol.name" class="mb-5">
               <div class="text-lg">{{ vol.name }}</div>
               <CardContentKeyValue
                 c-key="Size"
@@ -171,10 +170,12 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
                 :is-loading="isLoading"
               />
             </div>
-            <div v-if="!c.properties?.storage.volumes.length" class="text-muted-foreground text-center">
+            <div
+              v-if="!c.properties?.storage.volumes.length"
+              class="text-muted-foreground text-center"
+            >
               No storage volumes found
             </div>
-
           </CardContent>
         </Card>
       </div>
