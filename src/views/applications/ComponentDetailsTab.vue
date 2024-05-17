@@ -171,6 +171,9 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
                 :is-loading="isLoading"
               />
             </div>
+            <div v-if="!c.properties?.storage.volumes.length" class="text-muted-foreground text-center">
+              No storage volumes found
+            </div>
 
           </CardContent>
         </Card>
