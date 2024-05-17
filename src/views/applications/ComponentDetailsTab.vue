@@ -157,7 +157,11 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
             </CardTitle>
           </CardHeader>
           <CardContent class="p-4">
-            <div v-for="vol in c.properties?.storage.volumes" :key="vol.name" class="mb-5">
+            <div
+              v-for="vol in c.properties?.storage.volumes"
+              :key="vol.name"
+              class="mb-5"
+            >
               <div class="text-lg">{{ vol.name }}</div>
               <CardContentKeyValue
                 c-key="Size"
