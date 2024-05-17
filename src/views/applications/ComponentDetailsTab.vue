@@ -9,7 +9,11 @@ import {
 } from '@/components/ui/card'
 import { ref, watch } from 'vue'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import {ComponentStatus, getTimeAgo, statusComponent} from '@/services/organizations'
+import {
+  ComponentStatus,
+  getTimeAgo,
+  statusComponent,
+} from '@/services/organizations'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -66,10 +70,7 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
           />
           <CardContentKeyValueVertical
             c-key="Updated"
-            :value="
-              getTimeAgo(c.properties?.health.updated) +
-              ' ago'
-            "
+            :value="getTimeAgo(c.properties?.health.updated) + ' ago'"
             :is-loading="isLoading"
           />
         </CardContent>
@@ -113,9 +114,7 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
           <CardContent class="p-4">
             <CardContentKeyValue
               c-key="Image"
-              :value="
-                c.properties?.source?.container_image
-              "
+              :value="c.properties?.source?.container_image"
               :is-loading="isLoading"
             />
           </CardContent>
