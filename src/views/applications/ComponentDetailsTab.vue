@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useComponentStore } from '@/stores/ComponentStore'
 import {
   Card,
   CardContent,
@@ -10,14 +9,18 @@ import {
 } from '@/components/ui/card'
 import { ref, watch } from 'vue'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import { statusComponent } from '@/services/organizations'
+import {
+  ComponentStatus,
+  getTimeAgo,
+  statusComponent,
+} from '@/services/organizations'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const componentStore = useComponentStore()
 const breadCrumbStore = useBreadCrumbStore()
-const store = useComponentStore()
+const c = ref({} as ComponentStatus)
 const isLoading = ref<boolean>(true)
+const notDeployed = ref<boolean>(false)
 
 const fetchData = () => {
   statusComponent(
@@ -27,38 +30,47 @@ const fetchData = () => {
     route.params.componentId as string,
   )
     .then((response) => {
-      componentStore.componentStatus = response.data
+      c.value = response.data
       isLoading.value = false
     })
     .catch((error) => {
-      console.log(error)
+      if (error.response.data.code === '4004') {
+        notDeployed.value = true
+      } else {
+        throw error
+      }
     })
 }
 watch(() => route.params.componentId, fetchData, { immediate: true })
 </script>
 <template>
-  <div class="flex flex-row gap-2 flex-wrap">
+  <div v-if="!notDeployed" class="flex flex-row gap-2 flex-wrap">
     <div class="grow flex flex-col gap-2 sm:min-w-[22rem] md:min-w-[34rem]">
       <Card class="grow">
-        <CardContent class="p-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <CardContent class="p-4 grid grid-cols-2 sm:grid-cols-5 gap-2">
           <CardContentKeyValueVertical
             c-key="Name"
-            :value="store.componentStatus?.component?.name"
+            :value="c.component?.name"
             :is-loading="isLoading"
           />
           <CardContentKeyValueVertical
             c-key="Type"
-            :value="store.componentStatus?.component?.type"
+            :value="c.component?.type"
             :is-loading="isLoading"
           />
           <CardContentKeyValueVertical
-            c-key="Replicas"
-            :value="store.componentStatus?.properties?.resources?.replicas"
+            c-key="Healthy"
+            :value="c.properties?.health.healthy"
             :is-loading="isLoading"
           />
           <CardContentKeyValueVertical
             c-key="Status"
-            :value="store.componentStatus?.properties?.status"
+            :value="c.properties?.health.message"
+            :is-loading="isLoading"
+          />
+          <CardContentKeyValueVertical
+            c-key="Updated"
+            :value="getTimeAgo(c.properties?.health.updated) + ' ago'"
             :is-loading="isLoading"
           />
         </CardContent>
@@ -73,22 +85,22 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
           <CardContent class="p-4">
             <CardContentKeyValue
               c-key="IP"
-              :value="store.componentStatus?.properties?.network?.ip"
+              :value="c.properties?.network?.ip"
               :is-loading="isLoading"
             />
             <CardContentKeyValue
               c-key="External IP"
-              :value="store.componentStatus?.properties?.network?.external_ip"
+              :value="c.properties?.network?.external_ip"
               :is-loading="isLoading"
             />
             <CardContentKeyValue
               c-key="Host"
-              :value="store.componentStatus?.properties?.network?.host"
+              :value="c.properties?.network?.host"
               :is-loading="isLoading"
             />
             <CardContentKeyValue
               c-key="Ports"
-              :value="store.componentStatus?.properties?.network?.port"
+              :value="c.properties?.network?.port"
               :is-loading="isLoading"
             />
           </CardContent>
@@ -102,9 +114,12 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
           <CardContent class="p-4">
             <CardContentKeyValue
               c-key="Image"
-              :value="
-                store.componentStatus?.properties?.source?.container_image
-              "
+              :value="c.properties?.source?.container_image"
+              :is-loading="isLoading"
+            />
+            <CardContentKeyValue
+              c-key="Command"
+              :value="c.properties?.source?.command"
               :is-loading="isLoading"
             />
           </CardContent>
@@ -120,17 +135,17 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
           <CardContent class="p-4">
             <CardContentKeyValue
               c-key="CPU"
-              :value="store.componentStatus?.properties?.resources?.cpu"
+              :value="c.properties?.resources?.cpu"
               :is-loading="isLoading"
             />
             <CardContentKeyValue
               c-key="Memory"
-              :value="store.componentStatus?.properties?.resources?.memory"
+              :value="c.properties?.resources?.memory"
               :is-loading="isLoading"
             />
             <CardContentKeyValue
               c-key="Replicas"
-              :value="store.componentStatus?.properties?.resources?.replicas"
+              :value="c.properties?.resources?.replicas"
               :is-loading="isLoading"
             />
           </CardContent>
@@ -142,14 +157,32 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
             </CardTitle>
           </CardHeader>
           <CardContent class="p-4">
-            <CardContentKeyValue
-              c-key="Size"
-              :value="store.componentStatus?.properties?.storage?.size"
-              :is-loading="isLoading"
-            />
+
+            <div v-for="vol in c.properties?.storage.volumes" class="mb-5">
+              <div class="text-lg">{{ vol.name }}</div>
+              <CardContentKeyValue
+                c-key="Size"
+                :value="vol.size"
+                :is-loading="isLoading"
+              />
+              <CardContentKeyValue
+                c-key="Mount Path"
+                :value="vol.path"
+                :is-loading="isLoading"
+              />
+            </div>
+            <div v-if="!c.properties?.storage.volumes.length" class="text-muted-foreground text-center">
+              No storage volumes found
+            </div>
+
           </CardContent>
         </Card>
       </div>
+    </div>
+  </div>
+  <div v-else class="flex justify-center items-center h-96">
+    <div class="text-lg text-muted-foreground">
+      This component has not been deployed yet
     </div>
   </div>
 </template>

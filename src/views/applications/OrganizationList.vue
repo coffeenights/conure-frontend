@@ -162,6 +162,7 @@ const onSubmit = handleSubmit(async (values) => {
           </div>
           <Status
             :status="o.status"
+            :text="o.status"
             class="border-t mt-3 pt-3 justify-center"
           ></Status>
         </CardContent>

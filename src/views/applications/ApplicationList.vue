@@ -12,6 +12,13 @@ import {
 
 import { ApplicationCard, ApplicationEnvironmentAddCard } from '@/components'
 
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip'
+
 let applications = ref([] as Application[])
 const route = useRoute()
 const store = useBreadCrumbStore()
@@ -41,9 +48,37 @@ watch(() => route.params.organizationId, fetchData, { immediate: true })
           <AccordionItem value="environments" class="border rounded-md">
             <AccordionTrigger class="px-4 bg-transparent">
               {{ application.name }}
+              <div class="text-xl flex pt-2 pb-2 flex-grow justify-end mr-10">
+                <div class="flex gap-10">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger class="grow flex items-center gap-2">
+                        <div class="bi-boxes"></div>
+                        <span class="text-sm">{{
+                          application.total_components
+                        }}</span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Total amount of components
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger class="grow flex items-center gap-2">
+                        <div class="bi-people"></div>
+                        <span class="text-sm">1</span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Total amount of users with access
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
             </AccordionTrigger>
             <AccordionContent
-              class="p-5 bg-background rounded-b-md flex flex-row gap-5"
+              class="p-5 bg-background rounded-b-md flex flex-row gap-5 flex-wrap"
             >
               <ApplicationCard
                 v-for="environment in application.environments"
