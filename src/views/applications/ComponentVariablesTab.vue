@@ -115,12 +115,7 @@ const onSubmit = handleSubmit(async (values) => {
     }
     fetchVariables()
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      toast({
-        title: 'An error occurred',
-        description: error.response?.data.error,
-      })
-    } else {
+    if (!axios.isAxiosError(error)) {
       toast({
         title: 'An error occurred',
         description: 'An unexpected error occurred.',
@@ -144,12 +139,7 @@ const onDelete = async (id: string) => {
       description: 'Variable deleted!',
     })
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      toast({
-        title: 'An error occurred',
-        description: error.response?.data.error,
-      })
-    } else {
+    if (!axios.isAxiosError(error)) {
       toast({
         title: 'An error occurred',
         description: 'An unexpected error occurred.',

@@ -124,15 +124,7 @@ const onSubmit = handleSubmit(async (values) => {
     }
     fetchData()
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response?.data.code == '2007') {
-        toast({
-          title: 'An error occurred',
-          description:
-            error.response?.data.message + ' ' + error.response?.data.fields,
-        })
-      }
-    } else {
+    if (!axios.isAxiosError(error)) {
       toast({
         title: 'An error occurred',
         description: 'An unexpected error occurred.',
