@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
 import { getError } from './errors'
-import { useToast } from '@/components/ui/toast'
+import { notify } from './notifications'
 
 const instance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_API_URL,
@@ -10,12 +10,8 @@ const instance: AxiosInstance = axios.create({
 instance.interceptors.response.use(
   (response) => response,
   (error) => {
-    const { toast } = useToast()
     const errorMessage = getError(error)
-    toast({
-      title: 'Error',
-      description: errorMessage,
-    })
+    notify('Error', errorMessage)
     return Promise.reject(error)
   },
 )
