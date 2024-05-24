@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
-import { getError } from './errors'
-import { notify } from './notifications'
+import { getError, registerError } from './errors'
 
 const instance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_API_URL,
@@ -11,7 +10,7 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     const errorMessage = getError(error)
-    notify('Error', errorMessage)
+    registerError('Error', errorMessage, error)
     return Promise.reject(error)
   },
 )
