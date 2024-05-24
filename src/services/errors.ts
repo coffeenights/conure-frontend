@@ -45,12 +45,12 @@ export const getError = (error: any): string => {
 }
 
 export const registerError = (
-  title: string,
-  description: string,
+  title: string | undefined,
+  description: string | undefined,
   error: undefined | any,
   notifyUser = true,
 ): void => {
-  if (notifyUser) {
+  if (notifyUser && title && description) {
     notify(title, description)
   }
 }
