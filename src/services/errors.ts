@@ -21,6 +21,7 @@ const globalErrors: { [key: number]: string } = {
   4001: 'The provider is not supported.',
   4002: 'The component was not found.',
   4003: 'The application already exists.',
+  4004: 'The application has not been deployed.',
 }
 
 export const getErrorMessage = (code: number): string => {
