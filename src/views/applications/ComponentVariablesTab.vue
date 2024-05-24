@@ -82,6 +82,7 @@ function fetchVariables() {
       variables.value = response.data
     })
     .catch((error) => {
+      registerError(error)
       throw error
     })
     .finally(() => {
@@ -114,7 +115,10 @@ const onSubmit = handleSubmit(async (values) => {
     fetchVariables()
   } catch (error) {
     if (!axios.isAxiosError(error)) {
-      registerError('An error occurred', 'An unexpected error occurred.', error)
+      registerError(error, {
+        title: 'An error occurred',
+        description: 'An unexpected error occurred.',
+      })
     }
   }
 })
@@ -132,7 +136,10 @@ const onDelete = async (id: string) => {
     notify('Success', 'Variable deleted!')
   } catch (error) {
     if (!axios.isAxiosError(error)) {
-      registerError('An error occurred', 'An unexpected error occurred.', error)
+      registerError(error, {
+        title: 'An error occurred',
+        description: 'An unexpected error occurred.',
+      })
     }
   }
 }

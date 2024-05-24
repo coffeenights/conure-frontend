@@ -62,6 +62,7 @@ const fetchData = () => {
       organizations.value = response.data.organizations
     })
     .catch((error) => {
+      registerError(error)
       throw error
     })
 }
@@ -123,7 +124,10 @@ const onSubmit = handleSubmit(async (values) => {
     fetchData()
   } catch (error) {
     if (!axios.isAxiosError(error)) {
-      registerError('An error occurred', 'An unexpected error occurred.', error)
+      registerError(error, {
+        title: 'An error occurred',
+        description: 'An unexpected error occurred.',
+      })
     }
   }
 })

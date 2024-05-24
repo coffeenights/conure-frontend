@@ -12,6 +12,7 @@ import {
 } from '@/services/organizations'
 import { Status } from '@/components/ui/status'
 import { Skeleton } from '@/components/ui/skeleton'
+import { registerError } from '@/services/errors'
 
 const router = useRouter()
 const store = useBreadCrumbStore()
@@ -46,8 +47,8 @@ const statusMap: Record<string, string> = {
 
 latestRevision.value = getLatestRevision(props.application)
 
-function camelToSnakeCase(str: string)  {
-  return str.replace(/[A-Z]/g, letter => ` ${letter.toLowerCase()}`);
+function camelToSnakeCase(str: string) {
+  return str.replace(/[A-Z]/g, (letter) => ` ${letter.toLowerCase()}`)
 }
 
 function goToDetailApplication(
@@ -83,6 +84,7 @@ onMounted(() => {
       if (error.response.data.code === '4004') {
         status.value = 'notDeployed'
       } else {
+        registerError(error)
         throw error
       }
     })

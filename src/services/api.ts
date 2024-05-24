@@ -10,7 +10,7 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     const errorMessage = getError(error)
-    registerError('Error', errorMessage, error)
+    registerError(error, { title: 'Error', description: errorMessage })
     return Promise.reject(error)
   },
 )
