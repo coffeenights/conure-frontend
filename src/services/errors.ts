@@ -1,3 +1,5 @@
+import { notify } from './notifications'
+
 const globalErrors: { [key: number]: string } = {
   1000: 'The request is unauthorized.',
   1001: 'The token is invalid.',
@@ -40,4 +42,15 @@ export const getError = (error: any): string => {
     return `${getErrorMessage(getErrorCode(error))} ${error.response.data.fields}`
   }
   return getErrorMessage(getErrorCode(error))
+}
+
+export const registerError = (
+  title: string,
+  description: string,
+  error: undefined | any,
+  notifyUser = true,
+): void => {
+  if (notifyUser) {
+    notify(title, description)
+  }
 }
