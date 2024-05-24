@@ -31,10 +31,11 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Loader } from 'lucide-vue-next'
-import { toast } from '@/components/ui/toast'
 import axios from 'axios'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
+import { registerError } from '@/services/errors'
+import { notify } from '@/services/notifications'
 
 const store = useBreadCrumbStore()
 const getFirstLetter = (name: string): string => {
@@ -116,19 +117,13 @@ const onSubmit = handleSubmit(async (values) => {
       name: values.name,
     })
     if (result.status == 201) {
-      toast({
-        title: 'Success',
-        description: 'New organization created!',
-      })
+      notify('Success', 'New organization created!')
       newOrganizationOpen.value = false
     }
     fetchData()
   } catch (error) {
     if (!axios.isAxiosError(error)) {
-      toast({
-        title: 'An error occurred',
-        description: 'An unexpected error occurred.',
-      })
+      registerError('An error occurred', 'An unexpected error occurred.', error)
     }
   }
 })

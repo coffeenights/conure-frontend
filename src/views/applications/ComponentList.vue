@@ -6,8 +6,8 @@ import { listComponents, ComponentService } from '@/services/organizations'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { toast } from '@/components/ui/toast'
 import axios from 'axios'
+import { registerError } from '@/services/errors'
 
 const route = useRoute()
 const components = ref<ComponentService[]>([])
@@ -25,10 +25,11 @@ const fetchData = () => {
     })
     .catch((error) => {
       if (!axios.isAxiosError(error)) {
-        toast({
-          title: 'An error occurred',
-          description: 'An unexpected error occurred.',
-        })
+        registerError(
+          'An error occurred',
+          'An unexpected error occurred.',
+          error,
+        )
       }
     })
 }
