@@ -9,15 +9,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-
 import { ApplicationCard, ApplicationEnvironmentAddCard } from '@/components'
-
 import {
   Tooltip,
   TooltipProvider,
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip'
+import { registerError } from '@/services/errors'
 
 let applications = ref([] as Application[])
 const route = useRoute()
@@ -34,6 +33,7 @@ const fetchData = () => {
       applications.value = response.data.applications
     })
     .catch((error) => {
+      registerError(error)
       throw error
     })
 }

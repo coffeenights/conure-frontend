@@ -15,6 +15,7 @@ import {
   statusComponent,
 } from '@/services/organizations'
 import { useRoute } from 'vue-router'
+import { registerError } from '@/services/errors'
 
 const route = useRoute()
 const breadCrumbStore = useBreadCrumbStore()
@@ -37,6 +38,7 @@ const fetchData = () => {
       if (error.response.data.code === '4004') {
         notDeployed.value = true
       } else {
+        registerError(error)
         throw error
       }
     })
@@ -157,8 +159,11 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
             </CardTitle>
           </CardHeader>
           <CardContent class="p-4">
-
-            <div v-for="vol in c.properties?.storage.volumes" class="mb-5">
+            <div
+              v-for="vol in c.properties?.storage.volumes"
+              :key="vol.name"
+              class="mb-5"
+            >
               <div class="text-lg">{{ vol.name }}</div>
               <CardContentKeyValue
                 c-key="Size"
@@ -171,10 +176,12 @@ watch(() => route.params.componentId, fetchData, { immediate: true })
                 :is-loading="isLoading"
               />
             </div>
-            <div v-if="!c.properties?.storage.volumes.length" class="text-muted-foreground text-center">
+            <div
+              v-if="!c.properties?.storage.volumes.length"
+              class="text-muted-foreground text-center"
+            >
               No storage volumes found
             </div>
-
           </CardContent>
         </Card>
       </div>

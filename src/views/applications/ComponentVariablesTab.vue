@@ -41,7 +41,6 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { Loader } from 'lucide-vue-next'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import { toast } from '@/components/ui/toast'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import axios from 'axios'
@@ -56,6 +55,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
+import { notify } from '@/services/notifications'
+import { registerError } from '@/services/errors'
 
 const route = useRoute()
 const variables = ref([] as Variable[])
@@ -81,6 +82,7 @@ function fetchVariables() {
       variables.value = response.data
     })
     .catch((error) => {
+      registerError(error)
       throw error
     })
     .finally(() => {
@@ -107,21 +109,13 @@ const onSubmit = handleSubmit(async (values) => {
       is_encrypted: values.isEncrypted,
     })
     if (result.status == 201) {
-      toast({
-        title: 'Success',
-        description: 'New variable created!',
-      })
+      notify('Success', 'New variable created!')
       newVariableOpen.value = false
     }
     fetchVariables()
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      toast({
-        title: 'An error occurred',
-        description: error.response?.data.error,
-      })
-    } else {
-      toast({
+    if (!axios.isAxiosError(error)) {
+      registerError(error, {
         title: 'An error occurred',
         description: 'An unexpected error occurred.',
       })
@@ -139,18 +133,10 @@ const onDelete = async (id: string) => {
     await deleteVariable(store.organizationId, id)
     // refresh the list of variables
     fetchVariables()
-    toast({
-      title: 'Success',
-      description: 'Variable deleted!',
-    })
+    notify('Success', 'Variable deleted!')
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      toast({
-        title: 'An error occurred',
-        description: error.response?.data.error,
-      })
-    } else {
-      toast({
+    if (!axios.isAxiosError(error)) {
+      registerError(error, {
         title: 'An error occurred',
         description: 'An unexpected error occurred.',
       })
@@ -230,7 +216,9 @@ const truncate = (text: string, length: number) => {
       v-if="!variables.length && !isLoading"
       class="flex flex-col items-center w-full"
     >
-      <h1 class="text-lg text-muted-foreground mt-5">No component variables found</h1>
+      <h1 class="text-lg text-muted-foreground mt-5">
+        No component variables found
+      </h1>
     </div>
     <div class="px-2 pb-2">
       <Dialog v-model:open="newVariableOpen">
