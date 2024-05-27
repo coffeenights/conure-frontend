@@ -4,12 +4,12 @@ import Input from '@/components/ui/input/Input.vue'
 import Button from '@/components/ui/button/Button.vue'
 import { listComponents, ComponentService } from '@/services/organizations'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import {onMounted, ref, watch} from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { toast } from '@/components/ui/toast'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import axios from 'axios'
+import { registerError } from '@/services/errors'
 
 const route = useRoute()
-const router = useRouter()
 const components = ref<ComponentService[]>([])
 const store = useBreadCrumbStore()
 
@@ -24,12 +24,10 @@ const fetchData = () => {
       components.value = response.data.components
     })
     .catch((error) => {
-      if (error.response.status === 404) {
-        router.push({name: '404'})
-      } else {
-        toast({
-          title: 'Error',
-          description: 'An error occurred while fetching components.',
+      if (!axios.isAxiosError(error)) {
+        registerError(error, {
+          title: 'An error occurred',
+          description: 'An unexpected error occurred.',
         })
       }
     })

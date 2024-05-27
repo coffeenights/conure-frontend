@@ -15,6 +15,7 @@ import {
   statusComponent,
 } from '@/services/organizations'
 import { useRoute } from 'vue-router'
+import { registerError } from '@/services/errors'
 
 const route = useRoute()
 const breadCrumbStore = useBreadCrumbStore()
@@ -37,6 +38,7 @@ const fetchData = () => {
       if (error.response.data.code === '4004') {
         notDeployed.value = true
       } else {
+        registerError(error)
         throw error
       }
     })
