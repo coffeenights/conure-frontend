@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 const tabs = [
   { routeName: 'componentDetailsTab', caption: 'Details' },
   { routeName: 'componentVariablesTab', caption: 'Variables' },
+  { routeName: 'componentLogsTab', caption: 'Logs' },
 ]
 
 const defaultTab: string = 'componentDetailsTab'

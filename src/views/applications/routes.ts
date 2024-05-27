@@ -8,6 +8,7 @@ import ComponentDetailsTab from './ComponentDetailsTab.vue'
 import ComponentVariablesTab from './ComponentVariablesTab.vue'
 import OrganizationList from './OrganizationList.vue'
 import { RouteRecordRaw } from 'vue-router'
+import ComponentLogsTab from '@/views/applications/ComponentLogsTab.vue'
 
 const applicationRoutes: Array<RouteRecordRaw> = [
   {
@@ -64,6 +65,12 @@ const applicationRoutes: Array<RouteRecordRaw> = [
                 path: 'variables',
                 component: ComponentVariablesTab,
                 name: 'componentVariablesTab',
+                meta: { requiresAuth: true, requiresBreadcrumbState: true },
+              },
+              {
+                path: 'logs',
+                component: ComponentLogsTab,
+                name: 'componentLogsTab',
                 meta: { requiresAuth: true, requiresBreadcrumbState: true },
               },
             ],
