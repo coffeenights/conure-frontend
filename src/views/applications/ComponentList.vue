@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import ComponentCard from '@/components/ComponentCard.vue'
-import Input from '@/components/ui/input/Input.vue'
 import Button from '@/components/ui/button/Button.vue'
 import { listComponents, ComponentService } from '@/services/organizations'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
@@ -8,6 +7,7 @@ import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { registerError } from '@/services/errors'
+import ComponentSearch from './ComponentSearch.vue'
 
 const route = useRoute()
 const components = ref<ComponentService[]>([])
@@ -42,13 +42,12 @@ watch(() => route.params.environment, fetchData, { immediate: true })
     <Button variant="secondary" size="icon">
       <span class="bi-grid-fill text-xl"></span>
     </Button>
-    <div class="grow">
-      <Input
-        type="search"
-        placeholder="Search"
-        class="focus-visible:ring-ring focus-visible:ring-1"
-      />
-    </div>
+    <ComponentSearch
+      :organization-id="store.organizationId"
+      :application-id="store.applicationId"
+      :environment-id="store.environment"
+      :components="components"
+    />
   </div>
   <div class="relative grow overflow-hidden mt-3">
     <div id="componentsList" class="">
