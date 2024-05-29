@@ -64,6 +64,7 @@ watch(() => props.pods, loadLogs, { immediate: true })
 </script>
 
 <template>
+
   <div
     ref="logConsole"
     class="bg-background h-full grow overflow-y-scroll overflow-x-scroll p-3 scroller text-xs max-w-full rounded-sm dark:text-gray-300"
