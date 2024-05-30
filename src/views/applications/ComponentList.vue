@@ -43,6 +43,7 @@ watch(() => route.params.environment, fetchData, { immediate: true })
       <span class="bi-grid-fill text-xl"></span>
     </Button>
     <ComponentSearch
+      v-if="components.length > 0"
       :organization-id="store.organizationId"
       :application-id="store.applicationId"
       :environment-id="store.environment"
