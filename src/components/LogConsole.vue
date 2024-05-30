@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { ComponentPod } from '@/services/organizations'
 
 const props = defineProps({
   organizationId: {
@@ -19,7 +20,7 @@ const props = defineProps({
     required: true,
   },
   pods: {
-    type: Array as () => Array<string>,
+    type: Array as () => Array<ComponentPod>,
     required: true,
   },
 })
@@ -34,7 +35,8 @@ url.pathname = `/organizations/${props.organizationId}/a/${props.applicationId}/
 
 const loadLogs = () => {
   let params = new URLSearchParams()
-  params.append('pods', props.pods.join(','))
+  let podNames = props.pods.map((pod) => pod.name)
+  params.append('pods', podNames.join(','))
   url.search = params.toString()
   for (const s of sources) {
     s.close()

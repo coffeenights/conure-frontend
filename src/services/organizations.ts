@@ -94,8 +94,17 @@ export type ComponentProperties = {
   health: ComponentStatusHealth
 }
 
-export type ComponentPods = {
-  pods: string[]
+export type ComponentPodCondition = {
+  type: string
+  status: string
+  reason: string
+  message: string
+}
+
+export type ComponentPod = {
+  name: string
+  phase: string
+  conditions: Array<ComponentPodCondition>
 }
 
 export type ApplicationListResponse = ApiResponse<{
@@ -113,8 +122,9 @@ export type ComponentListResponse = ApiResponse<{
 }>
 export type ComponentStatusResponse = ApiResponse<ComponentStatus>
 export type ComponentStatusHealthResponse = ApiResponse<ComponentStatusHealth>
-export type ComponentPodsResponse = ApiResponse<ComponentPods>
-
+export type ComponentPodsResponse = ApiResponse<{
+  pods: ComponentPod[]
+}>
 
 export const detailOrganization = async (
   id: string,
