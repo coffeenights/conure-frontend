@@ -34,15 +34,18 @@ let sources: EventSource[] = []
 url.pathname = `/organizations/${props.organizationId}/a/${props.applicationId}/e/${props.environment}/c/${props.componentId}/status/logs`
 
 const loadLogs = () => {
+  for (const s of sources) {
+    s.close()
+  }
+  logs.value = []
+
+  if (props.pods.length === 0) {
+    return
+  }
   let params = new URLSearchParams()
   let podNames = props.pods.map((pod) => pod.name)
   params.append('pods', podNames.join(','))
   url.search = params.toString()
-  for (const s of sources) {
-    s.close()
-  }
-
-  logs.value = []
   const source = new EventSource(url.toString(), {
     withCredentials: true,
   })
