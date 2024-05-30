@@ -94,6 +94,10 @@ export type ComponentProperties = {
   health: ComponentStatusHealth
 }
 
+export type ComponentPods = {
+  pods: string[]
+}
+
 export type ApplicationListResponse = ApiResponse<{
   organization: Organization
   applications: Application[]
@@ -109,6 +113,7 @@ export type ComponentListResponse = ApiResponse<{
 }>
 export type ComponentStatusResponse = ApiResponse<ComponentStatus>
 export type ComponentStatusHealthResponse = ApiResponse<ComponentStatusHealth>
+export type ComponentPodsResponse = ApiResponse<ComponentPods>
 
 
 export const detailOrganization = async (
@@ -239,4 +244,15 @@ export function getLatestRevision(application: Application): Revision | null {
     return null
   }
   return revisions[0]
+}
+
+export function getComponentPods(
+  organizationId: string,
+  applicationId: string,
+  environment: string,
+  componentId: string,
+): Promise<ComponentPodsResponse> {
+  return fetchData<ComponentPodsResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/status/pods`,
+  )
 }
