@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { ComponentPod } from '@/services/organizations'
 
 const props = defineProps({
   organizationId: {
@@ -19,7 +20,7 @@ const props = defineProps({
     required: true,
   },
   pods: {
-    type: Array as () => Array<string>,
+    type: Array as () => Array<ComponentPod>,
     required: true,
   },
 })
@@ -33,14 +34,18 @@ let sources: EventSource[] = []
 url.pathname = `/organizations/${props.organizationId}/a/${props.applicationId}/e/${props.environment}/c/${props.componentId}/status/logs`
 
 const loadLogs = () => {
-  let params = new URLSearchParams()
-  params.append('pods', props.pods.join(','))
-  url.search = params.toString()
   for (const s of sources) {
     s.close()
   }
-
   logs.value = []
+
+  if (props.pods.length === 0) {
+    return
+  }
+  let params = new URLSearchParams()
+  let podNames = props.pods.map((pod) => pod.name)
+  params.append('pods', podNames.join(','))
+  url.search = params.toString()
   const source = new EventSource(url.toString(), {
     withCredentials: true,
   })

@@ -4,7 +4,7 @@ import { cn } from '@/utils'
 const props = defineProps<{
   class?: string
   status: string
-  text: string
+  text?: string
 }>()
 
 const color = () => {
