@@ -38,7 +38,9 @@ watch(() => route.params.environment, fetchData, { immediate: true })
 
 <template>
   <div class="flex gap-2">
-    <Button> <span class="bi-plus mr-1 text-2xl"></span>Add </Button>
+    <router-link :to="{ name: 'componentSelection' }">
+      <Button><span class="bi-plus mr-1 text-2xl"></span>Add </Button>
+    </router-link>
     <Button variant="secondary" size="icon">
       <span class="bi-grid-fill text-xl"></span>
     </Button>

@@ -9,6 +9,7 @@ import ComponentVariablesTab from './ComponentVariablesTab.vue'
 import OrganizationList from './OrganizationList.vue'
 import { RouteRecordRaw } from 'vue-router'
 import ComponentLogsTab from '@/views/applications/ComponentLogsTab.vue'
+import ComponentSelection from './ComponentSelection.vue'
 
 const applicationRoutes: Array<RouteRecordRaw> = [
   {
@@ -48,6 +49,12 @@ const applicationRoutes: Array<RouteRecordRaw> = [
         name: 'componentList',
         meta: { requiresAuth: true, requiresBreadcrumbState: true },
         children: [
+          {
+            path: 'create',
+            component: ComponentSelection,
+            name: 'componentSelection',
+            meta: { requiresAuth: true, requiresBreadcrumbState: true },
+          },
           {
             path: ':componentId',
             redirect: { name: 'componentDetailsTab' },
