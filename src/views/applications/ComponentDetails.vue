@@ -4,6 +4,7 @@ import { ComponentView } from '@/components'
 
 const tabs = [
   { routeName: 'componentDetailsTab', caption: 'Details' },
+  { routeName: 'componentSettingsTab', caption: 'Settings' },
   { routeName: 'componentVariablesTab', caption: 'Variables' },
   { routeName: 'componentLogsTab', caption: 'Logs' },
 ]

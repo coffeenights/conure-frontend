@@ -1,38 +1,24 @@
 <script setup lang="ts">
 import { ComponentView } from '@/components'
-
-const data = {
-  properties: {
-    objects: {
-      items: {
-        type: 'object',
-      },
-      title: 'objects',
-      type: 'array',
-    },
-  },
-  required: ['objects'],
-  type: 'object',
-}
-
-type SchemaField = {
-  properties: any
-  required: string[]
-  type: string
-}
-
-const parseSchema = (schema: any) => {
-  const properties = schema.properties
-  const required = schema.required
-  const type = schema.type
-
-
-  return { properties, required, type }
-}
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 </script>
 
 <template>
-  <ComponentView> </ComponentView>
+  <ComponentView>
+    <Accordion type="single" collapsible>
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Is it accessible?</AccordionTrigger>
+        <AccordionContent>
+          Yes. It adheres to the WAI-ARIA design pattern.
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  </ComponentView>
 </template>
 
 <style scoped></style>
