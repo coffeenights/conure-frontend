@@ -8,8 +8,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
-import {detailApplication, Environment} from "@/services/organizations";
-import {Loader} from "lucide-vue-next";
+import { detailApplication, Environment } from '@/services/organizations'
+import { Loader } from 'lucide-vue-next'
 
 const store = useBreadCrumbStore()
 const router = useRouter()
