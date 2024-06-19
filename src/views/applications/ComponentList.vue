@@ -83,7 +83,7 @@ watch(() => route.params.environment, fetchData, { immediate: true })
   </div>
 </template>
 
-<style>
+<style scoped>
 .v-enter-active,
 .v-leave-active {
   transition: all 0.5s ease;
