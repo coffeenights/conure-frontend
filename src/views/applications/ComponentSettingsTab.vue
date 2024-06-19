@@ -19,9 +19,25 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Slider } from '@/components/ui/slider'
 
-const component = ref({
-  name: '',
-  description: '',
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import { ComponentSettingsSchema } from '@/services/variables'
+import { configure } from 'vee-validate'
+
+configure({
+  validateOnBlur: false,
+  validateOnChange: true,
+  validateOnInput: false,
+  validateOnModelUpdate: true,
+})
+
+const { handleSubmit, isSubmitting } = useForm({
+  validationSchema: toTypedSchema(ComponentSettingsSchema),
+  initialValues: {
+    resourcesCpu: [1.0],
+    resourcesMemory: [512],
+    resourcesReplicas: [1],
+  },
 })
 </script>
 
@@ -30,7 +46,7 @@ const component = ref({
     <AccordionItem value="general" class="border border-b-0 rounded-t-md">
       <AccordionTrigger class="px-4 bg-transparent">General</AccordionTrigger>
       <AccordionContent class="p-5 bg-background flex flex-col gap-5 flex-wrap">
-        <FormField v-slot="{ componentField }" name="username">
+        <FormField v-slot="{ componentField }" name="name">
           <FormItem>
             <FormLabel>Name</FormLabel>
             <FormControl>
@@ -63,14 +79,18 @@ const component = ref({
     <AccordionItem value="resources" class="border border-b-0">
       <AccordionTrigger class="px-4 bg-transparent">Resources</AccordionTrigger>
       <AccordionContent class="p-5 bg-background flex flex-row gap-5">
-        <FormField v-slot="{ componentField, value }" name="duration" class="grow w-full">
+        <FormField
+          v-slot="{ componentField, value }"
+          name="resourcesReplicas"
+          class="grow w-full"
+        >
           <FormItem class="grow w-full">
             <FormLabel>Replicas</FormLabel>
             <FormControl>
               <Slider
                 v-bind="componentField"
                 :default-value="[1]"
-                :max="20"
+                :max="60"
                 :min="0"
                 :step="1"
                 slider-class="bg-card"
@@ -82,16 +102,16 @@ const component = ref({
             <FormMessage />
           </FormItem>
         </FormField>
-        <FormField v-slot="{ componentField, value }" name="duration">
+        <FormField v-slot="{ componentField, value }" name="resourcesCpu">
           <FormItem class="grow w-full">
-            <FormLabel>Replicas</FormLabel>
+            <FormLabel>CPU</FormLabel>
             <FormControl>
               <Slider
                 v-bind="componentField"
-                :default-value="[1]"
-                :max="20"
-                :min="0"
-                :step="1"
+                :default-value="[1.0]"
+                :max="4.0"
+                :min="0.1"
+                :step="0.1"
                 slider-class="bg-card"
               />
               <FormDescription class="flex justify-between">
@@ -101,20 +121,24 @@ const component = ref({
             <FormMessage />
           </FormItem>
         </FormField>
-        <FormField v-slot="{ componentField, value }" name="duration" class="grow w-full">
+        <FormField
+          v-slot="{ componentField, value }"
+          name="resourcesMemory"
+          class="grow w-full"
+        >
           <FormItem class="grow w-full">
-            <FormLabel>Replicas</FormLabel>
+            <FormLabel>Memory</FormLabel>
             <FormControl>
               <Slider
                 v-bind="componentField"
-                :default-value="[1]"
-                :max="20"
-                :min="0"
-                :step="1"
+                :default-value="[512]"
+                :max="4096"
+                :min="128"
+                :step="128"
                 slider-class="bg-card"
               />
               <FormDescription class="flex justify-between">
-                <span>{{ value?.[0] }}</span>
+                <span>{{ value?.[0] }} Mb</span>
               </FormDescription>
             </FormControl>
             <FormMessage />

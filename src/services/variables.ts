@@ -8,6 +8,14 @@ export const VariableSchema = z.object({
   isEncrypted: z.boolean().default(false),
 })
 
+export const ComponentSettingsSchema = z.object({
+  name: z.string().max(50),
+  description: z.string().max(255).optional(),
+  resourcesCpu: z.array(z.number().min(0.1).max(4.0)),
+  resourcesMemory: z.array(z.number().min(128).max(4096)),
+  resourcesReplicas: z.array(z.number().min(0).max(60)),
+})
+
 export type Variable = {
   id: string
   name: string
