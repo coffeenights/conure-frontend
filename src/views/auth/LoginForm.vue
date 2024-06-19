@@ -80,7 +80,12 @@ const onSubmit = handleSubmit(async (values) => {
       <form @submit="onSubmit">
         <div class="grid gap-2">
           <div class="grid gap-1">
-            <FormField v-slot="{ componentField }" name="email" :validate-on-blur="false" :validate-on-model-update="false">
+            <FormField
+              v-slot="{ componentField }"
+              name="email"
+              :validate-on-blur="false"
+              :validate-on-model-update="false"
+            >
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
@@ -99,7 +104,11 @@ const onSubmit = handleSubmit(async (values) => {
                 <FormMessage />
               </FormItem>
             </FormField>
-            <FormField v-slot="{ componentField }" name="password" :validate-on-blur="false">
+            <FormField
+              v-slot="{ componentField }"
+              name="password"
+              :validate-on-blur="false"
+            >
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
