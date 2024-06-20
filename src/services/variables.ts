@@ -14,6 +14,13 @@ export const ComponentSettingsSchema = z.object({
   resourcesCpu: z.array(z.number().min(0.1).max(4.0)),
   resourcesMemory: z.array(z.number().min(128).max(4096)),
   resourcesReplicas: z.array(z.number().min(0).max(60)),
+  networkPorts: z.array(
+    z.object({
+      hostPort: z.number().min(0).max(65535),
+      targetPort: z.number().min(0).max(65535),
+      portProtocol: z.enum(['TCP', 'UDP']),
+    }),
+  ),
 })
 
 export type Variable = {
