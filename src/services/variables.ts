@@ -21,6 +21,13 @@ export const ComponentSettingsSchema = z.object({
       portProtocol: z.enum(['TCP', 'UDP']),
     }),
   ),
+  storage: z.array(
+    z.object({
+      name: z.string().max(50),
+      mountPath: z.string().max(100),
+      size: z.number().min(1).max(100),
+    })
+  )
 })
 
 export type Variable = {

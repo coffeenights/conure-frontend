@@ -33,6 +33,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
+import { NumberField, NumberFieldContent, NumberFieldDecrement, NumberFieldIncrement, NumberFieldInput } from '@/components/ui/number-field'
 
 configure({
   validateOnBlur: false,
@@ -48,6 +49,7 @@ const { handleSubmit, isSubmitting } = useForm({
     resourcesMemory: [512],
     resourcesReplicas: [1],
     networkPorts: [{ hostPort: null, targetPort: null, portProtocol: 'TCP' }],
+    storage: [{ name: null, mountPath: null, size: 0}]
   },
 })
 
@@ -348,7 +350,63 @@ const handleAccordionTrigger = (newValue) => {
         force-mount
         :is-open="storageIsOpen"
       >
-        Yes. It adheres to the WAI-ARIA design pattern.
+        <FieldArray v-slot="{ fields, push, remove }" name="storage">
+          <fieldset
+            v-for="(field, idx) in fields"
+            :key="field.key"
+            class="flex flex-row gap-2 items-end"
+          >
+            <FormField v-slot="{ componentField }" :name="`storage[${idx}].name`">
+              <FormItem class="grow">
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="Volume name"
+                    v-bind="componentField"
+                    class="bg-card"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+            <FormField v-slot="{ componentField }" :name="`storage[${idx}].mountPath`">
+              <FormItem class="grow">
+                <FormLabel>Mount Path</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="/path/to/mount"
+                    v-bind="componentField"
+                    class="bg-card"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+            <FormField v-slot="{ componentField }" :name="`storage[${idx}].size`">
+              <FormItem class="grow">
+                <FormLabel>Size</FormLabel>
+                <NumberField>
+                  <NumberFieldContent>
+                    <NumberFieldDecrement />
+                    <FormControl>
+                      <NumberFieldInput class="bg-card" v-bind="componentField" />
+                    </FormControl>
+                    <NumberFieldIncrement />
+                  </NumberFieldContent>
+                </NumberField>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+            <Button size="icon" variant="ghost" @click="remove(idx)">
+              <span class="bi-trash text-xl cursor-pointer"></span>
+            </Button>
+          </fieldset>
+          <Button size="sm" variant="secondary" @click="push({ name: null, mountPath: null, size: null })" class="w-12">
+            <span class="bi-plus text-xl cursor-pointer"></span>
+          </Button>
+        </FieldArray>
       </AccordionContent>
     </AccordionItem>
   </Accordion>
