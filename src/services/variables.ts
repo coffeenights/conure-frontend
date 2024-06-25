@@ -25,9 +25,9 @@ export const ComponentSettingsSchema = z.object({
     z.object({
       name: z.string().max(50),
       mountPath: z.string().max(100),
-      size: z.number().min(1).max(100),
-    })
-  )
+      size: z.number().min(0.1).max(100.0),
+    }),
+  ),
 })
 
 export type Variable = {
