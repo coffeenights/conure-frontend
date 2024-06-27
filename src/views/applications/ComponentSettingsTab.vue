@@ -22,8 +22,8 @@ import { Switch } from '@/components/ui/switch'
 
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
-import { ComponentSettingsSchema } from '@/services/variables'
-import { configure, FieldArray } from 'vee-validate'
+import { configure, FieldArray, useFieldArray, useField } from 'vee-validate'
+import { z } from 'zod'
 import {
   Select,
   SelectContent,
@@ -40,14 +40,32 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
 } from '@/components/ui/number-field'
-import {z} from "zod";
 
 configure({
   validateOnBlur: false,
   validateOnChange: true,
   validateOnInput: false,
-  validateOnModelUpdate: true,
+  validateOnModelUpdate: false,
 })
+
+const networkSchema = z.object({
+  networkExpose: z.boolean(),
+  networkType: z.enum(['private', 'public']),
+  networkPorts: z.array(
+    z.object({
+      hostPort: z.number().min(0).max(65535),
+      targetPort: z.number().min(0).max(65535),
+      portProtocol: z.enum(['TCP', 'UDP']),
+    }),
+  ),
+})
+
+type portError = {
+  hostPort: string
+  targetPort: string
+  portProtocol: string
+}
+const networkPortErrors = ref<portError[]>([])
 
 const schemaSettings = {
   name: toTypedSchema(z.string().max(50)),
@@ -55,6 +73,38 @@ const schemaSettings = {
   resourcesCpu: toTypedSchema(z.array(z.number().min(0.1).max(4.0))),
   resourcesMemory: toTypedSchema(z.array(z.number().min(128).max(4096))),
   resourcesReplicas: toTypedSchema(z.array(z.number().min(0).max(60))),
+  storage: toTypedSchema(
+    z.array(
+      z.object({
+        name: z.string().max(50),
+        mountPath: z.string().max(100),
+        size: z.number().min(0.1).max(100.0),
+      }),
+    ),
+  ),
+  network: (values) => {
+    if (values && typeof values.networkExpose === 'undefined') {
+      return true
+    } else if (!values.networkExpose) {
+      return true
+    } else if (isSubmitting.value) {
+      const validationResult = networkSchema.safeParse(values)
+      if (!validationResult.success) {
+        networkPortErrors.value = Array.from(
+          { length: values.networkPorts.length },
+          () => ({
+            hostPort: '',
+            targetPort: '',
+            portProtocol: '',
+          }),
+        )
+        for (const error of validationResult.error?.errors) {
+          networkPortErrors.value[error.path[1]][error.path[2]] = error.message
+        }
+      }
+      return validationResult.success
+    }
+  },
 }
 
 const { handleSubmit, isSubmitting, setFieldValue } = useForm({
@@ -63,7 +113,11 @@ const { handleSubmit, isSubmitting, setFieldValue } = useForm({
     resourcesCpu: [1.0],
     resourcesMemory: [512],
     resourcesReplicas: [1],
-    networkPorts: [{ hostPort: null, targetPort: null, portProtocol: 'TCP' }],
+    network: {
+      networkExpose: false,
+      networkType: 'public',
+      networkPorts: [{ hostPort: null, targetPort: null, portProtocol: 'TCP' }],
+    },
     storage: [{ name: null, mountPath: null, size: 0.1 }],
   },
 })
@@ -71,9 +125,9 @@ const { handleSubmit, isSubmitting, setFieldValue } = useForm({
 // const { push, remove, fields } = useFieldArray('ports')
 const generalIsOpen = ref(true)
 const resourcesIsOpen = ref(true)
-const sourceIsOpen = ref(false)
-const networkIsOpen = ref(false)
-const storageIsOpen = ref(false)
+const sourceIsOpen = ref(true)
+const networkIsOpen = ref(true)
+const storageIsOpen = ref(true)
 
 const handleAccordionTrigger = (newValue) => {
   generalIsOpen.value = newValue.includes('general')
@@ -261,11 +315,14 @@ const isRequired = () => {
         force-mount
         :is-open="networkIsOpen"
       >
-        <FormField v-slot="{ componentField }" name="networkExpose">
+        <FormField
+          v-slot="{ value, handleChange }"
+          name="network.networkExpose"
+        >
           <FormItem class="flex flex-col">
             <FormLabel>Expose the component</FormLabel>
             <FormControl>
-              <Switch v-bind="componentField" />
+              <Switch :checked="value" @update:checked="handleChange" />
               <FormDescription>
                 Activate if you want to expose the component to other components
                 in the application or to the outside world
@@ -274,7 +331,7 @@ const isRequired = () => {
             <FormMessage />
           </FormItem>
         </FormField>
-        <FormField v-slot="{ componentField }" name="networkType">
+        <FormField v-slot="{ componentField }" name="network.networkType">
           <FormItem>
             <FormLabel>Type</FormLabel>
             <Select v-bind="componentField" default-value="public">
@@ -297,7 +354,10 @@ const isRequired = () => {
           </FormItem>
         </FormField>
         <div class="space-y-2">
-          <FieldArray v-slot="{ fields, push, remove }" name="networkPorts">
+          <FieldArray
+            v-slot="{ fields, push, remove }"
+            name="network.networkPorts"
+          >
             <Label>Ports</Label>
             <fieldset
               v-for="(field, idx) in fields"
@@ -306,7 +366,7 @@ const isRequired = () => {
             >
               <FormField
                 v-slot="{ componentField }"
-                :name="`networkPorts[${idx}].hostPort`"
+                :name="`network.networkPorts[${idx}].hostPort`"
               >
                 <FormItem class="grow">
                   <FormControl>
@@ -317,13 +377,18 @@ const isRequired = () => {
                       class="bg-card"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <p
+                    v-if="networkPortErrors[idx]"
+                    class="text-sm font-medium text-destructive"
+                  >
+                    {{ networkPortErrors[idx].hostPort }}
+                  </p>
                 </FormItem>
               </FormField>
               <span class="space-x-2">:</span>
               <FormField
                 v-slot="{ componentField }"
-                :name="`networkPorts[${idx}].targetPort`"
+                :name="`network.networkPorts[${idx}].targetPort`"
               >
                 <FormItem class="grow">
                   <FormControl>
@@ -334,12 +399,17 @@ const isRequired = () => {
                       class="bg-card"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <p
+                    v-if="networkPortErrors[idx]"
+                    class="text-sm font-medium text-destructive"
+                  >
+                    {{ networkPortErrors[idx].targetPort }}
+                  </p>
                 </FormItem>
               </FormField>
               <FormField
                 v-slot="{ componentField }"
-                :name="`networkPorts[${idx}].portProtocol`"
+                :name="`network.networkPorts[${idx}].portProtocol`"
               >
                 <FormItem class="w-24">
                   <FormControl>
@@ -355,7 +425,12 @@ const isRequired = () => {
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  <FormMessage />
+                  <p
+                    v-if="networkPortErrors[idx]"
+                    class="text-sm font-medium text-destructive"
+                  >
+                    {{ networkPortErrors[idx].portProtocol }}
+                  </p>
                 </FormItem>
               </FormField>
               <Button size="icon" variant="ghost" @click="remove(idx)">
@@ -426,10 +501,10 @@ const isRequired = () => {
                     class="bg-card"
                   />
                 </FormControl>
-                <FormMessage />
                 <FormDescription>
                   Where inside the component will the volume be mounted
                 </FormDescription>
+                <FormMessage />
               </FormItem>
             </FormField>
             <FormField
