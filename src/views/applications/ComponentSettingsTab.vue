@@ -22,7 +22,7 @@ import { Switch } from '@/components/ui/switch'
 
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
-import { configure, FieldArray, useFieldArray, useField } from 'vee-validate'
+import { configure, FieldArray } from 'vee-validate'
 import { z } from 'zod'
 import {
   Select,
@@ -41,12 +41,48 @@ import {
   NumberFieldInput,
 } from '@/components/ui/number-field'
 
+const generalIsOpen = ref(true)
+const resourcesIsOpen = ref(true)
+const sourceIsOpen = ref(true)
+const networkIsOpen = ref(true)
+const storageIsOpen = ref(false)
+
 configure({
   validateOnBlur: false,
   validateOnChange: true,
   validateOnInput: false,
   validateOnModelUpdate: false,
 })
+
+type PortError = {
+  hostPort: string
+  targetPort: string
+  portProtocol: string
+}
+
+type Port = {
+  hostPort: number
+  targetPort: number
+  portProtocol: 'TCP' | 'UDP'
+}
+
+type Network = {
+  networkExpose: boolean
+  networkType: 'private' | 'public'
+  networkPorts: Port[]
+}
+
+type Storage = {
+  name: string
+  mountPath: string
+  size: number
+}
+
+type StorageErrors = {
+  name: string
+  mountPath: string
+  size: string
+}
 
 const networkSchema = z.object({
   networkExpose: z.boolean(),
@@ -60,12 +96,16 @@ const networkSchema = z.object({
   ),
 })
 
-type portError = {
-  hostPort: string
-  targetPort: string
-  portProtocol: string
-}
-const networkPortErrors = ref<portError[]>([])
+const storageSchema = z.array(
+  z.object({
+    name: z.string().max(50),
+    mountPath: z.string().max(100),
+    size: z.number().min(0.1).max(100.0),
+  }),
+)
+
+const networkPortErrors = ref<PortError[]>([])
+const storageErrors = ref<StorageErrors[]>([])
 
 const schemaSettings = {
   name: toTypedSchema(z.string().max(50)),
@@ -73,16 +113,7 @@ const schemaSettings = {
   resourcesCpu: toTypedSchema(z.array(z.number().min(0.1).max(4.0))),
   resourcesMemory: toTypedSchema(z.array(z.number().min(128).max(4096))),
   resourcesReplicas: toTypedSchema(z.array(z.number().min(0).max(60))),
-  storage: toTypedSchema(
-    z.array(
-      z.object({
-        name: z.string().max(50),
-        mountPath: z.string().max(100),
-        size: z.number().min(0.1).max(100.0),
-      }),
-    ),
-  ),
-  network: (values) => {
+  network: (values: Network) => {
     if (values && typeof values.networkExpose === 'undefined') {
       return true
     } else if (!values.networkExpose) {
@@ -100,6 +131,25 @@ const schemaSettings = {
         )
         for (const error of validationResult.error?.errors) {
           networkPortErrors.value[error.path[1]][error.path[2]] = error.message
+        }
+      }
+      return validationResult.success
+    }
+  },
+  storage: (values: Storage) => {
+    if (!storageIsOpen.value) {
+      return true
+    }
+    if (isSubmitting.value) {
+      const validationResult = storageSchema.safeParse(values)
+      if (!validationResult.success) {
+        storageErrors.value = Array.from({ length: values.length }, () => ({
+          name: '',
+          mountPath: '',
+          size: '',
+        }))
+        for (const error of validationResult.error?.errors) {
+          storageErrors.value[error.path[0]][error.path[1]] = error.message
         }
       }
       return validationResult.success
@@ -123,11 +173,7 @@ const { handleSubmit, isSubmitting, setFieldValue } = useForm({
 })
 
 // const { push, remove, fields } = useFieldArray('ports')
-const generalIsOpen = ref(true)
-const resourcesIsOpen = ref(true)
-const sourceIsOpen = ref(true)
-const networkIsOpen = ref(true)
-const storageIsOpen = ref(true)
+
 
 const handleAccordionTrigger = (newValue) => {
   generalIsOpen.value = newValue.includes('general')
@@ -149,7 +195,7 @@ const isRequired = () => {
 <template>
   <Accordion
     type="multiple"
-    :default-value="['general', 'resources']"
+    :default-value="['general', 'resources', 'source', 'network']"
     collapsible
     @update:model-value="handleAccordionTrigger"
   >
@@ -484,7 +530,12 @@ const isRequired = () => {
                 <FormDescription>
                   Indicate a name to identify the volume
                 </FormDescription>
-                <FormMessage />
+                <p
+                  v-if="storageErrors[idx]"
+                  class="text-sm font-medium text-destructive"
+                >
+                  {{ storageErrors[idx].name }}
+                </p>
               </FormItem>
             </FormField>
             <FormField
@@ -504,7 +555,12 @@ const isRequired = () => {
                 <FormDescription>
                   Where inside the component will the volume be mounted
                 </FormDescription>
-                <FormMessage />
+                <p
+                  v-if="storageErrors[idx]"
+                  class="text-sm font-medium text-destructive"
+                >
+                  {{ storageErrors[idx].mountPath }}
+                </p>
               </FormItem>
             </FormField>
             <FormField
@@ -542,7 +598,12 @@ const isRequired = () => {
                 <FormDescription>
                   Value indicates the size of the volume in GB
                 </FormDescription>
-                <FormMessage />
+                <p
+                  v-if="storageErrors[idx]"
+                  class="text-sm font-medium text-destructive"
+                >
+                  {{ storageErrors[idx].size }}
+                </p>
               </FormItem>
             </FormField>
             <Button size="icon" variant="ghost" @click="remove(idx)">
