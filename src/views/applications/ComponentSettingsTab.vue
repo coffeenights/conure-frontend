@@ -113,6 +113,8 @@ const schemaSettings = {
   resourcesCpu: toTypedSchema(z.array(z.number().min(0.1).max(4.0))),
   resourcesMemory: toTypedSchema(z.array(z.number().min(128).max(4096))),
   resourcesReplicas: toTypedSchema(z.array(z.number().min(0).max(60))),
+  sourceImage: toTypedSchema(z.string().max(255)),
+  sourceCommand: toTypedSchema(z.string().max(255).optional()),
   network: (values: Network) => {
     if (values && typeof values.networkExpose === 'undefined') {
       return true
