@@ -8,28 +8,6 @@ export const VariableSchema = z.object({
   isEncrypted: z.boolean().default(false),
 })
 
-export const ComponentSettingsSchema = z.object({
-  name: z.string().max(50),
-  description: z.string().max(255).optional(),
-  resourcesCpu: z.array(z.number().min(0.1).max(4.0)),
-  resourcesMemory: z.array(z.number().min(128).max(4096)),
-  resourcesReplicas: z.array(z.number().min(0).max(60)),
-  networkPorts: z.array(
-    z.object({
-      hostPort: z.number().min(0).max(65535),
-      targetPort: z.number().min(0).max(65535),
-      portProtocol: z.enum(['TCP', 'UDP']),
-    }),
-  ),
-  storage: z.array(
-    z.object({
-      name: z.string().max(50),
-      mountPath: z.string().max(100),
-      size: z.number().min(0.1).max(100.0),
-    }),
-  ),
-})
-
 export type Variable = {
   id: string
   name: string

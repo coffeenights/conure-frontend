@@ -65,12 +65,51 @@ export type ComponentStatusHealth = {
   updated: string
 }
 
+type Port = {
+  host_port: number
+  target_port: number
+  protocol: 'TCP' | 'UDP'
+}
+
+type Network = {
+  exposed: boolean
+  type: 'private' | 'public'
+  ports: Port[]
+}
+
+type Storage = {
+  name: string
+  mount_path: string
+  size: number
+}
+
+export type Component = {
+  name: string
+  type: string
+  description: string
+  application_id: string
+  settings: {
+    resources_settings: {
+      cpu: string
+      memory: string
+      replicas: number
+    }
+    network_settings: Network
+    storage_settings: Storage[]
+    source_settings: {
+      repository: string
+      command: string
+    }
+  }
+}
+
 export type ComponentProperties = {
   network: {
     ip: string
     external_ip: string
     host: string
     port: number[]
+    ports: Port[]
   }
   resources: {
     cpu: string
@@ -78,13 +117,7 @@ export type ComponentProperties = {
     replicas: number
   }
   storage: {
-    volumes: [
-      {
-        name: string
-        path: string
-        size: string
-      },
-    ]
+    volumes: Storage[]
     healthy: boolean
   }
   source: {
@@ -120,6 +153,7 @@ export type OrganizationListResponse = ApiResponse<{
 export type ComponentListResponse = ApiResponse<{
   components: ComponentService[]
 }>
+export type ComponentResponse = ApiResponse<Component>
 export type ComponentStatusResponse = ApiResponse<ComponentStatus>
 export type ComponentStatusHealthResponse = ApiResponse<ComponentStatusHealth>
 export type ComponentPodsResponse = ApiResponse<{
@@ -179,21 +213,15 @@ export const listComponents = async (
   )
 }
 
-// TODO: Implement the detailComponent function using the fetchData function
-export const detailComponent = async (
+export const detailsComponent = async (
   organizationId: string,
   applicationId: string,
   environment: string,
   componentId: string,
-) => {
-  try {
-    const response = await api.get(
-      `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}`,
-    )
-    return response.data
-  } catch (error) {
-    console.log(error)
-  }
+): Promise<ComponentResponse> => {
+  return fetchData<ComponentResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}`,
+  )
 }
 
 export const statusComponent = async (
