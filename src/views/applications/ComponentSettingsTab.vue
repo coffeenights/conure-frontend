@@ -6,24 +6,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
-
-import { useForm } from 'vee-validate'
-import { toTypedSchema } from '@vee-validate/zod'
-import { configure, FieldArray } from 'vee-validate'
-import { z } from 'zod'
+import { z, ZodIssue } from 'zod'
 import {
   Select,
   SelectContent,
@@ -40,7 +28,11 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
 } from '@/components/ui/number-field'
-import { Component, detailsComponent } from '@/services/organizations'
+import {
+  ComponentService,
+  detailsComponent,
+  ResourcesArrays,
+} from '@/services/organizations'
 import { registerError } from '@/services/errors'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { useRoute } from 'vue-router'
@@ -51,29 +43,34 @@ const resourcesIsOpen = ref(true)
 const sourceIsOpen = ref(true)
 const networkIsOpen = ref(true)
 const storageIsOpen = ref(false)
+const isSubmitting = ref(false)
+const errors = ref([] as ZodIssue[])
+const resourceErrors = ref([] as ZodIssue[])
 const component = ref({
   name: '',
   type: '',
   description: '',
-  application_id: '',
   settings: {
-    resources_settings: {
-      replicas: [1],
-      cpu: [1.0],
-      memory: [512],
-    },
     network_settings: {
       exposed: false,
       type: 'public',
-      ports: [{ host_port: null, target_port: null, port_protocol: 'TCP' }],
+      ports: [
+        { host_port: undefined, target_port: undefined, protocol: 'tcp' },
+      ],
     },
-    storage_settings: [{ name: null, mountPath: null, size: 0.1 }],
+    storage_settings: [{ name: undefined, mount_path: undefined, size: 0.1 }],
     source_settings: {
       repository: '',
       command: '',
     },
   },
-} as Component)
+} as ComponentService)
+
+const componentResources = ref({
+  replicas: [1],
+  cpu: [1.0],
+  memory: [512],
+} as ResourcesArrays)
 
 const isLoading = ref(true)
 const breadCrumbStore = useBreadCrumbStore()
@@ -88,17 +85,16 @@ const fetchData = () => {
     route.params.componentId as string,
   )
     .then((response) => {
-      let settingsData = response.data
-      settingsData.settings.resources_settings.replicas = [
+      component.value = response.data
+      componentResources.value.replicas = [
         response.data.settings.resources_settings.replicas,
       ]
-      settingsData.settings.resources_settings.cpu = [
+      componentResources.value.cpu = [
         response.data.settings.resources_settings.cpu,
       ]
-      settingsData.settings.resources_settings.memory = [
+      componentResources.value.memory = [
         response.data.settings.resources_settings.memory,
       ]
-      component.value = settingsData
     })
     .catch((error) => {
       registerError(error)
@@ -110,131 +106,43 @@ const fetchData = () => {
 }
 watch(() => route.params.componentId, fetchData, { immediate: true })
 
-configure({
-  validateOnBlur: false,
-  validateOnChange: true,
-  validateOnInput: false,
-  validateOnModelUpdate: false,
-})
-
-type PortError = {
-  hostPort: string
-  targetPort: string
-  portProtocol: string
-}
-
-type Port = {
-  hostPort: number
-  targetPort: number
-  portProtocol: 'TCP' | 'UDP'
-}
-
-type Network = {
-  networkExpose: boolean
-  networkType: 'private' | 'public'
-  networkPorts: Port[]
-}
-
-type Storage = {
-  name: string
-  mountPath: string
-  size: number
-}
-
-type StorageErrors = {
-  name: string
-  mountPath: string
-  size: string
-}
-
 const networkSchema = z.object({
-  networkExpose: z.boolean(),
-  networkType: z.enum(['private', 'public']),
-  networkPorts: z.array(
+  exposed: z.boolean(),
+  type: z.enum(['private', 'public']),
+  ports: z.array(
     z.object({
-      hostPort: z.number().min(0).max(65535),
-      targetPort: z.number().min(0).max(65535),
-      portProtocol: z.enum(['TCP', 'UDP']),
+      host_port: z.number().min(1).max(65535),
+      target_port: z.number().min(1).max(65535),
+      protocol: z.enum(['tcp', 'udp']),
     }),
   ),
 })
 
 const storageSchema = z.array(
   z.object({
-    name: z.string().max(50),
-    mountPath: z.string().max(100),
+    name: z.string().max(50).trim().min(1, 'Field is required'),
+    mount_path: z.string().max(100).trim().min(1, 'Field is required'),
     size: z.number().min(0.1).max(100.0),
   }),
 )
 
-const networkPortErrors = ref<PortError[]>([])
-const storageErrors = ref<StorageErrors[]>([])
+const resourcesSchema = z.object({
+  cpu: z.array(z.number().min(0.1).max(4.0)),
+  memory: z.array(z.number().min(128).max(4096)),
+  replicas: z.array(z.number().min(0).max(60)),
+})
 
-const schemaSettings = {
-  name: toTypedSchema(z.string().max(50)),
-  description: toTypedSchema(z.string().max(255).optional()),
-  resourcesCpu: toTypedSchema(z.array(z.number().min(0.1).max(4.0))),
-  resourcesMemory: toTypedSchema(z.array(z.number().min(128).max(4096))),
-  resourcesReplicas: toTypedSchema(z.array(z.number().min(0).max(60))),
-  sourceImage: toTypedSchema(z.string().max(255)),
-  sourceCommand: toTypedSchema(z.string().max(255).optional()),
-  network: (values: Network) => {
-    if (values && typeof values.networkExpose === 'undefined') {
-      return true
-    } else if (!values.networkExpose) {
-      return true
-    } else if (isSubmitting.value) {
-      const validationResult = networkSchema.safeParse(values)
-      if (!validationResult.success) {
-        networkPortErrors.value = Array.from(
-          { length: values.networkPorts.length },
-          () => ({
-            hostPort: '',
-            targetPort: '',
-            portProtocol: '',
-          }),
-        )
-        for (const error of validationResult.error?.errors) {
-          networkPortErrors.value[error.path[1]][error.path[2]] = error.message
-        }
-      }
-      return validationResult.success
-    }
-  },
-  storage: (values: Storage) => {
-    if (!storageIsOpen.value) {
-      return true
-    }
-    if (isSubmitting.value) {
-      const validationResult = storageSchema.safeParse(values)
-      if (!validationResult.success) {
-        storageErrors.value = Array.from({ length: values.length }, () => ({
-          name: '',
-          mountPath: '',
-          size: '',
-        }))
-        for (const error of validationResult.error?.errors) {
-          storageErrors.value[error.path[0]][error.path[1]] = error.message
-        }
-      }
-      return validationResult.success
-    }
-  },
-}
-
-const { handleSubmit, isSubmitting, setFieldValue } = useForm({
-  validationSchema: schemaSettings,
-  initialValues: {
-    resourcesCpu: [1.0],
-    resourcesMemory: [512],
-    resourcesReplicas: [1],
-    network: {
-      networkExpose: false,
-      networkType: 'public',
-      networkPorts: [{ hostPort: null, targetPort: null, portProtocol: 'TCP' }],
-    },
-    storage: [{ name: null, mountPath: null, size: 0.1 }],
-  },
+const schemaSettings = z.object({
+  name: z.string().max(50).min(1, 'Field is required'),
+  description: z.string().max(255).optional(),
+  settings: z.object({
+    network_settings: networkSchema,
+    storage_settings: storageSchema,
+    source_settings: z.object({
+      repository: z.string().max(255).min(1, 'Field is required'),
+      command: z.string().max(255).optional(),
+    }),
+  }),
 })
 
 const handleAccordionTrigger = (newValue) => {
@@ -245,9 +153,26 @@ const handleAccordionTrigger = (newValue) => {
   storageIsOpen.value = newValue.includes('storage')
 }
 
-const onSubmit = handleSubmit(async (values) => {
-  console.log(values)
-})
+const onSubmit = () => {
+  isSubmitting.value = true
+  errors.value = [] as ZodIssue[]
+  resourceErrors.value = [] as ZodIssue[]
+  const validationResult = schemaSettings.safeParse(component.value)
+  const resourcesValidationResult = resourcesSchema.safeParse(
+    componentResources.value,
+  )
+  if (validationResult.success && resourcesValidationResult.success) {
+    console.log('Success')
+  }
+
+  if (!validationResult.success) {
+    errors.value = validationResult.error?.errors || []
+  }
+  if (!resourcesValidationResult.success) {
+    resourceErrors.value = resourcesValidationResult.error?.errors || []
+  }
+  isSubmitting.value = false
+}
 </script>
 
 <template>
@@ -273,7 +198,7 @@ const onSubmit = handleSubmit(async (values) => {
             class="bg-card"
             name="name"
           />
-          <SettingsErrorMessage />
+          <SettingsErrorMessage path="name" :errors="errors" />
         </div>
         <div class="space-y-2">
           <Label>Description (optional)</Label>
@@ -284,7 +209,7 @@ const onSubmit = handleSubmit(async (values) => {
             class="bg-card"
             name="description"
           />
-          <SettingsErrorMessage />
+          <SettingsErrorMessage path="description" :errors="errors" />
         </div>
       </AccordionContent>
     </AccordionItem>
@@ -298,25 +223,23 @@ const onSubmit = handleSubmit(async (values) => {
         <div class="grow w-full space-y-2">
           <Label>Replicas</Label>
           <Slider
-            v-bind="componentField"
-            v-model="component.settings.resources_settings.replicas"
+            v-model="componentResources.replicas"
             :default-value="[1]"
-            :max="60"
+            :max="70"
             :min="0"
             :step="1"
             slider-class="bg-card"
-            name="resourcesReplicas"
+            name="resources_replicas"
           />
           <div class="flex justify-between text-sm text-muted-foreground">
-            <span>{{ component.settings.resources_settings.replicas[0] }}</span>
+            <span>{{ componentResources.replicas[0] }}</span>
           </div>
-          <SettingsErrorMessage />
+          <SettingsErrorMessage path="replicas.0" :errors="resourceErrors" />
         </div>
         <div class="grow w-full space-y-2">
           <Label>CPU</Label>
           <Slider
-            v-bind="componentField"
-            v-model="component.settings.resources_settings.cpu"
+            v-model="componentResources.cpu"
             :default-value="[1.0]"
             :max="4.0"
             :min="0.1"
@@ -325,15 +248,14 @@ const onSubmit = handleSubmit(async (values) => {
             name="resourcesCpu"
           />
           <div class="flex justify-between text-sm text-muted-foreground">
-            <span>{{ component.settings.resources_settings.cpu[0] }}</span>
+            <span>{{ componentResources.cpu[0] }}</span>
           </div>
-          <SettingsErrorMessage />
+          <SettingsErrorMessage path="cpu.0" :errors="resourceErrors" />
         </div>
         <div class="grow w-full space-y-2">
           <Label>Memory</Label>
           <Slider
-            v-bind="componentField"
-            v-model="component.settings.resources_settings.memory"
+            v-model="componentResources.memory"
             :default-value="[512]"
             :max="4096"
             :min="128"
@@ -342,11 +264,9 @@ const onSubmit = handleSubmit(async (values) => {
             name="resourcesMemory"
           />
           <div class="flex justify-between text-sm text-muted-foreground">
-            <span
-              >{{ component.settings.resources_settings.memory[0] }} Mb</span
-            >
+            <span>{{ componentResources.memory[0] }} Mb</span>
           </div>
-          <SettingsErrorMessage />
+          <SettingsErrorMessage path="memory.0" :errors="resourceErrors" />
         </div>
       </AccordionContent>
     </AccordionItem>
@@ -370,7 +290,10 @@ const onSubmit = handleSubmit(async (values) => {
             The Image field is where you specify the container image for your
             component
           </div>
-          <SettingsErrorMessage />
+          <SettingsErrorMessage
+            path="settings.source_settings.repository"
+            :errors="errors"
+          />
         </div>
         <div class="space-y-2">
           <Label>Command (optional)</Label>
@@ -384,7 +307,10 @@ const onSubmit = handleSubmit(async (values) => {
           <div class="text-sm text-muted-foreground">
             Override the CMD property of your container image
           </div>
-          <SettingsErrorMessage />
+          <SettingsErrorMessage
+            path="settings.source_settings.command"
+            :errors="errors"
+          />
         </div>
       </AccordionContent>
     </AccordionItem>
@@ -406,7 +332,10 @@ const onSubmit = handleSubmit(async (values) => {
             Activate if you want to expose the component to other components in
             the application or to the outside world
           </div>
-          <SettingsErrorMessage />
+          <SettingsErrorMessage
+            path="settings.network_settings.exposed"
+            :errors="errors"
+          />
         </div>
 
         <div class="space-y-2">
@@ -429,28 +358,23 @@ const onSubmit = handleSubmit(async (values) => {
           <div class="text-sm text-muted-foreground">
             Select to whom you want to expose the component
           </div>
-          <SettingsErrorMessage />
+          <SettingsErrorMessage path="settings.network_settings.type" :errors="errors" />
         </div>
         <div class="space-y-2">
           <Label>Ports</Label>
           <fieldset
             v-for="(port, idx) in component.settings.network_settings.ports"
-            :key="port"
+            :key="idx"
             class="flex flex-row gap-2 items-center"
           >
             <div class="grow space-y-2">
               <Input
+                v-model="port.host_port"
                 type="number"
                 placeholder="Host"
                 class="bg-card"
-                v-model="port.host_port"
               />
-              <p
-                v-if="networkPortErrors[idx]"
-                class="text-sm font-medium text-destructive"
-              >
-                {{ networkPortErrors[idx].hostPort }}
-              </p>
+              <SettingsErrorMessage :path="'settings.network_settings.ports.' + idx + '.host_port'" :errors="errors" />
             </div>
             <span class="space-x-2">:</span>
             <div class="grow space-y-2">
@@ -460,12 +384,7 @@ const onSubmit = handleSubmit(async (values) => {
                 placeholder="Target"
                 class="bg-card"
               />
-              <p
-                v-if="networkPortErrors[idx]"
-                class="text-sm font-medium text-destructive"
-              >
-                {{ networkPortErrors[idx].targetPort }}
-              </p>
+              <SettingsErrorMessage :path="'settings.network_settings.ports.' + idx + '.target_port'" :errors="errors" />
             </div>
             <div class="w-24 space-y-2">
               <Select v-model="port.protocol" default-value="TCP">
@@ -474,17 +393,12 @@ const onSubmit = handleSubmit(async (values) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="TCP"> TCP </SelectItem>
-                    <SelectItem value="UDP"> UDP </SelectItem>
+                    <SelectItem value="tcp"> TCP </SelectItem>
+                    <SelectItem value="udp"> UDP </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <p
-                v-if="networkPortErrors[idx]"
-                class="text-sm font-medium text-destructive"
-              >
-                {{ networkPortErrors[idx].portProtocol }}
-              </p>
+              <SettingsErrorMessage :path="'settings.network_settings.ports.' + idx + '.protocol'" :errors="errors" />
             </div>
             <Button size="icon" variant="ghost" @click="remove(idx)">
               <span class="bi-trash text-xl cursor-pointer"></span>
@@ -513,118 +427,69 @@ const onSubmit = handleSubmit(async (values) => {
         force-mount
         :is-open="storageIsOpen"
       >
-        <FieldArray v-slot="{ fields, push, remove }" name="storage">
-          <fieldset
-            v-for="(field, idx) in fields"
-            :key="field.key"
-            class="flex flex-row gap-2 items-center"
-          >
-            <FormField
-              v-slot="{ componentField }"
-              :name="`storage[${idx}].name`"
+        <fieldset
+          v-for="(storage, idx) in component.settings.storage_settings"
+          :key="idx"
+          class="flex flex-row gap-2 items-center"
+        >
+          <div class="grow space-y-2">
+            <Label>Name</Label>
+            <Input
+              v-model="storage.name"
+              type="text"
+              placeholder="Volume name"
+              class="bg-card"
+            />
+            <div class="text-sm text-muted-foreground">
+              Indicate a name to identify the volume
+            </div>
+            <SettingsErrorMessage :path="'settings.storage_settings.' + idx + '.name'" :errors="errors" />
+          </div>
+          <div class="grow space-y-2">
+            <Label>Mount Path</Label>
+            <Input
+              v-model="storage.mount_path"
+              type="text"
+              placeholder="/path/to/mount"
+              class="bg-card"
+            />
+            <div class="text-sm text-muted-foreground">
+              Where inside the component will the volume be mounted
+            </div>
+            <SettingsErrorMessage :path="'settings.storage_settings.' + idx + '.mount_path'" :errors="errors" />
+          </div>
+          <div class="grow space-y-2">
+            <Label>Size</Label>
+            <NumberField
+              v-model="storage.size"
+              :min="0.1"
+              :max="100"
+              :step="0.1"
+              :default-value="0.1"
             >
-              <FormItem class="grow">
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Volume name"
-                    v-bind="componentField"
-                    class="bg-card"
-                  />
-                </FormControl>
-                <FormDescription>
-                  Indicate a name to identify the volume
-                </FormDescription>
-                <p
-                  v-if="storageErrors[idx]"
-                  class="text-sm font-medium text-destructive"
-                >
-                  {{ storageErrors[idx].name }}
-                </p>
-              </FormItem>
-            </FormField>
-            <FormField
-              v-slot="{ componentField }"
-              :name="`storage[${idx}].mountPath`"
-            >
-              <FormItem class="grow">
-                <FormLabel>Mount Path</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="/path/to/mount"
-                    v-bind="componentField"
-                    class="bg-card"
-                  />
-                </FormControl>
-                <FormDescription>
-                  Where inside the component will the volume be mounted
-                </FormDescription>
-                <p
-                  v-if="storageErrors[idx]"
-                  class="text-sm font-medium text-destructive"
-                >
-                  {{ storageErrors[idx].mountPath }}
-                </p>
-              </FormItem>
-            </FormField>
-            <FormField
-              v-slot="{ componentField }"
-              :name="`storage[${idx}].size`"
-            >
-              <FormItem class="grow">
-                <FormLabel>Size</FormLabel>
-                <NumberField
-                  :min="0.1"
-                  :max="100"
-                  :step="0.1"
-                  :default-value="0.1"
-                  @update:model-value="
-                    (v) => {
-                      if (v) {
-                        setFieldValue(`storage[${idx}].size`, v)
-                      } else {
-                        setFieldValue(`storage[${idx}].size`, undefined)
-                      }
-                    }
-                  "
-                >
-                  <NumberFieldContent>
-                    <NumberFieldDecrement />
-                    <FormControl>
-                      <NumberFieldInput
-                        class="bg-card"
-                        v-bind="componentField"
-                      />
-                    </FormControl>
-                    <NumberFieldIncrement />
-                  </NumberFieldContent>
-                </NumberField>
-                <FormDescription>
-                  Value indicates the size of the volume in GB
-                </FormDescription>
-                <p
-                  v-if="storageErrors[idx]"
-                  class="text-sm font-medium text-destructive"
-                >
-                  {{ storageErrors[idx].size }}
-                </p>
-              </FormItem>
-            </FormField>
-            <Button size="icon" variant="ghost" @click="remove(idx)">
-              <span class="bi-trash text-xl cursor-pointer"></span>
-            </Button>
-          </fieldset>
-          <Button
-            size="sm"
-            variant="secondary"
-            class="w-12"
-            @click="push({ name: null, mountPath: null, size: 0.1 })"
-          >
-            <span class="bi-plus text-xl cursor-pointer"></span>
+              <NumberFieldContent>
+                <NumberFieldDecrement />
+                <NumberFieldInput class="bg-card" />
+                <NumberFieldIncrement />
+              </NumberFieldContent>
+            </NumberField>
+            <div class="text-sm text-muted-foreground">
+              Value indicates the size of the volume in GB
+            </div>
+            <SettingsErrorMessage :path="'settings.storage_settings.' + idx + '.size'" :errors="errors" />
+          </div>
+          <Button size="icon" variant="ghost" @click="remove(idx)">
+            <span class="bi-trash text-xl cursor-pointer"></span>
           </Button>
-        </FieldArray>
+        </fieldset>
+        <Button
+          size="sm"
+          variant="secondary"
+          class="w-12"
+          @click="push({ name: null, mountPath: null, size: 0.1 })"
+        >
+          <span class="bi-plus text-xl cursor-pointer"></span>
+        </Button>
       </AccordionContent>
     </AccordionItem>
   </Accordion>
