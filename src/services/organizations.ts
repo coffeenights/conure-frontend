@@ -107,19 +107,19 @@ export type ComponentStatusHealth = {
   updated: string
 }
 
-type Port = {
+export type Port = {
   host_port: number | undefined
   target_port: number | undefined
   protocol: 'tcp' | 'udp'
 }
 
-type Network = {
+export type Network = {
   exposed: boolean
   type: 'private' | 'public'
   ports: Port[]
 }
 
-type Storage = {
+export type Storage = {
   name: string | undefined
   mount_path: string | undefined
   size: number

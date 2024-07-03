@@ -32,6 +32,7 @@ import {
   ComponentService,
   detailsComponent,
   ResourcesArrays,
+  Storage,
 } from '@/services/organizations'
 import { registerError } from '@/services/errors'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
@@ -42,10 +43,15 @@ const generalIsOpen = ref(true)
 const resourcesIsOpen = ref(true)
 const sourceIsOpen = ref(true)
 const networkIsOpen = ref(true)
-const storageIsOpen = ref(false)
+const storageIsOpen = ref(true)
+
 const isSubmitting = ref(false)
+
 const errors = ref([] as ZodIssue[])
 const resourceErrors = ref([] as ZodIssue[])
+const networkErrors = ref([] as ZodIssue[])
+const storageErrors = ref([] as ZodIssue[])
+
 const component = ref({
   name: '',
   type: '',
@@ -58,7 +64,7 @@ const component = ref({
         { host_port: undefined, target_port: undefined, protocol: 'tcp' },
       ],
     },
-    storage_settings: [{ name: undefined, mount_path: undefined, size: 0.1 }],
+    storage_settings: [] as Storage[],
     source_settings: {
       repository: '',
       command: '',
@@ -118,13 +124,15 @@ const networkSchema = z.object({
   ),
 })
 
-const storageSchema = z.array(
-  z.object({
-    name: z.string().max(50).trim().min(1, 'Field is required'),
-    mount_path: z.string().max(100).trim().min(1, 'Field is required'),
-    size: z.number().min(0.1).max(100.0),
-  }),
-)
+const storageSchema = z
+  .array(
+    z.object({
+      name: z.string().max(50).trim().min(1, 'Field is required'),
+      mount_path: z.string().max(100).trim().min(1, 'Field is required'),
+      size: z.number().min(0.1).max(100.0),
+    }),
+  )
+  .optional()
 
 const resourcesSchema = z.object({
   cpu: z.array(z.number().min(0.1).max(4.0)),
@@ -136,8 +144,6 @@ const schemaSettings = z.object({
   name: z.string().max(50).min(1, 'Field is required'),
   description: z.string().max(255).optional(),
   settings: z.object({
-    network_settings: networkSchema,
-    storage_settings: storageSchema,
     source_settings: z.object({
       repository: z.string().max(255).min(1, 'Field is required'),
       command: z.string().max(255).optional(),
@@ -157,28 +163,80 @@ const onSubmit = () => {
   isSubmitting.value = true
   errors.value = [] as ZodIssue[]
   resourceErrors.value = [] as ZodIssue[]
+
+  let allSuccess: boolean = true
+
   const validationResult = schemaSettings.safeParse(component.value)
+  if (!validationResult.success) {
+    errors.value = validationResult.error?.errors || []
+    allSuccess = false
+  }
+
   const resourcesValidationResult = resourcesSchema.safeParse(
     componentResources.value,
   )
-  if (validationResult.success && resourcesValidationResult.success) {
+  if (!resourcesValidationResult.success) {
+    resourceErrors.value = resourcesValidationResult.error?.errors || []
+    allSuccess = false
+  }
+
+  if (component.value.settings.network_settings.exposed) {
+    const networkValidationResult = networkSchema.safeParse(
+      component.value.settings.network_settings,
+    )
+    if (!networkValidationResult.success) {
+      networkErrors.value = networkValidationResult.error?.errors || []
+      allSuccess = false
+    }
+  }
+  const storageValidationResult = storageSchema.safeParse(
+    component.value.settings.storage_settings,
+  )
+  if (!storageValidationResult.success) {
+    storageErrors.value = storageValidationResult.error?.errors || []
+    allSuccess = false
+  }
+
+  if (allSuccess) {
     console.log('Success')
   }
 
-  if (!validationResult.success) {
-    errors.value = validationResult.error?.errors || []
-  }
-  if (!resourcesValidationResult.success) {
-    resourceErrors.value = resourcesValidationResult.error?.errors || []
-  }
   isSubmitting.value = false
+}
+
+const addNewPort = () => {
+  component.value.settings.network_settings.ports.push({
+    host_port: undefined,
+    target_port: undefined,
+    protocol: 'tcp',
+  })
+}
+
+const removePort = (index: number) => {
+  component.value.settings.network_settings.ports.splice(index, 1)
+}
+
+const addNewVolume = () => {
+  component.value.settings.storage_settings.push({
+    name: undefined,
+    mount_path: undefined,
+    size: 0.1,
+  })
+}
+
+const removeVolume = (index: number) => {
+  component.value.settings.storage_settings.splice(index, 1)
+}
+
+const changeExposed = (value: boolean) => {
+  component.value.settings.network_settings.exposed = value
 }
 </script>
 
 <template>
   <Accordion
     type="multiple"
-    :default-value="['general', 'resources', 'source', 'network']"
+    :default-value="['general', 'resources', 'source', 'network', 'storage']"
     collapsible
     @update:model-value="handleAccordionTrigger"
   >
@@ -327,15 +385,13 @@ const onSubmit = () => {
             v-model="component.settings.network_settings.exposed"
             :checked="component.settings.network_settings.exposed"
             name="network.networkExpose"
+            @update:checked="changeExposed"
           />
           <div class="text-sm text-muted-foreground">
             Activate if you want to expose the component to other components in
             the application or to the outside world
           </div>
-          <SettingsErrorMessage
-            path="settings.network_settings.exposed"
-            :errors="errors"
-          />
+          <SettingsErrorMessage path="exposed" :errors="networkErrors" />
         </div>
 
         <div class="space-y-2">
@@ -358,7 +414,7 @@ const onSubmit = () => {
           <div class="text-sm text-muted-foreground">
             Select to whom you want to expose the component
           </div>
-          <SettingsErrorMessage path="settings.network_settings.type" :errors="errors" />
+          <SettingsErrorMessage path="type" :errors="networkErrors" />
         </div>
         <div class="space-y-2">
           <Label>Ports</Label>
@@ -374,7 +430,10 @@ const onSubmit = () => {
                 placeholder="Host"
                 class="bg-card"
               />
-              <SettingsErrorMessage :path="'settings.network_settings.ports.' + idx + '.host_port'" :errors="errors" />
+              <SettingsErrorMessage
+                :path="'ports.' + idx + '.host_port'"
+                :errors="networkErrors"
+              />
             </div>
             <span class="space-x-2">:</span>
             <div class="grow space-y-2">
@@ -384,7 +443,10 @@ const onSubmit = () => {
                 placeholder="Target"
                 class="bg-card"
               />
-              <SettingsErrorMessage :path="'settings.network_settings.ports.' + idx + '.target_port'" :errors="errors" />
+              <SettingsErrorMessage
+                :path="'ports.' + idx + '.target_port'"
+                :errors="networkErrors"
+              />
             </div>
             <div class="w-24 space-y-2">
               <Select v-model="port.protocol" default-value="TCP">
@@ -398,23 +460,16 @@ const onSubmit = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <SettingsErrorMessage :path="'settings.network_settings.ports.' + idx + '.protocol'" :errors="errors" />
+              <SettingsErrorMessage
+                :path="'ports.' + idx + '.protocol'"
+                :errors="networkErrors"
+              />
             </div>
-            <Button size="icon" variant="ghost" @click="remove(idx)">
+            <Button size="icon" variant="ghost" @click="removePort(idx)">
               <span class="bi-trash text-xl cursor-pointer"></span>
             </Button>
           </fieldset>
-          <Button
-            size="sm"
-            variant="secondary"
-            @click="
-              push({
-                hostPort: null,
-                targetPort: null,
-                portProtocol: 'TCP',
-              })
-            "
-          >
+          <Button size="sm" variant="secondary" @click="addNewPort()">
             <span class="bi-plus text-xl cursor-pointer"></span>
           </Button>
         </div>
@@ -443,7 +498,10 @@ const onSubmit = () => {
             <div class="text-sm text-muted-foreground">
               Indicate a name to identify the volume
             </div>
-            <SettingsErrorMessage :path="'settings.storage_settings.' + idx + '.name'" :errors="errors" />
+            <SettingsErrorMessage
+              :path="idx + '.name'"
+              :errors="storageErrors"
+            />
           </div>
           <div class="grow space-y-2">
             <Label>Mount Path</Label>
@@ -456,7 +514,10 @@ const onSubmit = () => {
             <div class="text-sm text-muted-foreground">
               Where inside the component will the volume be mounted
             </div>
-            <SettingsErrorMessage :path="'settings.storage_settings.' + idx + '.mount_path'" :errors="errors" />
+            <SettingsErrorMessage
+              :path="idx + '.mount_path'"
+              :errors="storageErrors"
+            />
           </div>
           <div class="grow space-y-2">
             <Label>Size</Label>
@@ -476,9 +537,12 @@ const onSubmit = () => {
             <div class="text-sm text-muted-foreground">
               Value indicates the size of the volume in GB
             </div>
-            <SettingsErrorMessage :path="'settings.storage_settings.' + idx + '.size'" :errors="errors" />
+            <SettingsErrorMessage
+              :path="idx + '.size'"
+              :errors="storageErrors"
+            />
           </div>
-          <Button size="icon" variant="ghost" @click="remove(idx)">
+          <Button size="icon" variant="ghost" @click="removeVolume(idx)">
             <span class="bi-trash text-xl cursor-pointer"></span>
           </Button>
         </fieldset>
@@ -486,7 +550,7 @@ const onSubmit = () => {
           size="sm"
           variant="secondary"
           class="w-12"
-          @click="push({ name: null, mountPath: null, size: 0.1 })"
+          @click="addNewVolume()"
         >
           <span class="bi-plus text-xl cursor-pointer"></span>
         </Button>
