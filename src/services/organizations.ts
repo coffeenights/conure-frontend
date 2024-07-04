@@ -1,4 +1,4 @@
-import { ApiResponse, fetchData, postData } from './api'
+import { ApiResponse, fetchData, postData, putData } from './api'
 import { z } from 'zod'
 
 export type Revision = {
@@ -47,7 +47,6 @@ export type ComponentService = {
   name: string
   type: string
   description: string
-  application_id: string
   settings: {
     resources_settings: Resources
     network_settings: Network
@@ -57,6 +56,12 @@ export type ComponentService = {
       command: string
     }
   }
+}
+
+export type ComponentCreateRequest = {
+  name: string
+  type: string
+  description: string
 }
 
 export type ComponentProperties = {
@@ -239,6 +244,32 @@ export const statusComponentHealth = async (
 ): Promise<ComponentStatusHealthResponse> => {
   return fetchData<ComponentStatusHealthResponse>(
     `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/status/health`,
+  )
+}
+
+export const createComponent = async (
+  organizationId: string,
+  applicationId: string,
+  environment: string,
+  componentId: string,
+  data: ComponentCreateRequest,
+): Promise<ComponentResponse> => {
+  return postData<ComponentResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}`,
+    data,
+  )
+}
+
+export const updateComponent = async (
+  organizationId: string,
+  applicationId: string,
+  environment: string,
+  componentId: string,
+  data: ComponentService,
+): Promise<ComponentResponse> => {
+  return putData<ComponentResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}`,
+    data,
   )
 }
 
