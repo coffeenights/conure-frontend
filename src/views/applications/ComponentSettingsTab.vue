@@ -33,6 +33,7 @@ import {
   detailsComponent,
   ResourcesArrays,
   Storage,
+  updateComponent,
 } from '@/services/organizations'
 import { registerError } from '@/services/errors'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
@@ -198,7 +199,29 @@ const onSubmit = () => {
   }
 
   if (allSuccess) {
-    console.log('Success')
+    // update the resources on the component
+    component.value.settings.resources_settings = {
+      cpu: componentResources.value.cpu[0],
+      memory: componentResources.value.memory[0],
+      replicas: componentResources.value.replicas[0],
+    }
+    updateComponent(
+      breadCrumbStore.organizationId,
+      breadCrumbStore.applicationId,
+      breadCrumbStore.environment,
+      route.params.componentId as string,
+      component.value,
+    )
+      .then(() => {
+        console.log('Component updated')
+      })
+      .catch((error) => {
+        registerError(error)
+        throw error
+      })
+      .finally(() => {
+        isSubmitting.value = false
+      })
   }
 
   isSubmitting.value = false
@@ -283,7 +306,7 @@ const changeExposed = (value: boolean) => {
           <Slider
             v-model="componentResources.replicas"
             :default-value="[1]"
-            :max="70"
+            :max="60"
             :min="0"
             :step="1"
             slider-class="bg-card"
@@ -478,7 +501,7 @@ const changeExposed = (value: boolean) => {
     <AccordionItem value="storage" class="border rounded-b-md">
       <AccordionTrigger class="px-4 bg-transparent">Storage</AccordionTrigger>
       <AccordionContent
-        class="p-5 bg-background flex flex-col gap-5 flex-wrap"
+        class="p-5 bg-background flex flex-col gap-5 flex-wrap rounded-b-md"
         force-mount
         :is-open="storageIsOpen"
       >
@@ -557,9 +580,15 @@ const changeExposed = (value: boolean) => {
       </AccordionContent>
     </AccordionItem>
   </Accordion>
-  <div class="flex w-full my-5">
+  <div class="flex w-full py-5">
     <Button :disabled="isSubmitting" class="grow" @click="onSubmit"
       >Save</Button
     >
   </div>
 </template>
+
+<style scoped>
+#componentTabsContent {
+  height: calc(100% - 10rem);
+}
+</style>
