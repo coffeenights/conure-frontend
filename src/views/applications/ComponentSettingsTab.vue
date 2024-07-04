@@ -39,12 +39,13 @@ import { registerError } from '@/services/errors'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 import { useRoute } from 'vue-router'
 import SettingsErrorMessage from '@/components/SettingsErrorMessage.vue'
+import { notify } from '@/services/notifications'
 
 const generalIsOpen = ref(true)
 const resourcesIsOpen = ref(true)
-const sourceIsOpen = ref(true)
-const networkIsOpen = ref(true)
-const storageIsOpen = ref(true)
+const sourceIsOpen = ref(false)
+const networkIsOpen = ref(false)
+const storageIsOpen = ref(false)
 
 const isSubmitting = ref(false)
 
@@ -52,6 +53,8 @@ const errors = ref([] as ZodIssue[])
 const resourceErrors = ref([] as ZodIssue[])
 const networkErrors = ref([] as ZodIssue[])
 const storageErrors = ref([] as ZodIssue[])
+const sourceErrors = ref([] as ZodIssue[])
+const accordionItems = ref(['general', 'resources'] as string[])
 
 const component = ref({
   name: '',
@@ -141,29 +144,45 @@ const resourcesSchema = z.object({
   replicas: z.array(z.number().min(0).max(60)),
 })
 
+const sourceSchema = z.object({
+  repository: z.string().max(255).min(1, 'Field is required'),
+  command: z.string().max(255).optional(),
+})
+
 const schemaSettings = z.object({
   name: z.string().max(50).min(1, 'Field is required'),
   description: z.string().max(255).optional(),
-  settings: z.object({
-    source_settings: z.object({
-      repository: z.string().max(255).min(1, 'Field is required'),
-      command: z.string().max(255).optional(),
-    }),
-  }),
 })
+const isStringArray = (value: any): value is string[] => {
+  return Array.isArray(value) && value.every(element => typeof element === 'string');
+};
 
-const handleAccordionTrigger = (newValue) => {
-  generalIsOpen.value = newValue.includes('general')
-  resourcesIsOpen.value = newValue.includes('resources')
-  sourceIsOpen.value = newValue.includes('source')
-  networkIsOpen.value = newValue.includes('network')
-  storageIsOpen.value = newValue.includes('storage')
+const handleAccordionTrigger = (newValue:  string | string[] | undefined) => {
+  if (isStringArray(newValue)) {
+    generalIsOpen.value = newValue.includes('general')
+    resourcesIsOpen.value = newValue.includes('resources')
+    sourceIsOpen.value = newValue.includes('source')
+    networkIsOpen.value = newValue.includes('network')
+    storageIsOpen.value = newValue.includes('storage')
+  }
+}
+
+const openAccordionItem = (value: string) => {
+  if (!accordionItems.value.includes(value)) {
+    accordionItems.value.push(value)
+  }
+  handleAccordionTrigger(accordionItems.value)
 }
 
 const onSubmit = () => {
   isSubmitting.value = true
+
+  // Reset all error messages
   errors.value = [] as ZodIssue[]
   resourceErrors.value = [] as ZodIssue[]
+  networkErrors.value = [] as ZodIssue[]
+  storageErrors.value = [] as ZodIssue[]
+  sourceErrors.value = [] as ZodIssue[]
 
   let allSuccess: boolean = true
 
@@ -171,6 +190,16 @@ const onSubmit = () => {
   if (!validationResult.success) {
     errors.value = validationResult.error?.errors || []
     allSuccess = false
+    openAccordionItem('general')
+  }
+
+  const sourceValidationResult = sourceSchema.safeParse(
+    component.value.settings.source_settings,
+  )
+  if (!sourceValidationResult.success) {
+    sourceErrors.value = sourceValidationResult.error?.errors || []
+    allSuccess = false
+    openAccordionItem('source')
   }
 
   const resourcesValidationResult = resourcesSchema.safeParse(
@@ -179,6 +208,7 @@ const onSubmit = () => {
   if (!resourcesValidationResult.success) {
     resourceErrors.value = resourcesValidationResult.error?.errors || []
     allSuccess = false
+    openAccordionItem('resources')
   }
 
   if (component.value.settings.network_settings.exposed) {
@@ -188,6 +218,7 @@ const onSubmit = () => {
     if (!networkValidationResult.success) {
       networkErrors.value = networkValidationResult.error?.errors || []
       allSuccess = false
+      openAccordionItem('network')
     }
   }
   const storageValidationResult = storageSchema.safeParse(
@@ -196,6 +227,7 @@ const onSubmit = () => {
   if (!storageValidationResult.success) {
     storageErrors.value = storageValidationResult.error?.errors || []
     allSuccess = false
+    openAccordionItem('storage')
   }
 
   if (allSuccess) {
@@ -213,7 +245,7 @@ const onSubmit = () => {
       component.value,
     )
       .then(() => {
-        console.log('Component updated')
+        notify('Success', 'Component has been updated!')
       })
       .catch((error) => {
         registerError(error)
@@ -222,6 +254,12 @@ const onSubmit = () => {
       .finally(() => {
         isSubmitting.value = false
       })
+  } else {
+    registerError('Validation error', {
+      title: 'Error',
+      description: 'Some of the fields are invalid. Please check the form.',
+    },
+    true)
   }
 
   isSubmitting.value = false
@@ -259,8 +297,9 @@ const changeExposed = (value: boolean) => {
 <template>
   <Accordion
     type="multiple"
-    :default-value="['general', 'resources', 'source', 'network', 'storage']"
+    :default-value="accordionItems"
     collapsible
+    v-model="accordionItems"
     @update:model-value="handleAccordionTrigger"
   >
     <AccordionItem value="general" class="border border-b-0 rounded-t-md">
@@ -372,8 +411,8 @@ const changeExposed = (value: boolean) => {
             component
           </div>
           <SettingsErrorMessage
-            path="settings.source_settings.repository"
-            :errors="errors"
+            path="repository"
+            :errors="sourceErrors"
           />
         </div>
         <div class="space-y-2">
@@ -389,8 +428,8 @@ const changeExposed = (value: boolean) => {
             Override the CMD property of your container image
           </div>
           <SettingsErrorMessage
-            path="settings.source_settings.command"
-            :errors="errors"
+            path="command"
+            :errors="sourceErrors"
           />
         </div>
       </AccordionContent>
