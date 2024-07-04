@@ -625,9 +625,3 @@ const changeExposed = (value: boolean) => {
     >
   </div>
 </template>
-
-<style scoped>
-#componentTabsContent {
-  height: calc(100% - 10rem);
-}
-</style>
