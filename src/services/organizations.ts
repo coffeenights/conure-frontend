@@ -1,4 +1,4 @@
-import api, { ApiResponse, fetchData, postData } from './api'
+import { ApiResponse, fetchData, postData, putData } from './api'
 import { z } from 'zod'
 
 export type Revision = {
@@ -44,56 +44,11 @@ export const OrganizationSchema = z.object({
 })
 
 export type ComponentService = {
-  id: string
-  name: string
-  application_id: string
-  created_at: string
-  description: string
-  properties: object
-  traits: object
-  type: string
-}
-
-export type ComponentStatus = {
-  component: ComponentService
-  properties: ComponentProperties
-}
-
-export type ComponentStatusHealth = {
-  healthy: boolean
-  message: string
-  updated: string
-}
-
-type Port = {
-  host_port: number
-  target_port: number
-  protocol: 'TCP' | 'UDP'
-}
-
-type Network = {
-  exposed: boolean
-  type: 'private' | 'public'
-  ports: Port[]
-}
-
-type Storage = {
-  name: string
-  mount_path: string
-  size: number
-}
-
-export type Component = {
   name: string
   type: string
   description: string
-  application_id: string
   settings: {
-    resources_settings: {
-      cpu: string
-      memory: string
-      replicas: number
-    }
+    resources_settings: Resources
     network_settings: Network
     storage_settings: Storage[]
     source_settings: {
@@ -101,6 +56,12 @@ export type Component = {
       command: string
     }
   }
+}
+
+export type ComponentCreateRequest = {
+  name: string
+  type: string
+  description: string
 }
 
 export type ComponentProperties = {
@@ -140,6 +101,47 @@ export type ComponentPod = {
   conditions: Array<ComponentPodCondition>
 }
 
+export type ComponentStatus = {
+  component: ComponentService
+  properties: ComponentProperties
+}
+
+export type ComponentStatusHealth = {
+  healthy: boolean
+  message: string
+  updated: string
+}
+
+export type Port = {
+  host_port: number | undefined
+  target_port: number | undefined
+  protocol: 'tcp' | 'udp'
+}
+
+export type Network = {
+  exposed: boolean
+  type: 'private' | 'public'
+  ports: Port[]
+}
+
+export type Storage = {
+  name: string | undefined
+  mount_path: string | undefined
+  size: number
+}
+
+export type Resources = {
+  cpu: number
+  memory: number
+  replicas: number
+}
+
+export type ResourcesArrays = {
+  cpu: number[]
+  memory: number[]
+  replicas: number[]
+}
+
 export type ApplicationListResponse = ApiResponse<{
   organization: Organization
   applications: Application[]
@@ -153,7 +155,7 @@ export type OrganizationListResponse = ApiResponse<{
 export type ComponentListResponse = ApiResponse<{
   components: ComponentService[]
 }>
-export type ComponentResponse = ApiResponse<Component>
+export type ComponentResponse = ApiResponse<ComponentService>
 export type ComponentStatusResponse = ApiResponse<ComponentStatus>
 export type ComponentStatusHealthResponse = ApiResponse<ComponentStatusHealth>
 export type ComponentPodsResponse = ApiResponse<{
@@ -242,6 +244,32 @@ export const statusComponentHealth = async (
 ): Promise<ComponentStatusHealthResponse> => {
   return fetchData<ComponentStatusHealthResponse>(
     `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}/status/health`,
+  )
+}
+
+export const createComponent = async (
+  organizationId: string,
+  applicationId: string,
+  environment: string,
+  componentId: string,
+  data: ComponentCreateRequest,
+): Promise<ComponentResponse> => {
+  return postData<ComponentResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}`,
+    data,
+  )
+}
+
+export const updateComponent = async (
+  organizationId: string,
+  applicationId: string,
+  environment: string,
+  componentId: string,
+  data: ComponentService,
+): Promise<ComponentResponse> => {
+  return putData<ComponentResponse>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}`,
+    data,
   )
 }
 
