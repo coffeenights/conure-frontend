@@ -153,7 +153,7 @@ const schemaSettings = z.object({
   name: z.string().max(50).min(1, 'Field is required'),
   description: z.string().max(255).optional(),
 })
-const isStringArray = (value: any): value is string[] => {
+const isStringArray = (value: unknown): value is string[] => {
   return (
     Array.isArray(value) &&
     value.every((element) => typeof element === 'string')
