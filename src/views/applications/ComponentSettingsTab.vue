@@ -154,10 +154,13 @@ const schemaSettings = z.object({
   description: z.string().max(255).optional(),
 })
 const isStringArray = (value: any): value is string[] => {
-  return Array.isArray(value) && value.every(element => typeof element === 'string');
-};
+  return (
+    Array.isArray(value) &&
+    value.every((element) => typeof element === 'string')
+  )
+}
 
-const handleAccordionTrigger = (newValue:  string | string[] | undefined) => {
+const handleAccordionTrigger = (newValue: string | string[] | undefined) => {
   if (isStringArray(newValue)) {
     generalIsOpen.value = newValue.includes('general')
     resourcesIsOpen.value = newValue.includes('resources')
@@ -255,11 +258,14 @@ const onSubmit = () => {
         isSubmitting.value = false
       })
   } else {
-    registerError('Validation error', {
-      title: 'Error',
-      description: 'Some of the fields are invalid. Please check the form.',
-    },
-    true)
+    registerError(
+      'Validation error',
+      {
+        title: 'Error',
+        description: 'Some of the fields are invalid. Please check the form.',
+      },
+      true,
+    )
   }
 
   isSubmitting.value = false
@@ -296,10 +302,10 @@ const changeExposed = (value: boolean) => {
 
 <template>
   <Accordion
+    v-model="accordionItems"
     type="multiple"
     :default-value="accordionItems"
     collapsible
-    v-model="accordionItems"
     @update:model-value="handleAccordionTrigger"
   >
     <AccordionItem value="general" class="border border-b-0 rounded-t-md">
@@ -410,10 +416,7 @@ const changeExposed = (value: boolean) => {
             The Image field is where you specify the container image for your
             component
           </div>
-          <SettingsErrorMessage
-            path="repository"
-            :errors="sourceErrors"
-          />
+          <SettingsErrorMessage path="repository" :errors="sourceErrors" />
         </div>
         <div class="space-y-2">
           <Label>Command (optional)</Label>
@@ -427,10 +430,7 @@ const changeExposed = (value: boolean) => {
           <div class="text-sm text-muted-foreground">
             Override the CMD property of your container image
           </div>
-          <SettingsErrorMessage
-            path="command"
-            :errors="sourceErrors"
-          />
+          <SettingsErrorMessage path="command" :errors="sourceErrors" />
         </div>
       </AccordionContent>
     </AccordionItem>
