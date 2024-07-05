@@ -40,6 +40,7 @@ import {
 } from '@/components/ui/number-field'
 import {
   ComponentService,
+  deleteComponent,
   detailsComponent,
   ResourcesArrays,
   Storage,
@@ -47,7 +48,7 @@ import {
 } from '@/services/organizations'
 import { registerError } from '@/services/errors'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import SettingsErrorMessage from '@/components/SettingsErrorMessage.vue'
 import { notify } from '@/services/notifications'
 
@@ -99,6 +100,7 @@ const componentResources = ref({
 const isLoading = ref(true)
 const breadCrumbStore = useBreadCrumbStore()
 const route = useRoute()
+const router = useRouter()
 
 const fetchData = () => {
   isLoading.value = true
@@ -313,6 +315,33 @@ const removeVolume = (index: number) => {
 
 const changeExposed = (value: boolean) => {
   componentUpdate.value.settings.network_settings.exposed = value
+}
+
+const onDeleteComponent = () => {
+  deleteComponent(
+    breadCrumbStore.organizationId,
+    breadCrumbStore.applicationId,
+    breadCrumbStore.environment,
+    route.params.componentId as string,
+  )
+    .then(() => {
+      router.push({
+        name: 'componentList',
+        params: {
+          organizationId: breadCrumbStore.organizationId,
+          applicationId: breadCrumbStore.applicationId,
+          environment: breadCrumbStore.environment,
+        },
+      })
+      notify(
+        'Success',
+        'Component ' + component.value.name + 'has been deleted!',
+      )
+    })
+    .catch((error) => {
+      registerError(error)
+      throw error
+    })
 }
 </script>
 
@@ -680,6 +709,7 @@ const changeExposed = (value: boolean) => {
                 :disabled="deleteComponentBox !== component.name"
                 type="button"
                 variant="destructive"
+                @click="onDeleteComponent()"
               >
                 Delete
               </Button>
@@ -693,8 +723,8 @@ const changeExposed = (value: boolean) => {
     </AccordionItem>
   </Accordion>
   <div class="flex w-full py-5">
-    <Button :disabled="isSubmitting" class="grow" @click="onSubmit"
-      >Save</Button
-    >
+    <Button :disabled="isSubmitting" class="grow" @click="onSubmit">
+      Save
+    </Button>
   </div>
 </template>

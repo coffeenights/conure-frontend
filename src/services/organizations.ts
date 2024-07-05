@@ -1,4 +1,4 @@
-import { ApiResponse, fetchData, postData, putData } from './api'
+import {ApiResponse, deleteData, fetchData, postData, putData} from './api'
 import { z } from 'zod'
 
 export type Revision = {
@@ -257,6 +257,17 @@ export const createComponent = async (
   return postData<ComponentResponse>(
     `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}`,
     data,
+  )
+}
+
+export const deleteComponent = async (
+  organizationId: string,
+  applicationId: string,
+  environment: string,
+  componentId: string,
+): Promise<ComponentResponse> => {
+  return deleteData<ApiResponse<never>>(
+    `/organizations/${organizationId}/a/${applicationId}/e/${environment}/c/${componentId}`,
   )
 }
 
