@@ -20,6 +20,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import {
   NumberField,
@@ -46,6 +56,7 @@ const resourcesIsOpen = ref(true)
 const sourceIsOpen = ref(false)
 const networkIsOpen = ref(false)
 const storageIsOpen = ref(false)
+const dangerIsOpen = ref(false)
 
 const isSubmitting = ref(false)
 
@@ -56,7 +67,9 @@ const storageErrors = ref([] as ZodIssue[])
 const sourceErrors = ref([] as ZodIssue[])
 const accordionItems = ref(['general', 'resources'] as string[])
 
-const component = ref({
+const deleteComponentBox = ref('')
+
+const componentUpdate = ref({
   name: '',
   type: '',
   description: '',
@@ -75,6 +88,7 @@ const component = ref({
     },
   },
 } as ComponentService)
+const component = ref({} as ComponentService)
 
 const componentResources = ref({
   replicas: [1],
@@ -96,6 +110,7 @@ const fetchData = () => {
   )
     .then((response) => {
       component.value = response.data
+      componentUpdate.value = response.data
       componentResources.value.replicas = [
         response.data.settings.resources_settings.replicas,
       ]
@@ -167,6 +182,7 @@ const handleAccordionTrigger = (newValue: string | string[] | undefined) => {
     sourceIsOpen.value = newValue.includes('source')
     networkIsOpen.value = newValue.includes('network')
     storageIsOpen.value = newValue.includes('storage')
+    dangerIsOpen.value = newValue.includes('danger')
   }
 }
 
@@ -189,7 +205,7 @@ const onSubmit = () => {
 
   let allSuccess: boolean = true
 
-  const validationResult = schemaSettings.safeParse(component.value)
+  const validationResult = schemaSettings.safeParse(componentUpdate.value)
   if (!validationResult.success) {
     errors.value = validationResult.error?.errors || []
     allSuccess = false
@@ -197,7 +213,7 @@ const onSubmit = () => {
   }
 
   const sourceValidationResult = sourceSchema.safeParse(
-    component.value.settings.source_settings,
+    componentUpdate.value.settings.source_settings,
   )
   if (!sourceValidationResult.success) {
     sourceErrors.value = sourceValidationResult.error?.errors || []
@@ -214,9 +230,9 @@ const onSubmit = () => {
     openAccordionItem('resources')
   }
 
-  if (component.value.settings.network_settings.exposed) {
+  if (componentUpdate.value.settings.network_settings.exposed) {
     const networkValidationResult = networkSchema.safeParse(
-      component.value.settings.network_settings,
+      componentUpdate.value.settings.network_settings,
     )
     if (!networkValidationResult.success) {
       networkErrors.value = networkValidationResult.error?.errors || []
@@ -225,7 +241,7 @@ const onSubmit = () => {
     }
   }
   const storageValidationResult = storageSchema.safeParse(
-    component.value.settings.storage_settings,
+    componentUpdate.value.settings.storage_settings,
   )
   if (!storageValidationResult.success) {
     storageErrors.value = storageValidationResult.error?.errors || []
@@ -235,7 +251,7 @@ const onSubmit = () => {
 
   if (allSuccess) {
     // update the resources on the component
-    component.value.settings.resources_settings = {
+    componentUpdate.value.settings.resources_settings = {
       cpu: componentResources.value.cpu[0],
       memory: componentResources.value.memory[0],
       replicas: componentResources.value.replicas[0],
@@ -245,7 +261,7 @@ const onSubmit = () => {
       breadCrumbStore.applicationId,
       breadCrumbStore.environment,
       route.params.componentId as string,
-      component.value,
+      componentUpdate.value,
     )
       .then(() => {
         notify('Success', 'Component has been updated!')
@@ -272,7 +288,7 @@ const onSubmit = () => {
 }
 
 const addNewPort = () => {
-  component.value.settings.network_settings.ports.push({
+  componentUpdate.value.settings.network_settings.ports.push({
     host_port: undefined,
     target_port: undefined,
     protocol: 'tcp',
@@ -280,11 +296,11 @@ const addNewPort = () => {
 }
 
 const removePort = (index: number) => {
-  component.value.settings.network_settings.ports.splice(index, 1)
+  componentUpdate.value.settings.network_settings.ports.splice(index, 1)
 }
 
 const addNewVolume = () => {
-  component.value.settings.storage_settings.push({
+  componentUpdate.value.settings.storage_settings.push({
     name: undefined,
     mount_path: undefined,
     size: 0.1,
@@ -292,11 +308,11 @@ const addNewVolume = () => {
 }
 
 const removeVolume = (index: number) => {
-  component.value.settings.storage_settings.splice(index, 1)
+  componentUpdate.value.settings.storage_settings.splice(index, 1)
 }
 
 const changeExposed = (value: boolean) => {
-  component.value.settings.network_settings.exposed = value
+  componentUpdate.value.settings.network_settings.exposed = value
 }
 </script>
 
@@ -318,7 +334,7 @@ const changeExposed = (value: boolean) => {
         <div class="space-y-2">
           <Label>Name</Label>
           <Input
-            v-model="component.name"
+            v-model="componentUpdate.name"
             type="text"
             placeholder="Component's name"
             class="bg-card"
@@ -329,7 +345,7 @@ const changeExposed = (value: boolean) => {
         <div class="space-y-2">
           <Label>Description (optional)</Label>
           <Textarea
-            v-model="component.description"
+            v-model="componentUpdate.description"
             type="text"
             placeholder="Describe your component here..."
             class="bg-card"
@@ -406,7 +422,7 @@ const changeExposed = (value: boolean) => {
         <div class="space-y-2">
           <Label>Image</Label>
           <Input
-            v-model="component.settings.source_settings.repository"
+            v-model="componentUpdate.settings.source_settings.repository"
             type="text"
             placeholder="registry/repository:tag"
             class="bg-card"
@@ -421,7 +437,7 @@ const changeExposed = (value: boolean) => {
         <div class="space-y-2">
           <Label>Command (optional)</Label>
           <Input
-            v-model="component.settings.source_settings.command"
+            v-model="componentUpdate.settings.source_settings.command"
             type="text"
             placeholder="yarn dev"
             class="bg-card"
@@ -444,8 +460,8 @@ const changeExposed = (value: boolean) => {
         <div class="flex flex-col space-y-2">
           <Label>Expose the component</Label>
           <Switch
-            v-model="component.settings.network_settings.exposed"
-            :checked="component.settings.network_settings.exposed"
+            v-model="componentUpdate.settings.network_settings.exposed"
+            :checked="componentUpdate.settings.network_settings.exposed"
             name="network.networkExpose"
             @update:checked="changeExposed"
           />
@@ -459,7 +475,7 @@ const changeExposed = (value: boolean) => {
         <div class="space-y-2">
           <Label>Type</Label>
           <Select
-            v-model="component.settings.network_settings.type"
+            v-model="componentUpdate.settings.network_settings.type"
             default-value="public"
             name="network.networkType"
           >
@@ -481,7 +497,8 @@ const changeExposed = (value: boolean) => {
         <div class="space-y-2">
           <Label>Ports</Label>
           <fieldset
-            v-for="(port, idx) in component.settings.network_settings.ports"
+            v-for="(port, idx) in componentUpdate.settings.network_settings
+              .ports"
             :key="idx"
             class="flex flex-row gap-2 items-center"
           >
@@ -537,7 +554,7 @@ const changeExposed = (value: boolean) => {
         </div>
       </AccordionContent>
     </AccordionItem>
-    <AccordionItem value="storage" class="border rounded-b-md">
+    <AccordionItem value="storage" class="border border-b-0">
       <AccordionTrigger class="px-4 bg-transparent">Storage</AccordionTrigger>
       <AccordionContent
         class="p-5 bg-background flex flex-col gap-5 flex-wrap rounded-b-md"
@@ -545,7 +562,7 @@ const changeExposed = (value: boolean) => {
         :is-open="storageIsOpen"
       >
         <fieldset
-          v-for="(storage, idx) in component.settings.storage_settings"
+          v-for="(storage, idx) in componentUpdate.settings.storage_settings"
           :key="idx"
           class="flex flex-row gap-2 items-center"
         >
@@ -616,6 +633,62 @@ const changeExposed = (value: boolean) => {
         >
           <span class="bi-plus text-xl cursor-pointer"></span>
         </Button>
+      </AccordionContent>
+    </AccordionItem>
+    <AccordionItem value="danger" class="border rounded-b-md">
+      <AccordionTrigger class="px-4 bg-transparent"
+        >Danger Zone</AccordionTrigger
+      >
+      <AccordionContent
+        class="p-5 bg-background flex flex-col gap-5 flex-wrap rounded-b-md"
+        force-mount
+        :is-open="dangerIsOpen"
+      >
+        <Dialog>
+          <DialogTrigger as-child>
+            <Button
+              :disabled="isSubmitting"
+              variant="outline"
+              class="grow border-destructive text-destructive"
+              >Delete</Button
+            >
+          </DialogTrigger>
+          <DialogContent class="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Warning!</DialogTitle>
+              <DialogDescription>
+                This action will delete the component and all its data.<br />
+                Type the name of the component (<b class="text-primary">{{
+                  component.name
+                }}</b
+                >) to confirm:
+              </DialogDescription>
+            </DialogHeader>
+            <div class="flex items-center space-x-2">
+              <div class="grid flex-1 gap-2">
+                <Label for="link" class="sr-only"> Link </Label>
+                <Input
+                  id="link"
+                  v-model="deleteComponentBox"
+                  :placeholder="component.name"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+            <DialogFooter class="sm:justify-start">
+              <Button
+                :disabled="deleteComponentBox !== component.name"
+                type="button"
+                variant="destructive"
+              >
+                Delete
+              </Button>
+              <DialogClose as-child>
+                <Button type="button" variant="secondary"> Close </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </AccordionContent>
     </AccordionItem>
   </Accordion>
