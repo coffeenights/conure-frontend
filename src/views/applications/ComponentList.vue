@@ -38,7 +38,9 @@ watch(() => route.params.environment, fetchData, { immediate: true })
 
 <template>
   <div class="flex gap-2">
-    <Button> <span class="bi-plus mr-1 text-2xl"></span>Add </Button>
+    <router-link :to="{ name: 'componentSelection' }">
+      <Button><span class="bi-plus mr-1 text-2xl"></span>Add </Button>
+    </router-link>
     <Button variant="secondary" size="icon">
       <span class="bi-grid-fill text-xl"></span>
     </Button>
@@ -81,7 +83,7 @@ watch(() => route.params.environment, fetchData, { immediate: true })
   </div>
 </template>
 
-<style>
+<style scoped>
 .v-enter-active,
 .v-leave-active {
   transition: all 0.5s ease;

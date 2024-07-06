@@ -78,6 +78,7 @@ watch(() => route.params.organizationId, fetchData, { immediate: true })
               </div>
             </AccordionTrigger>
             <AccordionContent
+              :is-open="true"
               class="p-5 bg-background rounded-b-md flex flex-row gap-5 flex-wrap"
             >
               <ApplicationCard
