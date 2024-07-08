@@ -1,6 +1,17 @@
 <script setup lang="ts">
-defineProps({
+import { cn } from "@/utils";
+
+const props = defineProps({
   name: String,
+  alt: {
+    type: String,
+    default: 'Service Icon',
+  },
+  class: {
+    type: String,
+    default: '',
+    optional: true,
+  },
 })
 
 type IconFile = {
@@ -8,7 +19,11 @@ type IconFile = {
 }
 const serviceIcon: IconFile = {
   docker: 'docker.svg',
-  webservice: 'serverstack.svg',
+  webservice: 'cloudServer.svg',
+  oneoff: 'PlayCircle.svg',
+  cron: 'calendar.svg',
+  stateful: 'Database.svg',
+  static: 'FileImage.svg',
   mariadb: 'mariadb.svg',
   mysql: 'mysql.svg',
   raw: 'postgres.svg',
@@ -19,6 +34,7 @@ const serviceIcon: IconFile = {
   awsDark: 'aws_logo_dark.svg',
   awsRds: 'aws_rds.svg',
   awsRdsDark: 'aws_rds_dark.svg',
+
 }
 
 function getImageUrl(name: string) {
@@ -28,7 +44,7 @@ function getImageUrl(name: string) {
 </script>
 
 <template>
-  <img :src="getImageUrl(name as string)" alt="Web Service" class="w-10 h-12" />
+  <img :src="getImageUrl(name as string)" :alt="alt" :class="cn('w-10 h-12', props.class)" />
 </template>
 
 <style scoped>

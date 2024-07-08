@@ -1,24 +1,36 @@
 <script setup lang="ts">
-import { ComponentView } from '@/components'
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
+  CardDivider,
+  ComponentSelectionCard,
+  ComponentView,
+} from '@/components'
 </script>
 
 <template>
   <ComponentView>
-    <Accordion type="single" collapsible>
-      <AccordionItem value="item-1">
-        <AccordionTrigger>Is it accessible?</AccordionTrigger>
-        <AccordionContent>
-          Yes. It adheres to the WAI-ARIA design pattern.
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+    <CardDivider title="Services" />
+    <div class="flex flex-row flex-wrap mt-5 gap-5">
+      <ComponentSelectionCard
+        alt="Web Service"
+        name="webservice"
+        title="Web Service"
+      />
+      <ComponentSelectionCard
+        alt="One-Off Job"
+        name="oneoff"
+        title="One-Off Job"
+      />
+      <ComponentSelectionCard alt="Cron Job" name="cron" title="Cron Job" />
+      <ComponentSelectionCard
+        alt="Stateful Service"
+        name="stateful"
+        title="Stateful Service"
+      />
+      <ComponentSelectionCard
+        alt="Static Site"
+        name="static"
+        title="Static Site"
+      />
+    </div>
   </ComponentView>
 </template>
-
-<style scoped></style>
