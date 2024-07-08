@@ -70,6 +70,7 @@ const accordionItems = ref(['general', 'resources'] as string[])
 
 const deleteComponentBox = ref('')
 
+const emits = defineEmits(['refreshComponentsList'])
 const componentUpdate = ref({
   name: '',
   type: '',
@@ -335,8 +336,9 @@ const onDeleteComponent = () => {
       })
       notify(
         'Success',
-        'Component ' + component.value.name + 'has been deleted!',
+        'Component ' + component.value.name + ' has been deleted!',
       )
+      emits('refreshComponentsList')
     })
     .catch((error) => {
       registerError(error)

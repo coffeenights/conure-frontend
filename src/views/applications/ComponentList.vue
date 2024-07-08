@@ -8,7 +8,7 @@ import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { registerError } from '@/services/errors'
 import ComponentSearch from './ComponentSearch.vue'
-import { CardDivider } from "@/components";
+import { CardDivider } from '@/components'
 
 const route = useRoute()
 const components = ref<ComponentService[]>([])
@@ -35,6 +35,10 @@ const fetchData = () => {
 }
 
 watch(() => route.params.environment, fetchData, { immediate: true })
+
+const onRefreshList = () => {
+  fetchData()
+}
 </script>
 
 <template>
@@ -74,7 +78,10 @@ watch(() => route.params.environment, fetchData, { immediate: true })
         </router-link>
       </div>
     </div>
-    <router-view v-slot="{ Component }">
+    <router-view
+      v-slot="{ Component }"
+      @refreshComponentsList="onRefreshList()"
+    >
       <transition>
         <component :is="Component" />
       </transition>
