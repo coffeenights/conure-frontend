@@ -8,6 +8,7 @@ import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { registerError } from '@/services/errors'
 import ComponentSearch from './ComponentSearch.vue'
+import { CardDivider } from "@/components";
 
 const route = useRoute()
 const components = ref<ComponentService[]>([])
@@ -54,9 +55,7 @@ watch(() => route.params.environment, fetchData, { immediate: true })
   </div>
   <div class="relative grow overflow-hidden mt-3">
     <div id="componentsList" class="">
-      <div class="py-3 mt-5 border-b">
-        <div class="text-lg">Services</div>
-      </div>
+      <CardDivider title="Services" />
       <div id="componentsGroupList" class="flex mt-4 gap-3 flex-wrap">
         <router-link
           v-for="(c, index) in components"
