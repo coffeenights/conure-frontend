@@ -44,6 +44,7 @@ export const OrganizationSchema = z.object({
 })
 
 export type ComponentService = {
+  id: string
   name: string
   type: string
   description: string
