@@ -80,7 +80,7 @@ const onRefreshList = () => {
     </div>
     <router-view
       v-slot="{ Component }"
-      @refreshComponentsList="onRefreshList()"
+      @refresh-components-list="onRefreshList()"
     >
       <transition>
         <component :is="Component" />
