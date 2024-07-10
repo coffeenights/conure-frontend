@@ -235,7 +235,12 @@ const truncate = (text: string, length: number) => {
                 Create a new component variable
               </DialogDescription>
             </DialogHeader>
-            <FormField v-slot="{ componentField }" name="name">
+            <FormField
+              v-slot="{ componentField }"
+              name="name"
+              :validate-on-blur="false"
+              :validate-on-model-update="false"
+            >
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
@@ -248,7 +253,12 @@ const truncate = (text: string, length: number) => {
                 <FormMessage />
               </FormItem>
             </FormField>
-            <FormField v-slot="{ componentField }" name="value">
+            <FormField
+              v-slot="{ componentField }"
+              name="value"
+              :validate-on-blur="false"
+              :validate-on-model-update="false"
+            >
               <FormItem>
                 <FormLabel>Value</FormLabel>
                 <FormControl>
@@ -261,7 +271,12 @@ const truncate = (text: string, length: number) => {
                 <FormMessage />
               </FormItem>
             </FormField>
-            <FormField v-slot="{ value, handleChange }" name="isEncrypted">
+            <FormField
+              v-slot="{ value, handleChange }"
+              name="isEncrypted"
+              :validate-on-blur="false"
+              :validate-on-model-update="false"
+            >
               <FormItem>
                 <FormControl>
                   <div class="flex items-center space-x-2">
