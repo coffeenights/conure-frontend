@@ -6,6 +6,7 @@ import App from './App.vue'
 import PageNotFound from './views/404.vue'
 import applicationRoutes from './views/applications/routes'
 import authRoutes from './views/auth/routes'
+import settingsRoutes from '@/views/settings/routes'
 import { useUserStore } from '@/stores/UserStore'
 import { authenticationStatus } from '@/services/auth'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
@@ -25,6 +26,7 @@ const routes: Array<RouteRecordRaw> = [
 
 routes.push(...applicationRoutes)
 routes.push(...authRoutes)
+routes.push(...settingsRoutes)
 
 const router = createRouter({
   history: createWebHistory(),

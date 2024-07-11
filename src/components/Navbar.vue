@@ -10,8 +10,13 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip'
+import { useRouter } from 'vue-router'
 
 const { isDarkMode, toggleDarkMode } = useDarkMode()
+const router = useRouter()
+const goToSettings = () => {
+  router.push({ name: 'settingsGeneral' })
+}
 </script>
 <template>
   <nav class="bg-card h-16 shadow-sm min-w-max sticky top-0 border-b z-10">
@@ -31,7 +36,7 @@ const { isDarkMode, toggleDarkMode } = useDarkMode()
               <Button
                 size="icon"
                 variant="ghost"
-                class="mr-5"
+                class="mr-1"
                 @click="toggleDarkMode"
               >
                 <span
@@ -44,6 +49,21 @@ const { isDarkMode, toggleDarkMode } = useDarkMode()
               </Button>
             </TooltipTrigger>
             <TooltipContent>Switch theme</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                size="icon"
+                variant="ghost"
+                class="mr-5"
+                @click="goToSettings"
+              >
+                <span class="text-xl bi-gear"></span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Settings</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>
