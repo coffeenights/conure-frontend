@@ -11,7 +11,9 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip'
 import { useRouter, useRoute } from 'vue-router'
+import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 
+const store = useBreadCrumbStore()
 const { isDarkMode, toggleDarkMode } = useDarkMode()
 const router = useRouter()
 const route = useRoute()
@@ -57,6 +59,7 @@ const goToSettings = () => {
           <Tooltip>
             <TooltipTrigger>
               <Button
+                v-if="store.organizationId != ''"
                 size="icon"
                 variant="ghost"
                 class="mr-5"
