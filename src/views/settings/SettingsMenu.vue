@@ -2,9 +2,16 @@
 import SettingsWrapper from './SettingsWrapper.vue'
 import { NavMenu, NavItem } from '@/components/ui/vertical-nav'
 import { useRoute, useRouter } from 'vue-router'
+import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
 
+const store = useBreadCrumbStore()
 const route = useRoute()
 const router = useRouter()
+
+// reset the breadcrumb store
+store.environment = ''
+store.applicationId = ''
+store.application = ''
 
 type Item = {
   iconClass: string
