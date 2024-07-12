@@ -62,7 +62,6 @@ const goToSettings = () => {
                 v-if="store.organizationId != ''"
                 size="icon"
                 variant="ghost"
-                class="mr-5"
                 @click="goToSettings"
               >
                 <span class="text-xl bi-gear"></span>
@@ -72,7 +71,7 @@ const goToSettings = () => {
           </Tooltip>
         </TooltipProvider>
       </div>
-      <div class="mr-5 mt-2">
+      <div class="mx-5 mt-2">
         <Avatar class="h-10 w-10">
           <AvatarFallback
             ><span class="text-lg bi bi-person"></span
