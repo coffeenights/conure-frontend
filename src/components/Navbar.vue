@@ -10,11 +10,13 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const { isDarkMode, toggleDarkMode } = useDarkMode()
 const router = useRouter()
+const route = useRoute()
 const goToSettings = () => {
+  if (route.name === 'settingsGeneral') return
   router.push({ name: 'settingsGeneral' })
 }
 </script>
