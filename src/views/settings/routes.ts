@@ -4,6 +4,7 @@ import GeneralSettings from './GeneralSettings.vue'
 import SettingsMenu from './SettingsMenu.vue'
 import Limits from './Limits.vue'
 import Security from './Security.vue'
+import NewIntegration from './NewIntegration.vue'
 
 const settingsRoutes: Array<RouteRecordRaw> = [
   {
@@ -23,6 +24,12 @@ const settingsRoutes: Array<RouteRecordRaw> = [
         path: 'integrations',
         component: Integrations,
         name: 'settingsIntegrations',
+        meta: { requiresAuth: true, requiresBreadcrumbState: false },
+      },
+      {
+        path: 'integrations/new',
+        component: NewIntegration,
+        name: 'settingsNewIntegration',
         meta: { requiresAuth: true, requiresBreadcrumbState: false },
       },
       {
