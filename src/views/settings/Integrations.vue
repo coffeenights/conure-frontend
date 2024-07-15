@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { CardDivider } from '@/components'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 const onNewIntegration = () => {
-  console.log('New integration')
+  router.push({ name: 'settingsNewIntegration' })
 }
 </script>
 
