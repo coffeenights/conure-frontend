@@ -3,11 +3,7 @@ import { CardDivider, ComponentSelectionCard } from '@/components'
 </script>
 
 <template>
-  <CardDivider
-    title="Repositories"
-    class="mt-5"
-    :button="false"
-  />
+  <CardDivider title="Repositories" class="mt-5" :button="false" />
   <div class="flex flex-row flex-wrap mt-10 gap-5">
     <ComponentSelectionCard
       alt="Docker Repository"
@@ -21,5 +17,3 @@ import { CardDivider, ComponentSelectionCard } from '@/components'
     />
   </div>
 </template>
-
-<style scoped></style>

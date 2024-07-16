@@ -19,7 +19,12 @@ const router = useRouter()
 const route = useRoute()
 const goToSettings = () => {
   if (route.name === 'settingsGeneral') return
-  router.push({ name: 'settingsGeneral' })
+  router.push({
+    name: 'settingsGeneral',
+    params: {
+      organizationId: store.organizationId,
+    },
+  })
 }
 </script>
 <template>
