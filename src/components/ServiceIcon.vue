@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import { cn } from '@/utils'
-import { useDarkMode } from '@/composables/useDarkMode'
+import { useDarkModeStore } from '@/stores/DarkModeStore'
+import { watch, ref, onMounted } from 'vue'
 
-const props = defineProps({
-  name: String,
-  alt: {
-    type: String,
-    default: 'Service Icon',
-  },
-  class: {
-    type: String,
-    default: '',
-    optional: true,
-  },
-})
+const props = defineProps<{
+  name: string
+  alt: string
+  class?: string
+}>()
 
-const { isDarkMode } = useDarkMode()
+watch(
+  () => useDarkModeStore().isDarkMode,
+  () => {
+    imageUrl.value = getImageUrl(props.name)
+  },
+)
 
 type IconFile = {
   [key: string]: string
@@ -41,10 +40,15 @@ const serviceIcon: IconFile = {
   awsRdsDark: 'aws_rds_dark.svg',
 }
 
+const imageUrl = ref('')
+onMounted(() => {
+  imageUrl.value = getImageUrl(props.name)
+})
+
 function getImageUrl(name: string) {
   let icon: string
   icon = serviceIcon[name]
-  if (isDarkMode) {
+  if (useDarkModeStore().isDarkMode) {
     if (Object.prototype.hasOwnProperty.call(serviceIcon, `${name}Dark`)) {
       icon = serviceIcon[`${name}Dark`]
     }
@@ -54,11 +58,7 @@ function getImageUrl(name: string) {
 </script>
 
 <template>
-  <img
-    :src="getImageUrl(name as string)"
-    :alt="alt"
-    :class="cn('w-10 h-12', props.class)"
-  />
+  <img :src="imageUrl" :alt="alt" :class="cn('w-10 h-12', props.class)" />
 </template>
 
 <style scoped></style>

@@ -1,15 +1,16 @@
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { GetSettings, SetSettings, Settings } from '@/storage/settings'
+import { useDarkModeStore } from '@/stores/DarkModeStore'
 
 export function useDarkMode() {
   const isDarkMode = ref(false)
+  const settings: Settings = GetSettings()
+  const store = useDarkModeStore()
+  // Use the saved value
+  isDarkMode.value = settings.isDarkMode === 'true'
 
   onMounted(() => {
-    const settings: Settings = GetSettings()
-
     if (settings.isDarkMode !== '') {
-      // Use the saved value
-      isDarkMode.value = settings.isDarkMode === 'true'
       document.documentElement.classList.toggle('dark', isDarkMode.value)
     } else {
       // Save the system preference to local storage
@@ -32,6 +33,9 @@ export function useDarkMode() {
     document.documentElement.classList.toggle('dark', isDarkMode.value)
     SetSettings({ isDarkMode: String(isDarkMode.value) })
   }
+  watch(isDarkMode, (value) => {
+    store.isDarkMode = value
+  })
 
   return { isDarkMode, toggleDarkMode }
 }
