@@ -1,4 +1,4 @@
-import {ApiResponse, deleteData, fetchData, postData, putData} from './api'
+import { ApiResponse, deleteData, fetchData, postData, putData } from './api'
 import { z } from 'zod'
 
 export type Revision = {
