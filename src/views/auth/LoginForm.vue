@@ -14,10 +14,10 @@ import { useForm } from 'vee-validate'
 import { UserLoginSchema, authenticateUser } from '@/services/auth'
 import { toTypedSchema } from '@vee-validate/zod'
 import axios from 'axios'
-import CompanyLogo from '@/components/CompanyLogo.vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/UserStore'
 import { GetSettings } from '@/storage/settings'
+import ServiceIcon from '@/components/ServiceIcon.vue'
 
 const isLoading = ref(false)
 const authError = ref('')
@@ -69,16 +69,14 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <div class="flex flex-col w-1/2 gap-6 pt-4 items-center">
-    <div class="w-1/6">
-      <CompanyLogo />
-    </div>
+  <div class="flex flex-col w-1/2 gap-1 pt-4 items-center justify-center">
+    <ServiceIcon name="logo" alt="Home" class="w-48 h-48" />
     <div class="h-2">
       <p class="text-red-500">{{ authError }}</p>
     </div>
     <div>
       <form @submit="onSubmit">
-        <div class="grid gap-2">
+        <div class="grid gap-3">
           <div class="grid gap-1">
             <FormField
               v-slot="{ componentField }"

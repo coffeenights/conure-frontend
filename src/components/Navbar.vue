@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Breadcrumb from '../components/Breadcrumb.vue'
-import CompanyLogo from '../components/CompanyLogo.vue'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useDarkMode } from '@/composables/useDarkMode'
@@ -12,6 +11,7 @@ import {
 } from '@/components/ui/tooltip'
 import { useRouter, useRoute } from 'vue-router'
 import { useBreadCrumbStore } from '@/stores/BreadCrumbStore'
+import ServiceIcon from '@/components/ServiceIcon.vue'
 
 const store = useBreadCrumbStore()
 const { isDarkMode, toggleDarkMode } = useDarkMode()
@@ -28,11 +28,11 @@ const goToSettings = () => {
 }
 </script>
 <template>
-  <nav class="bg-card h-16 shadow-sm min-w-max sticky top-0 border-b z-10">
-    <div class="flex flex-row items-center">
+  <nav class="bg-card h-16 shadow-sm min-w-max sticky top-0 border-b z-10 flex items-center">
+    <div class="flex flex-row items-center grow">
       <router-link :to="{ name: 'organizations' }">
-        <div class="logo mr-6 w-12 ml-3">
-          <CompanyLogo />
+        <div class="mr-3 ml-3">
+          <ServiceIcon name="logo" alt="Home" class="w-14 h-14" />
         </div>
       </router-link>
       <div class="breadcrumbs">

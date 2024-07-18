@@ -43,6 +43,9 @@ const serviceIcon: IconFile = {
   awsDark: 'aws_logo_dark.svg',
   awsRds: 'aws_rds.svg',
   awsRdsDark: 'aws_rds_dark.svg',
+  logo: 'conure-logo.svg',
+  logoDark: 'conure-logo-dark.svg',
+  // logo: 'conure-logo-2.svg',
 }
 
 const imageUrl = ref('')
