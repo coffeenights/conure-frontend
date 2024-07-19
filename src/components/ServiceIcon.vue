@@ -44,7 +44,7 @@ const serviceIcon: IconFile = {
   awsRds: 'aws_rds.svg',
   awsRdsDark: 'aws_rds_dark.svg',
   logo: 'conure-logo.svg',
-  logoDark: 'conure-logo-dark.svg',
+  logoDark: 'conure-logo-dark-2.svg',
   // logo: 'conure-logo-2.svg',
 }
 

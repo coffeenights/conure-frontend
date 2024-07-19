@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 75 67" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-miterlimit:10;">
-    <g transform="matrix(1,0,0,1,-40.3629,-2152.79)">
-        <g transform="matrix(0.0802357,0,0,0.0820756,37.2099,1982.51)">
+    <g transform="matrix(1,0,0,1,-40.3629,-2072.77)">
+        <g transform="matrix(0.0802357,0,0,0.0820756,37.2099,1902.49)">
             <rect id="Artboard1" x="39.298" y="2074.67" width="933.656" height="804.692" style="fill:none;"/>
             <clipPath id="_clip1">
                 <rect id="Artboard11" serif:id="Artboard1" x="39.298" y="2074.67" width="933.656" height="804.692"/>
@@ -13,7 +13,7 @@
                         <path d="M0.649,-0.477L0.297,-0.477L0.056,-0.302L0,-0.126L0.112,0.049L0.297,0.225L1,0.477L1,-0.126C1,-0.32 0.843,-0.477 0.649,-0.477Z" style="fill:url(#_Linear2);fill-rule:nonzero;"/>
                     </g>
                     <g transform="matrix(1,0,0,1,561.284,420.737)">
-                        <path d="M0,21.528C0,9.639 -9.638,0 -21.528,0L-29.979,0" style="fill:none;fill-rule:nonzero;stroke:rgb(62,51,58);stroke-width:5px;"/>
+                        <path d="M0,21.528C0,9.639 -9.638,0 -21.528,0L-29.979,0" style="fill:none;fill-rule:nonzero;stroke:rgb(62,51,58);stroke-width:2.5px;"/>
                     </g>
                     <g transform="matrix(1,0,0,1,554.294,442.265)">
                         <path d="M0,17.09C9.438,17.09 17.09,9.439 17.09,0L0,0L0,17.09Z" style="fill:rgb(62,51,58);fill-rule:nonzero;"/>
@@ -22,28 +22,28 @@
                         <path d="M0,8.545C0,3.826 3.826,0 8.545,0C13.264,0 17.09,3.826 17.09,8.545" style="fill:rgb(62,51,58);fill-rule:nonzero;"/>
                     </g>
                     <g transform="matrix(1,0,0,1,539.756,479.263)">
-                        <path d="M0,-36.998C-11.889,-36.998 -21.528,-27.36 -21.528,-15.471L21.528,0L21.528,-14.274" style="fill:none;fill-rule:nonzero;stroke:rgb(62,51,58);stroke-width:5px;"/>
+                        <path d="M0,-36.998C-11.889,-36.998 -21.528,-27.36 -21.528,-15.471L21.528,0L21.528,-14.274" style="fill:none;fill-rule:nonzero;stroke:rgb(62,51,58);stroke-width:2.5px;"/>
                     </g>
                     <g transform="matrix(0,1,1,0,539.756,435.568)">
                         <path d="M6.698,-6.698C2.999,-6.698 0.001,-3.699 0.001,-0.001C0.001,3.699 2.999,6.698 6.698,6.698C10.397,6.698 13.395,3.699 13.395,-0.001C13.395,-3.699 10.397,-6.698 6.698,-6.698" style="fill:rgb(62,51,58);fill-rule:nonzero;"/>
                     </g>
                     <g transform="matrix(-1,0,0,1,503.418,431.501)">
-                        <path d="M-27.887,0L0,0" style="fill:none;fill-rule:nonzero;stroke:rgb(62,51,58);stroke-width:5px;"/>
+                        <path d="M-27.887,0L0,0" style="fill:none;fill-rule:nonzero;stroke:rgb(62,51,58);stroke-width:2.5px;"/>
                     </g>
                     <g transform="matrix(-1,0,0,1,506.836,453.029)">
-                        <path d="M-14.275,0L0,0" style="fill:none;fill-rule:nonzero;stroke:rgb(62,51,58);stroke-width:5px;"/>
+                        <path d="M-14.275,0L0,0" style="fill:none;fill-rule:nonzero;stroke:rgb(62,51,58);stroke-width:2.5px;"/>
                     </g>
                     <g transform="matrix(-1,0,0,1,518.229,420.738)">
-                        <path d="M-13.076,0L0,0" style="fill:none;fill-rule:nonzero;stroke:rgb(62,51,58);stroke-width:5px;"/>
+                        <path d="M-13.076,0L0,0" style="fill:none;fill-rule:nonzero;stroke:rgb(62,51,58);stroke-width:2.5px;"/>
                     </g>
                     <g transform="matrix(1,0,0,1,500,442.265)">
-                        <path d="M0,0L39.756,0" style="fill:none;fill-rule:nonzero;stroke:rgb(62,51,58);stroke-width:5px;"/>
+                        <path d="M0,0L39.756,0" style="fill:none;fill-rule:nonzero;stroke:rgb(62,51,58);stroke-width:2.5px;"/>
                     </g>
                 </g>
             </g>
         </g>
     </g>
     <defs>
-        <linearGradient id="_Linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,-1,0,0)"><stop offset="0" style="stop-color:white;stop-opacity:1"/><stop offset="0.24" style="stop-color:rgb(253,242,208);stop-opacity:1"/><stop offset="0.5" style="stop-color:rgb(246,207,80);stop-opacity:1"/><stop offset="0.75" style="stop-color:rgb(243,184,72);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(235,113,46);stop-opacity:1"/></linearGradient>
+        <linearGradient id="_Linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1,0,0,-1,0,-8.88178e-16)"><stop offset="0" style="stop-color:rgb(249,233,89);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(235,113,46);stop-opacity:1"/></linearGradient>
     </defs>
 </svg>
